@@ -27,21 +27,29 @@
   */
 void propeller_thread_entry(void *parameter)
 {
-		Propeller_Init();       //推进器初始化
+		rt_thread_mdelay(3000);
+		uint32 cnt = 0;
 		while(1)
 		{
-			
-
-
-				if(FOUR_AXIS == VehicleMode && UNLOCK == ControlCmd.All_Lock ){ //安全保护措施
-
+				
+				if(FOUR_AXIS == VehicleMode  ){ //安全保护措施
+						
+					
+						cnt++;
+						
+						Servo_Dir_Control(0);
+							
+						if(cnt >= 2000){
+								cnt= 0;
+								//Two_Axis_Yuntai_Control();
+						}
+						Back_Wheel_Control(0);
+				}
+				else if(SIX_AXIS == VehicleMode ){
 
 				}
-				else if(SIX_AXIS == VehicleMode && UNLOCK == ControlCmd.All_Lock){
 
-				}
 
-				Propeller_Output(); //推进器真实PWM输出		
 				rt_thread_mdelay(1); //5ms
 		}
 	
@@ -73,7 +81,7 @@ void devices_thread_entry(void *parameter)//高电平1.5ms 总周期20ms  占空比7.5% v
 		{
 			
 				if(WORK == WorkMode){//工作模式
-					
+
 						//Extractor_Control(&ControlCmd.Arm); //吸取器控制
 						RoboticArm_Control(&ControlCmd.Arm);//机械臂控制
 						Search_Light_Control(&ControlCmd.Light);  //探照灯控制
@@ -82,7 +90,7 @@ void devices_thread_entry(void *parameter)//高电平1.5ms 总周期20ms  占空比7.5% v
 				}
 				else if(DEBUG == WorkMode)//调试模式
 				{	
-						Debug_Mode(get_button_value(&ControlCmd));
+						//Debug_Mode(get_button_value(&ControlCmd));
 				}
 				rt_thread_mdelay(20);
 		}
@@ -98,7 +106,7 @@ int propeller_thread_init(void)
                     propeller_thread_entry,			 //线程入口函数【entry】
                     RT_NULL,							   //线程入口函数参数【parameter】
                     2048,										 //线程栈大小，单位是字节【byte】
-                    8,										 	 //线程优先级【priority】
+                    12,										 	 //线程优先级【priority】
                     10);										 //线程的时间片大小【tick】= 100ms
 
     if (propeller_tid != RT_NULL){

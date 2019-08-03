@@ -19,7 +19,7 @@ void Convert_RockerValue(Rocker_Type *rc); //ªÒ»°“°∏À÷µ
 void Speed_Buffer(short *now_value,short *last_value,short BufferRange);
 
 
-
+void Two_Axis_Yuntai_Control(void);
 #endif
 
 

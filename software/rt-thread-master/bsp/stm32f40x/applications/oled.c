@@ -80,7 +80,7 @@ int oled_thread_init(void)
                     oled_thread_entry,	//线程入口函数【entry】
                     RT_NULL,				    //线程入口函数参数【parameter】
                     2048,							  //线程栈大小，单位是字节【byte】
-                    15,								  //线程优先级【priority】
+                    20,								  //线程优先级【priority】
                     10);							  //线程的时间片大小【tick】= 100ms
 
     if (oled_tid != RT_NULL){

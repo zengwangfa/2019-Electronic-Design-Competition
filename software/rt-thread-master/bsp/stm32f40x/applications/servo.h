@@ -13,12 +13,16 @@ typedef struct  /*  */
 }ServoType;
 
 
-
+void Servo_Dir_Control(short offest); //PWM越大 ,往右
 void RoboticArm_Control(uint8 *action);
 
 void YunTai_Control(uint8 *action);
 void DirectionProportion(int Mode);
+/* 云台控制 
 
+当前x，期望x;当前y，期望y
+*/
+void yuntai_pid_control(short present_x,short expect_x,short persent_y,short expect_y) ;//
 
 extern ServoType RoboticArm ;//机械臂
 

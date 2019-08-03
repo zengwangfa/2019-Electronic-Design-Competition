@@ -30,6 +30,51 @@
 /*----------------------- Function Implement --------------------------------*/
 
 
+void TIM3_Int_Init(u16 arr,u16 psc)
+{
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
+	NVIC_InitTypeDef NVIC_InitStructure;
+	
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3,ENABLE);  ///使能TIM3时钟
+	
+  TIM_TimeBaseInitStructure.TIM_Period = arr; 	//自动重装载值
+	TIM_TimeBaseInitStructure.TIM_Prescaler=psc;  //定时器分频
+	TIM_TimeBaseInitStructure.TIM_CounterMode=TIM_CounterMode_Up; //向上计数模式
+	TIM_TimeBaseInitStructure.TIM_ClockDivision=TIM_CKD_DIV1; 
+	
+	TIM_TimeBaseInit(TIM3,&TIM_TimeBaseInitStructure);//初始化TIM3
+	
+	TIM_ITConfig(TIM3,TIM_IT_Update,ENABLE); //允许定时器3更新中断
+	TIM_Cmd(TIM3,ENABLE); //使能定时器3
+	
+	NVIC_InitStructure.NVIC_IRQChannel=TIM3_IRQn; //定时器3中断
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=0x01; //抢占优先级1
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority=0x03; //子优先级3
+	NVIC_InitStructure.NVIC_IRQChannelCmd=ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+	
+}
+
+//定时器3中断服务函数
+void TIM3_IRQHandler(void)
+{
+	if(TIM_GetITStatus(TIM3,TIM_IT_Update)==SET) //溢出中断
+	{
+
+		
+			
+		
+	}
+	TIM_ClearITPendingBit(TIM3,TIM_IT_Update);  //清除中断标志位
+}
+
+
+
+
+
+
+
+
 /**
   * @brief  timer1_out(定时器中断函数)
   * @param  void* parameter
@@ -45,10 +90,10 @@ static void timer1_out(void* parameter)// 定时器1超时函数  进行JY901模块数据转换
 				
 
 	
-		get_speed(&Sensor.JY901.Acc.x,&Sensor.JY901.Speed.x);//得到x速度,数据有问题，累积效应过大
-		get_zspeed(); 
+//		get_speed(&Sensor.JY901.Acc.x,&Sensor.JY901.Speed.x);//得到x速度,数据有问题，累积效应过大
+//		get_zspeed(); 
 		//Angle_Control(); //角度控制
-
+		Two_Axis_Yuntai_Control();
 
 		/* 调度器解锁 */
 		rt_exit_critical();
@@ -66,24 +111,16 @@ int timer1_init(void)
     timer1 = rt_timer_create("timer1",  /* 定时器名字是 timer1 */
                         timer1_out, 		  /* 超时时回调的处理函数 */
                         RT_NULL, 			  /* 超时函数的入口参数 */
-                        10,      			  /* 定时长度，以OS Tick为单位，即5个OS Tick   --> 50MS*/  
+                        1,      			  /* 定时长度，以OS Tick为单位，即5个OS Tick   --> 50MS*/  
                         RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_HARD_TIMER); /* 周期性定时器 */
     /* 启动定时器 */
     if (timer1 != RT_NULL){ 
-				
+				TIM3_Int_Init(10-1,84-1); //84M/84 = 1M,  1M/10 = 100K  = 1MS
 				rt_timer_start(timer1);
 				
 		}
 
     return 0;
 }
-//INIT_APP_EXPORT(timer1_init);
-
-
-
-
-
-
-
-
+INIT_APP_EXPORT(timer1_init);
 

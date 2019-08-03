@@ -50,7 +50,7 @@ int return_computer_thread_init(void)
 		}
 		return 0;
 }
-INIT_APP_EXPORT(return_computer_thread_init);
+//INIT_APP_EXPORT(return_computer_thread_init);
 
 
 

@@ -64,7 +64,7 @@ typedef enum
 		
 }ActionType_Enum; //动作指令枚举
 
-
+void Back_Wheel_Control(int duty);
 void Propeller_Init(void);
 
 void PWM_Update(PropellerPower_Type* power);//推进器PWM 更新

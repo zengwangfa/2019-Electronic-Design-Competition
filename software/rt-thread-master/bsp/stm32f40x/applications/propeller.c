@@ -44,72 +44,36 @@ PropellerError_Type TurnLeft  = {0,0,0,0,0,0};
 PropellerError_Type TurnRight = {0,0,0,0,0,0};
 Adjust_Parameter AdjustParameter = {1,1,1,1};
 
-extern int16 PowerPercent;
-extern int Extractor_Value;//吸取器推进器的值
+
 /*----------------------- Function Implement --------------------------------*/
 
-/*******************************************
-* 函 数 名：Propeller_Init
-* 功    能：推进器的初始化
-* 输入参数：none
-* 返 回 值：none
-* 注    意：初始化流程：
-*           1,接线,上电，哔-哔-哔三声,表示开机正常
-*           2,给电调2ms或1ms最高转速信号,哔一声
-*           3,给电调1.5ms停转信号,哔一声
-*           4,初始化完成，可以开始控制
-********************************************/
-void Propeller_Init(void)//这边都需要经过限幅在给定  原先为2000->1500
+
+
+
+void Back_Wheel_Control(int duty)
 {
+//		if(power >= 0)
+//		{
 
-	
-
-}
-
-
-void PWM_Update(PropellerPower_Type* propeller)
-{	
-
-	
-
-				
-		TIM1_PWM_CH1_E9 (propeller->rightUp);     //右上	 E9	
-		TIM1_PWM_CH2_E11(propeller->leftDown);    //左下	 E11
-		TIM1_PWM_CH3_E13(propeller->leftUp); 	    //左上   E13
-		TIM1_PWM_CH4_E14(propeller->rightDown);   //右下   E14
-	
-		TIM4_PWM_CH1_D12(propeller->leftMiddle);  //左中   D12
-		TIM4_PWM_CH2_D13(propeller->rightMiddle); //右中   D13
-			
-
-			
-		
+//				PropellerPower.rightUp = power;
+//				PropellerPower.rightDown = 0;
+//		}
+//		else{
+//				PropellerPower.rightUp = 0;
+//				PropellerPower.rightDown = abs(power);
+//			
+//		
+//		}
+		TIM1_PWM_CH1_E9 (PropellerPower.rightUp);     //右上	 E9	
+		TIM1_PWM_CH4_E14(PropellerPower.rightDown);   //右下   E14
 
 }
 
 
 
-int power_value = 1500;
-/**
-  * @brief  Extractor_Control(吸取器控制)
-  * @param  控制指令 0x00：不动作  0x01：吸取  0x02：关闭
-  * @retval None
-  * @notice 
-  */
-void Extractor_Control(uint8 *action)
-{
 
-		switch(*action)
-		{
-				case 0x01:power_value = Extractor_Value; //设定吸力值
-									break;
-				case 0x02:power_value = PropellerPower_Med; //推进器中值 停转
-									break;
-				default:break;
-		}
 
-		//TIM4_PWM_CH3_D14(power_value);
-}
+
 
 
 PropellerPower_Type power_test_msh; //调试用的变量
@@ -127,13 +91,12 @@ static int Propeller_Test(int argc, char **argv)
 		if(atoi(argv[1]) <= 2000){
 
 
-				PropellerPower.rightUp     =  atoi(argv[1]);
-				PropellerPower.leftDown    =  atoi(argv[1]);
-				PropellerPower.leftUp      =  atoi(argv[1]);
-			//	power_test_msh.rightDown   =  atoi(argv[1]);
+				//PropellerPower.rightUp     =  atoi(argv[1]);
 
-				PropellerPower.leftMiddle  =  atoi(argv[1]);
-				PropellerPower.rightMiddle =  atoi(argv[1]);
+
+				PropellerPower.rightDown   =  atoi(argv[1]);
+
+
 
 
 				log_i("Current propeller power:  %d",atoi(argv[1]) );
@@ -258,58 +221,6 @@ _exit:
 }
 MSH_CMD_EXPORT(propeller_dir_set,propeller <1 1 1 1 1 1>);
 
-
-/*【推进器】 修改 【动力】MSH方法 */
-static int propeller_power_set(int argc, char **argv) //只能是 0~3.0f
-{
-    int result = 0;
-    if (argc != 2){ //6个推进器
-        log_e("Error! Proper Usage: propeller_power_set <0~300> % ");
-				result = -RT_ERROR;
-        goto _exit;
-    }
-		
-	  if( atoi(argv[1]) >=0 && atoi(argv[1]) <=300  ) {
-				 
-				PowerPercent = atoi(argv[1]); //百分制
-				Flash_Update();
-
-				log_i("Propeller_Power: %d %%",PowerPercent);
-		}
-		
-		else {
-				log_e("Error! Input Error!");
-		}
-_exit:
-    return result;
-}
-MSH_CMD_EXPORT(propeller_power_set,propeller_power_set <0~300> %);
-
-
-
-/*【吸取器】推进器 修改 【推力】 MSH方法 */
-static int extractor_value_set(int argc, char **argv)
-{
-    int result = 0;
-    if (argc != 2){
-        log_e("Error! Proper Usage: extractor_value_set <1000~2000>");
-				result = -RT_ERROR;
-        goto _exit;
-    }
-
-		if(atoi(argv[1]) <= 2000 ){		
-				Extractor_Value = atoi(argv[1]);
-				Flash_Update();
-				log_i("Write_Successed! extractor_value  %d",Extractor_Value);
-		}
-		else {
-				log_e("Error! The value is out of range!");
-		}
-
-_exit:
-    return result;
-}
-MSH_CMD_EXPORT(extractor_value_set,ag: extractor_value_set <1000~2000>);
 
 
 

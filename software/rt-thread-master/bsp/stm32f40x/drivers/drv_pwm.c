@@ -23,8 +23,8 @@
 
 void PWM_Init(void)
 {
-		TIM1_PWM_Init(2000-1,168-1);	//168M/168=1Mhz的计数频率,重装载值(即PWM精度)20000，所以PWM频率为 1M/20000=500Hz.  【现在为500Hz】
-		TIM3_PWM_Init(20000-1,84-1);  //吸取器	
+		TIM1_PWM_Init(100-1,168-1);	//168M/168=1Mhz的计数频率,重装载值(即PWM精度)20000，所以PWM频率为 1M/100=10KHz.  【现在为500Hz】
+		//TIM3_PWM_Init(20000-1,84-1);  //吸取器	
 		TIM4_PWM_Init(20000-1,84-1);	//84M/84=1Mhz的计数频率,重装载值(即PWM精度)20000，所以PWM频率为 1M/20000=50Hz.  
 		TIM_Cmd(TIM1, ENABLE);  //使能TIM1
 		TIM_Cmd(TIM3, ENABLE);  //使能TIM1
@@ -37,11 +37,11 @@ void PWM_Init(void)
 	
 		TIM4_PWM_CH1_D12(0); //左中   D12
 		TIM4_PWM_CH2_D13(0); //右中   D13
-		//TIM4_PWM_CH3_D14(0); //
+		TIM4_PWM_CH3_D14(0); //
 		TIM4_PWM_CH4_D15(0); //
 	
-		TIM3_PWM_CH3_B0(0);  //吸取器
-		TIM3_PWM_CH4_B1(0);
+		//TIM3_PWM_CH3_B0(0);  //吸取器
+		//TIM3_PWM_CH4_B1(0);
 }
 
 void Light_PWM_Init(void)

@@ -10,6 +10,10 @@ void Camera_Focus_Data_Analysis(uint8 Data); //控制数据解析
 
 
 
+int get_persent_x(void);
+
+
+int get_persent_y(void);
 #endif
 
 

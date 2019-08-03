@@ -23,7 +23,7 @@
 #include "rc_data.h"
 #include "focus.h"
 #include "DeviceThread.h"
-
+#include "PID.h"
 /*---------------------- Constant / Macro Definitions -----------------------*/
 
 #define RoboticArm_MedValue  1500
@@ -44,8 +44,9 @@ ServoType  YunTai = {
 	   .Speed  = 10//云台转动速度
 };      //云台
 
+
 uint16 propeller_power = 1500;
-short _test_value = 0;
+
 
 
 /*----------------------- Function Implement --------------------------------*/
@@ -64,6 +65,98 @@ void Servo_Output_Limit(ServoType *Servo)
 		Servo->CurrentValue = Servo->CurrentValue < Servo->MinValue ? Servo->MinValue : Servo->CurrentValue ;//反向限幅
 	
 }
+
+
+
+
+
+
+
+/*  小车舵机 控制*/
+void Servo_Dir_Control(short offest) //PWM越大 ,往右
+{
+
+	
+		YunTai.CurrentValue = YunTai.MedValue + (offest);
+	
+		Servo_Output_Limit(&YunTai); //限幅
+		TIM4_PWM_CH4_D15(YunTai.CurrentValue);  //输出
+
+}
+
+
+/* 云台控制 
+
+当前x，期望x;当前y，期望y
+*/
+void yuntai_pid_control(short present_x,short expect_x,short persent_y,short expect_y) //
+{
+
+    /* 航向角 为 X*/
+		Total_Controller.Yaw_Angle_Control.FeedBack = present_x;  //当前深度反馈
+		Total_Controller.Yaw_Angle_Control.Expect = expect_x ; //期望深度由遥控器给定	
+	
+		/* 俯仰角 为 Y*/
+		Total_Controller.Pitch_Angle_Control.FeedBack = persent_y;  //当前深度反馈
+		Total_Controller.Pitch_Angle_Control.Expect = expect_y ; //期望深度由遥控器给定
+	
+	
+		PID_Control(&Total_Controller.Pitch_Angle_Control);//高度位置控制器
+		PID_Control(&Total_Controller.Yaw_Angle_Control);//高度位置控制器
+	
+}
+
+/*【推进器】 修改 【正向最大值】MSH方法 */
+static int pitch_yuntai(int argc, char **argv)
+{
+
+    int result = 0;
+    if (argc != 2){
+        log_e("Error! Proper Usage: Propoller_Test <0~100>");
+				result = -RT_ERROR;
+        goto _exit;
+    }
+		if(atoi(argv[1]) <= 5000){
+
+				PropellerPower.rightMiddle = atoi(argv[1]);
+
+				log_i("Current propeller power:  %d",atoi(argv[1]) );
+		}
+		
+		else {
+				log_e("Error! The value is out of range!");
+		}
+_exit:
+    return result;
+}
+MSH_CMD_EXPORT(pitch_yuntai,ag: two_axis_yuntai 1000 1000);
+
+
+
+/*【推进器】 修改 【正向最大值】MSH方法 */
+static int yaw_yuntai(int argc, char **argv)
+{
+
+    int result = 0;
+    if (argc != 2){
+        log_e("Error! Proper Usage: Propoller_Test <0~100>");
+				result = -RT_ERROR;
+        goto _exit;
+    }
+		if(atoi(argv[1]) <= 5000){
+
+				PropellerPower.leftMiddle = atoi(argv[1]);
+
+				log_i("Current propeller power:  %d",atoi(argv[1]) );
+		}
+		
+		else {
+				log_e("Error! The value is out of range!");
+		}
+_exit:
+    return result;
+}
+MSH_CMD_EXPORT(yaw_yuntai,ag: two_axis_yuntai 1000 1000);
 
 
 /**
@@ -123,7 +216,7 @@ void YunTai_Control(uint8 *action)
 				default: break;
 		}
 		Servo_Output_Limit(&YunTai);
-		TIM4_PWM_CH4_D15(YunTai.CurrentValue); 
+		//TIM4_PWM_CH4_D15(YunTai.CurrentValue); 
 		*action = 0x00; //清除控制字
 }
 
@@ -133,7 +226,7 @@ void YunTai_Control(uint8 *action)
 
 
 
-
+short _test_value = 0;
 /*【吸取器】 修改 【测试】 MSH方法 */
 static int xiquqi_value_set(int argc, char **argv)
 {

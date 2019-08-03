@@ -325,20 +325,20 @@ void Boot_Animation(void)
 				y = 64-x;
 				OLED_DrawPoint(64-0.7*y,y,1);
 				OLED_DrawPoint(64+0.7*y,y,1);
-				rt_thread_delay(2);
+				rt_thread_mdelay(20);
 			  OLED_Refresh_Gram();//更新显示到OLED
 		}
 		
 		for(x = 30;x <= 94;x++){
 				OLED_DrawPoint(125-x,47,1);
 				OLED_DrawPoint(x,18,1);
-				rt_thread_delay(2);
+				rt_thread_mdelay(20);
 			  OLED_Refresh_Gram();//更新显示到OLED
 		}
 
 		OLED_ShowString(60,20,(uint8 *)"E",16);
 	  OLED_Refresh_Gram();//更新显示到OLED
-		rt_thread_delay(100);
+		rt_thread_mdelay(1000);
 		
 }
 

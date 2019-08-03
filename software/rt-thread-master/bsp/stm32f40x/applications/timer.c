@@ -49,7 +49,7 @@ void TIM3_Int_Init(u16 arr,u16 psc)
 	
 	NVIC_InitStructure.NVIC_IRQChannel=TIM3_IRQn; //定时器3中断
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=0x01; //抢占优先级1
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority=0x03; //子优先级3
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority=0x01; //子优先级3
 	NVIC_InitStructure.NVIC_IRQChannelCmd=ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 	
@@ -61,7 +61,7 @@ void TIM3_IRQHandler(void)
 	if(TIM_GetITStatus(TIM3,TIM_IT_Update)==SET) //溢出中断
 	{
 
-		
+				Two_Axis_Yuntai_Control();
 			
 		
 	}
@@ -93,7 +93,7 @@ static void timer1_out(void* parameter)// 定时器1超时函数  进行JY901模块数据转换
 //		get_speed(&Sensor.JY901.Acc.x,&Sensor.JY901.Speed.x);//得到x速度,数据有问题，累积效应过大
 //		get_zspeed(); 
 		//Angle_Control(); //角度控制
-		Two_Axis_Yuntai_Control();
+
 
 		/* 调度器解锁 */
 		rt_exit_critical();
@@ -115,12 +115,12 @@ int timer1_init(void)
                         RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_HARD_TIMER); /* 周期性定时器 */
     /* 启动定时器 */
     if (timer1 != RT_NULL){ 
-				TIM3_Int_Init(10-1,84-1); //84M/84 = 1M,  1M/10 = 100K  = 1MS
+				//TIM3_Int_Init(1000-1,84-1); //84M/84 = 1M,  1M/1000 = 1K  = 1MS
 				rt_timer_start(timer1);
 				
 		}
 
     return 0;
 }
-INIT_APP_EXPORT(timer1_init);
+//INIT_APP_EXPORT(timer1_init);
 

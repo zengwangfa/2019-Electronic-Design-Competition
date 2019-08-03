@@ -49,6 +49,7 @@ void sensor_lowSpeed_thread_entry(void* parameter)
 				Sensor.CPU.Temperature = get_cpu_temp();           //获取CPU温度
 				Sensor.PowerSource.Voltage = get_voltage_value();  //获取电源电压值
 				if(Sensor.PowerSource.Voltage > 6.0f ){							//当未接入电源时，不检测电流值
+						
 						Sensor.PowerSource.Current = get_current_value();  //获取INA169电流值
 						temp_current = Sensor.PowerSource.Current ;
 						Sensor.PowerSource.Current = KalmanFilter(&Sensor.PowerSource.Current);
@@ -79,7 +80,7 @@ void sensor_highSpeed_thread_entry(void* parameter)
 		{
 				JY901_Convert(&Sensor.JY901); //JY901数据转换
 				
-				Depth_Sensor_Data_Convert();  //深度数据转换
+				//Depth_Sensor_Data_Convert();  //深度数据转换
 
 				rt_thread_mdelay(20);
 		}
@@ -104,8 +105,8 @@ int sensor_thread_init(void)
                     sensor_highSpeed_thread_entry,		 //线程入口函数【entry】
                     RT_NULL,							   //线程入口函数参数【parameter】
                     2048,										 //线程栈大小，单位是字节【byte】
-                    20,										 	 //线程优先级【priority】
-                    10);										 //线程的时间片大小【tick】= 100ms
+                    10,										 	 //线程优先级【priority】
+                    3);										 //线程的时间片大小【tick】= 100ms
 
     if (sensor_lowSpeed_tid != RT_NULL && sensor_highSpeed_tid != RT_NULL){
 			

@@ -70,7 +70,7 @@ void oled_thread_entry(void* parameter)
 		OLED_Clear();
 		while(1){	
 				menu_define();//菜单定义选择
-				rt_thread_mdelay(1000/pow(MENU+2,3)); //菜单号越大 刷新速率越大
+				rt_thread_mdelay(1000/pow(MENU+2,2)); //菜单号越大 刷新速率越大
 		}
 }
 

@@ -88,7 +88,7 @@ int Debug_thread_init(void)
 		}
 		return 0;
 }
-//INIT_APP_EXPORT(Debug_thread_init);
+INIT_APP_EXPORT(Debug_thread_init);
 
 /*-----------------------Debug Thread End-----------------------------*/
 

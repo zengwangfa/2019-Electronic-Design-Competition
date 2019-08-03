@@ -27,30 +27,22 @@
   */
 void propeller_thread_entry(void *parameter)
 {
-		rt_thread_mdelay(3000);
-		uint32 cnt = 0;
+		rt_thread_mdelay(4000);
+
 		while(1)
 		{
 				
-				if(FOUR_AXIS == VehicleMode  ){ //安全保护措施
+
 						
-					
-						cnt++;
-						
-						Servo_Dir_Control(0);
+				Servo_Dir_Control(0);
 							
-						if(cnt >= 2000){
-								cnt= 0;
-								//Two_Axis_Yuntai_Control();
-						}
-						Back_Wheel_Control(0);
-				}
-				else if(SIX_AXIS == VehicleMode ){
+					
+				Two_Axis_Yuntai_Control();
+				
+				Back_Wheel_Control(0);
+				
 
-				}
-
-
-				rt_thread_mdelay(1); //5ms
+				rt_thread_mdelay(3); //5ms
 		}
 	
 }
@@ -106,8 +98,8 @@ int propeller_thread_init(void)
                     propeller_thread_entry,			 //线程入口函数【entry】
                     RT_NULL,							   //线程入口函数参数【parameter】
                     2048,										 //线程栈大小，单位是字节【byte】
-                    12,										 	 //线程优先级【priority】
-                    10);										 //线程的时间片大小【tick】= 100ms
+                    5,										 	 //线程优先级【priority】
+                    1);										 //线程的时间片大小【tick】= 1ms
 
     if (propeller_tid != RT_NULL){
 			

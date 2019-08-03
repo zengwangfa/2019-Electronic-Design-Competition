@@ -5,6 +5,30 @@
 #include "rc_data.h"
 
 
+//typedef struct 
+//{
+//	int x;
+//	int y;
+//	int a;
+//	int b;
+//	float Angle;
+//		
+//}Cycle_Type;// ‘≤
+
+typedef struct 
+{
+	float pit;
+	float yaw;
+	float l; //æ‡¿Î
+	float r; //∞Îæ∂
+
+		
+}Cycle_Type;// ‘≤
+
+
+
+
+
 void Angle_Control(void);
 void Depth_PID_Control(float expect_depth,float sensor_depth);
 

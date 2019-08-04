@@ -16,6 +16,8 @@
 #include "Control.h"
 #include "PID.h"
 #include "rc_data.h"
+#include "ret_data.h"
+#include <stdio.h>
 
 #include "focus.h"
 #include "led.h"
@@ -33,6 +35,12 @@ int target_y = 120;
 
 int coords_x = -128;//当前坐标
 int coords_y = 0;
+
+Cyc Cycle = {0,0,250,250,0};
+Rectange_Type Rectange = {100,100};
+Trigonometric_Type Sin = {0,0};
+Trigonometric_Type Cos = {0,PI};
+Star_Type Star = {0,50};
 
 uint16 Pitch_Axis_Output_Limit_Left(int16 value)
 {
@@ -78,6 +86,136 @@ void draw_cycle(int *x,int *y,int r)
 
 }
 
+void DrawCycle(int *x,int *y,int r)
+{	
+	static float Angle = 0;
+	static int rec = 1;
+	Angle = atan2(*y,*x);
+	if(rec)
+	{
+		*x = r * cos(Angle);
+		*y = r * sin(Angle);
+		rec = 0;
+	}
+	if(*x>r*cos(PI/4))
+	{
+		(*y)++;
+		 *x = sqrt( r*r - ((*y)*(*y)));
+	}
+	else if(*x < r*cos(PI*3/4))
+	{
+		(*y)--;
+		*x = sqrt( r*r - ((*y)*(*y)));
+	}
+	else
+	{
+		if(*y >= r*sin(PI/4) )
+		{
+			(*x)--;
+			*y = sqrt((r*r)- ((*x)*(*x)));
+		}
+		if(*y <= (r*sin(-PI/4)) )
+		{
+			(*x)++;
+			*y = -(sqrt((r*r)- ((*x)*(*x))));
+		}
+	}
+	
+}
+void DrawCyc(Cyc *cyc)
+{
+	cyc->Angle+=0.01f;
+	cyc->x = cyc->a * cos(cyc->Angle);
+	cyc->y = cyc->b * sin(cyc->Angle);
+}
+
+void DrawRetange(Rectange_Type *Rec)
+{
+	static int Flag = 1, Size_X,Size_Y;
+	if(Flag)
+	{
+		Flag = 0;
+		Size_X = Rec->x;
+		Size_Y = Rec->y;
+	}
+	if(Rec->y>=Size_Y)
+	{
+		Rec->x--;
+	}
+	if(Rec->x <= -Size_X)
+	{
+		Rec->y--;		
+	}
+	if(Rec->y<=-Size_Y)
+	{
+		Rec->x++;
+		
+	}
+	if(Rec->x>=Size_X)
+	{
+		Rec->y++;
+	}
+
+}
+void DrawSin(Trigonometric_Type *Sin)
+{
+	Sin->x += 1;
+	Sin->y = 100*sin(Sin->x/100);
+}
+void DrawCos(Trigonometric_Type *Cos)
+{
+	Cos->x += 1;
+	Cos->y = 100*cos(Cos->x/100);
+}
+
+void DrawStar(Star_Type *Star)
+{
+	static int t = 0;
+	static int Mode = 1;
+	static char str[100];
+	switch(Mode)
+	{
+		case 1:t++;Star->x = t*cos(0.4f*PI);
+				Star->y = 50 - t*sin(0.4f*PI);
+				if(t>=100)
+				{
+					Mode  = 2;
+					t = 0;
+				}
+				break;
+		case 2:t++;Star->x = 31- t*cos(0.2f*PI);
+				Star->y = -45 + t*sin(0.2f*PI);
+				if(t>=100)
+				{
+					Mode  = 3;
+					t = 0;
+				}break;
+		case 3:t++;Star->x = -50 +t;
+				Star->y = 14 ;
+				if(t>=100)
+				{
+					Mode  = 4;
+					t = 0;
+				}break;
+		case 4:t++;Star->x = 50 - t*cos(0.2f*PI);
+				Star->y = 14 - t*sin(0.2f*PI);
+				if(t>=100)
+				{
+					Mode  = 5;
+					t = 0;
+				}break;
+		case 5:t++;Star->x = -31 + t*cos(0.4f*PI);
+				   Star->y = -45 +  t*sin(0.4f*PI);
+				if(t>=100)
+				{
+					Mode  = 1;
+					t = 0;
+				}break;
+	}
+	
+}
+
+
 
 int test_x = -250;
 int test_y = 0;
@@ -91,12 +229,15 @@ void Two_Axis_Yuntai_Control(void)
 
 		
     //yuntai_pid_control(coords_x,target_x,coords_y,target_y);
-		draw_cycle(&test_x,&test_y,250);
+		//DrawCyc(&Cycle);
+		//DrawSin(&Sin);
+		//DrawCos(&Cos);
+	DrawStar(&Star);
 
 // 		PropellerPower.leftMiddle  = YAW_YUNTAI_MEN   + Total_Controller.Yaw_Angle_Control.Control_OutPut;   //水平
 //		PropellerPower.rightMiddle = PITCH_YUNTAI_MED - Total_Controller.Pitch_Angle_Control.Control_OutPut; //俯仰    左边是  上面控制俯仰的舵机 Y轴
-		PropellerPower.leftMiddle = YAW_YUNTAI_MEN + test_x;
-		PropellerPower.rightMiddle = PITCH_YUNTAI_MED + test_y;
+		PropellerPower.leftMiddle = YAW_YUNTAI_MEN + Cycle.x;
+		PropellerPower.rightMiddle = PITCH_YUNTAI_MED + Cycle.y;
 
 		PropellerPower.leftMiddle  = Yaw_Axis_Output_Limit_Right(PropellerPower.leftMiddle);  //云台
 		PropellerPower.rightMiddle = Pitch_Axis_Output_Limit_Left(PropellerPower.rightMiddle);			
@@ -106,7 +247,7 @@ void Two_Axis_Yuntai_Control(void)
 }
 
 
-
+ 
 
 /*【深度 】期望yaw MSH方法 */
 static int coords(int argc, char **argv)

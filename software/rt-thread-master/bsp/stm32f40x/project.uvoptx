@@ -135,17 +135,17 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-          <Name>d</Name>
+          <Name>?6w€$?6w€$</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
           <Key>JL2CM3</Key>
-          <Name>-U20090928 -O78 -S2 -ZTIFSpeedSel5000 -A0 -C0 -JU1 -JI127.0.0.1 -JP0 -RST0 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO15 -FD20000000 -FC1000 -FN1 -FF0STM32F4xx_1024.FLM -FS08000000 -FL0100000 -FP0($$Device:STM32F407ZG$Flash\STM32F4xx_1024.FLM)</Name>
+          <Name>-U20090928 -O78 -S2 -ZTIFSpeedSel5000 -A0 -C0 -JU1 -JI127.0.0.1 -JP0 -RST0 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO15 -FD20000000 -FC1000 -FN1 -FF0STM32F4xx_1024.FLM -FS08000000 -FL0100000 -FP0($$Device:STM32F407ZG$CMSIS\Flash\STM32F4xx_1024.FLM)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
           <Key>UL2CM3</Key>
-          <Name>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0STM32F4xx_1024 -FS08000000 -FL0100000 -FP0($$Device:STM32F407ZG$Flash\STM32F4xx_1024.FLM))</Name>
+          <Name>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0STM32F4xx_1024 -FS08000000 -FL0100000 -FP0($$Device:STM32F407ZG$CMSIS\Flash\STM32F4xx_1024.FLM))</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
       <Breakpoint>
@@ -154,14 +154,14 @@
           <Type>0</Type>
           <LineNumber>210</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134243754</Address>
+          <Address>134245754</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>D:\My\Github\Underwater_Vehicle\software\rt-thread-master\bsp\stm32f40x\applications\rc_data.c</Filename>
+          <Filename>.\applications\rc_data.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\rtthread_stm32f4xx\applications/rc_data.c\210</Expression>
         </Bp>
@@ -170,14 +170,14 @@
           <Type>0</Type>
           <LineNumber>206</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134243740</Address>
+          <Address>134245740</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>D:\My\Github\Underwater_Vehicle\software\rt-thread-master\bsp\stm32f40x\applications\rc_data.c</Filename>
+          <Filename>.\applications\rc_data.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\rtthread_stm32f4xx\applications/rc_data.c\206</Expression>
         </Bp>
@@ -186,14 +186,14 @@
           <Type>0</Type>
           <LineNumber>215</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134243768</Address>
+          <Address>134245768</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>D:\My\Github\Underwater_Vehicle\software\rt-thread-master\bsp\stm32f40x\applications\rc_data.c</Filename>
+          <Filename>.\applications\rc_data.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\rtthread_stm32f4xx\applications/rc_data.c\215</Expression>
         </Bp>
@@ -202,14 +202,14 @@
           <Type>0</Type>
           <LineNumber>219</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134243782</Address>
+          <Address>134245782</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>D:\My\Github\Underwater_Vehicle\software\rt-thread-master\bsp\stm32f40x\applications\rc_data.c</Filename>
+          <Filename>.\applications\rc_data.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\rtthread_stm32f4xx\applications/rc_data.c\219</Expression>
         </Bp>
@@ -218,14 +218,14 @@
           <Type>0</Type>
           <LineNumber>224</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134243796</Address>
+          <Address>134245796</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>D:\My\Github\Underwater_Vehicle\software\rt-thread-master\bsp\stm32f40x\applications\rc_data.c</Filename>
+          <Filename>.\applications\rc_data.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\rtthread_stm32f4xx\applications/rc_data.c\224</Expression>
         </Bp>
@@ -234,14 +234,14 @@
           <Type>0</Type>
           <LineNumber>228</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134243810</Address>
+          <Address>134245810</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>D:\My\Github\Underwater_Vehicle\software\rt-thread-master\bsp\stm32f40x\applications\rc_data.c</Filename>
+          <Filename>.\applications\rc_data.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\rtthread_stm32f4xx\applications/rc_data.c\228</Expression>
         </Bp>
@@ -250,14 +250,14 @@
           <Type>0</Type>
           <LineNumber>181</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134243684</Address>
+          <Address>134245684</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>D:\My\Github\Underwater_Vehicle\software\rt-thread-master\bsp\stm32f40x\applications\rc_data.c</Filename>
+          <Filename>.\applications\rc_data.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\rtthread_stm32f4xx\applications/rc_data.c\181</Expression>
         </Bp>
@@ -266,14 +266,14 @@
           <Type>0</Type>
           <LineNumber>185</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134243698</Address>
+          <Address>134245698</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>D:\My\Github\Underwater_Vehicle\software\rt-thread-master\bsp\stm32f40x\applications\rc_data.c</Filename>
+          <Filename>.\applications\rc_data.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\rtthread_stm32f4xx\applications/rc_data.c\185</Expression>
         </Bp>
@@ -282,14 +282,14 @@
           <Type>0</Type>
           <LineNumber>189</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134243712</Address>
+          <Address>134245712</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>D:\My\Github\Underwater_Vehicle\software\rt-thread-master\bsp\stm32f40x\applications\rc_data.c</Filename>
+          <Filename>.\applications\rc_data.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\rtthread_stm32f4xx\applications/rc_data.c\189</Expression>
         </Bp>
@@ -298,14 +298,14 @@
           <Type>0</Type>
           <LineNumber>193</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134243726</Address>
+          <Address>134245726</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>D:\My\Github\Underwater_Vehicle\software\rt-thread-master\bsp\stm32f40x\applications\rc_data.c</Filename>
+          <Filename>.\applications\rc_data.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\rtthread_stm32f4xx\applications/rc_data.c\193</Expression>
         </Bp>
@@ -366,6 +366,56 @@
           <WinNumber>1</WinNumber>
           <ItemText>cycle_flag,0x0A</ItemText>
         </Ww>
+        <Ww>
+          <count>11</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>x</ItemText>
+        </Ww>
+        <Ww>
+          <count>12</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>*x,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>13</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Angle</ItemText>
+        </Ww>
+        <Ww>
+          <count>14</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Angle</ItemText>
+        </Ww>
+        <Ww>
+          <count>15</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>DrawCyc</ItemText>
+        </Ww>
+        <Ww>
+          <count>16</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Cycle,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>17</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Rectange,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>18</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Sin,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>19</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Cos</ItemText>
+        </Ww>
+        <Ww>
+          <count>20</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Star,0x0A</ItemText>
+        </Ww>
       </WatchWindow1>
       <MemoryWindow1>
         <Mm>
@@ -417,6 +467,12 @@
       <pszMrulep></pszMrulep>
       <pSingCmdsp></pSingCmdsp>
       <pMultCmdsp></pMultCmdsp>
+      <DebugDescription>
+        <Enable>1</Enable>
+        <EnableLog>0</EnableLog>
+        <Protocol>2</Protocol>
+        <DbgClock>10000000</DbgClock>
+      </DebugDescription>
     </TargetOption>
   </Target>
 
@@ -678,7 +734,7 @@
       <GroupNumber>2</GroupNumber>
       <FileNumber>21</FileNumber>
       <FileType>1</FileType>
-      <tvExp>0</tvExp>
+      <tvExp>1</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>User\Control.c</PathWithFileName>

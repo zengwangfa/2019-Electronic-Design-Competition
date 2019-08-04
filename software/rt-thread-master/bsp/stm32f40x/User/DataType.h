@@ -121,6 +121,34 @@ typedef enum
 }DirectionMode_Eunm;//枚举方向系数模式
 
 
+typedef struct 
+{
+	int x;
+	int y;
+	int a;
+	int b;
+	float Angle;
+		
+}Cyc;// 圆
+
+typedef struct
+{
+	int x;
+	int y;	
+}Rectange_Type; //矩形
+
+typedef struct
+{
+	float x;
+	float y;
+}Trigonometric_Type;//三角函数
+
+typedef struct
+{
+	float x;
+	float y;
+}Star_Type; //五角星
+
 
 /* ------------------------【重要定义】---------------------------------*/
 

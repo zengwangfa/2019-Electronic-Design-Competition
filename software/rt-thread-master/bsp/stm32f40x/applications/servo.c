@@ -39,8 +39,8 @@ ServoType RoboticArm = {
 };  //机械臂
 ServoType  YunTai = {
 		 .MaxValue = 1700, 		// 正向最大值
-		 .MinValue = 1400,	  // 反向
-		 .MedValue = 1100,
+		 .MinValue = 1100,	  // 反向
+		 .MedValue = 1400,
 	   .Speed  = 10//云台转动速度
 };      //云台
 
@@ -77,7 +77,7 @@ void Servo_Dir_Control(short offest) //PWM越大 ,往右
 {
 
 	
-		YunTai.CurrentValue = YunTai.MedValue + (offest);
+		//YunTai.CurrentValue = YunTai.MedValue + (offest);
 	
 		Servo_Output_Limit(&YunTai); //限幅
 		TIM4_PWM_CH4_D15(YunTai.CurrentValue);  //输出
@@ -89,7 +89,7 @@ void Servo_Dir_Control(short offest) //PWM越大 ,往右
 
 当前x，期望x;当前y，期望y
 */
-void yuntai_pid_control(short present_x,short expect_x,short persent_y,short expect_y) //
+void yuntai_pid_control(float present_x,float expect_x,float persent_y,float expect_y) //
 {
 
     /* 航向角 为 X*/
@@ -116,7 +116,7 @@ static int pitch_yuntai(int argc, char **argv)
 				result = -RT_ERROR;
         goto _exit;
     }
-		if(atoi(argv[1]) <= 5000){
+		if(atoi(argv[1]) <= 200000){
 
 				PropellerPower.rightMiddle = atoi(argv[1]);
 
@@ -143,7 +143,7 @@ static int yaw_yuntai(int argc, char **argv)
 				result = -RT_ERROR;
         goto _exit;
     }
-		if(atoi(argv[1]) <= 5000){
+		if(atoi(argv[1]) <= 200000){
 
 				PropellerPower.leftMiddle = atoi(argv[1]);
 

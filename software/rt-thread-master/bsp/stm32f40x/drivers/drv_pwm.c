@@ -23,7 +23,7 @@
 
 void PWM_Init(void)
 {
-		TIM1_PWM_Init(100-1,168-1);	//168M/168=1Mhz的计数频率,重装载值(即PWM精度)20000，所以PWM频率为 1M/100=10KHz.  【现在为500Hz】
+		TIM1_PWM_Init(1000-1,16-1);	//168M/16=10Mhz的计数频率,重装载值(即PWM精度)20000，所以PWM频率为 1M/100=10KHz.  【现在为500Hz】
 		//TIM3_PWM_Init(20000-1,84-1);  //吸取器	
 		TIM4_PWM_Init(20000-1,84-1);	//84M/84=1Mhz的计数频率,重装载值(即PWM精度)20000，所以PWM频率为 1M/20000=50Hz.  
 		TIM_Cmd(TIM1, ENABLE);  //使能TIM1

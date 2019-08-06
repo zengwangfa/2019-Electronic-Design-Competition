@@ -9,6 +9,8 @@
 #include "DeviceThread.h"
 #include <rtthread.h>
 #include <elog.h>
+#include <math.h>
+#include <stdlib.h>
 #include "propeller.h"
 #include "servo.h"
 #include "light.h"
@@ -17,6 +19,41 @@
 #include "PropellerControl.h"
 #include "focus.h"
 #include "debug.h"
+#include "timer.h"
+#include "gyroscope.h"
+#include "PID.h"
+
+uint8 thread_speed = 5;
+
+
+
+void Set_Z_Zero(void)//设置Z轴归0
+{
+		/* 调度器上锁，上锁后，将不再切换到其他线程，仅响应中断 */
+		rt_enter_critical();
+	
+		TIM4_PWM_CH1_D12(YAW_YUNTAI_MED);  //左中   D12
+		TIM4_PWM_CH2_D13(PITCH_YUNTAI_MED); //右中   D13
+		rt_thread_mdelay(2000);
+	
+		/* 调度器解锁 */
+		rt_exit_critical();
+	
+		gyroscope_z_zero();
+
+}
+MSH_CMD_EXPORT(Set_Z_Zero,ag: Set_Z_Zero  );
+
+//void drifting_check(void)//漂移检测
+//{
+//		if( Total_Controller.Yaw_Angle_Control.Control_OutPut <= 1){
+//				
+//				gyroscope_z_zero();
+//				log_w("drifting goto zero");
+//		
+//		}
+
+//}
 
 
 /**
@@ -27,29 +64,45 @@
   */
 void propeller_thread_entry(void *parameter)
 {
-		rt_thread_mdelay(4000);
-
+		rt_thread_mdelay(1000);
+		Set_Z_Zero();
+		rt_thread_mdelay(1000);
+		TIM3_ENABLE();
 		while(1)
 		{
-				
+				//drifting_check(); //漂移 检测			
 
-						
-				Servo_Dir_Control(0);
-							
-					
+				//Car_Pitch_Control();			
 				Two_Axis_Yuntai_Control();
-				
-				Back_Wheel_Control(0);
-				
+			
+				Servo_Dir_Control(0);			//舵机控制
 
-				rt_thread_mdelay(3); //5ms
+				
+				rt_thread_mdelay(thread_speed); //5ms
 		}
-	
 }
 
 
 
 
+static int speed(int argc, char **argv)
+{
+    int result = 0;
+    if (argc != 2){
+        log_e("Error! Proper Usage: speed <0~100>");
+				result = -RT_ERROR;
+        goto _exit;
+    }
+		if(atoi(argv[1]) <= 1000){
+				thread_speed = atoi(argv[1]);
+		}
+		else {
+				log_e("Error! The value is out of range!");
+		}
+_exit:
+    return result;
+}
+MSH_CMD_EXPORT(speed,ag: speed  <0~100>);
 
 
 
@@ -75,7 +128,7 @@ void devices_thread_entry(void *parameter)//高电平1.5ms 总周期20ms  占空比7.5% v
 				if(WORK == WorkMode){//工作模式
 
 						//Extractor_Control(&ControlCmd.Arm); //吸取器控制
-						RoboticArm_Control(&ControlCmd.Arm);//机械臂控制
+						//RoboticArm_Control(&ControlCmd.Arm);//机械臂控制
 						Search_Light_Control(&ControlCmd.Light);  //探照灯控制
 						YunTai_Control(&ControlCmd.Yuntai); //云台控制				
 						Focus_Zoom_Camera_Control(&ControlCmd.Focus);//变焦摄像头控制					
@@ -99,7 +152,7 @@ int propeller_thread_init(void)
                     RT_NULL,							   //线程入口函数参数【parameter】
                     2048,										 //线程栈大小，单位是字节【byte】
                     5,										 	 //线程优先级【priority】
-                    1);										 //线程的时间片大小【tick】= 1ms
+                    10);										 //线程的时间片大小【tick】= 1ms
 
     if (propeller_tid != RT_NULL){
 			
@@ -133,7 +186,7 @@ int devices_thread_init(void)
 
 		return 0;
 }
-INIT_APP_EXPORT(devices_thread_init);
+//INIT_APP_EXPORT(devices_thread_init);
 
 
 

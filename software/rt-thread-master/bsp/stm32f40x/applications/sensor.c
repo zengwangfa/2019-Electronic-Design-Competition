@@ -41,7 +41,7 @@ void sensor_lowSpeed_thread_entry(void* parameter)
 {
 		uint8 cpu_usage_major, cpu_usage_minor; //整数位、小数位
 
-		rt_thread_mdelay(3000);//等待3s系统稳定再获取数据
+		rt_thread_mdelay(1000);//等待3s系统稳定再获取数据
 
 		while(1)
 		{
@@ -74,7 +74,7 @@ void sensor_lowSpeed_thread_entry(void* parameter)
 void sensor_highSpeed_thread_entry(void* parameter)
 {
 
-		rt_thread_mdelay(3000);//等待3s系统稳定再获取数据
+		rt_thread_mdelay(1000);//等待3s系统稳定再获取数据
 	
 		while(1)
 		{

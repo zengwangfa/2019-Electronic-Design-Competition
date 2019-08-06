@@ -29,6 +29,7 @@
 /*----------------------- Variable Declarations. -----------------------------*/
 
 extern rt_device_t debug_uart_device;	
+extern rt_device_t control_uart_device;
 extern uint8 uart_startup_flag;
 extern float  Yaw;
 
@@ -46,7 +47,11 @@ char *debug_tool_name[3]={"NULL","VCAN","ANO"};
 
 uint8 debug_tool = PC_ANO; //山外 / 匿名上位机 调试标志位
 
+extern float target_pit ; //期望角度
+extern float target_yaw ;
 
+extern float persent_pit ;//当前角度
+extern float persent_yaw ;
 
 
 
@@ -57,15 +62,17 @@ void debug_send_thread_entry(void* parameter)
 	
 		while(uart_startup_flag)//当debug_uart初始化完毕后 才进行上位机通信
 		{		
-				rt_thread_mdelay(1);
-				switch(debug_tool)//选择上位机
-				{
+				rt_thread_mdelay(5);
+//				switch(debug_tool)//选择上位机
+//				{
 
-						case PC_VCAN: Vcan_Send_Data();break;
-						case PC_ANO :	ANO_SEND_StateMachine();break;
-						default :break;
-				}
-				
+//						case PC_VCAN: Vcan_Send_Data();break;
+//						case PC_ANO :	ANO_SEND_StateMachine();break;
+//						default :break;
+//				}
+				Vcan_Send_Data();
+			  
+
 		}
 }
 
@@ -78,8 +85,8 @@ int Debug_thread_init(void)
     debug_send_tid = rt_thread_create("debug",			 //线程名称
                     debug_send_thread_entry, //线程入口函数【entry】
                     RT_NULL,							   //线程入口函数参数【parameter】
-                    2048,										 //线程栈大小，单位是字节【byte】
-                    10,										 	 //线程优先级【priority】
+                    4096,										 //线程栈大小，单位是字节【byte】
+                    15,										 	 //线程优先级【priority】
                     10);										 //线程的时间片大小【tick】= 100ms
 
     if (debug_send_tid != RT_NULL){
@@ -103,22 +110,27 @@ void Vcan_Send_Cmd(void *wareaddr, unsigned int waresize)
     static uint8 cmdf[2] = {CMD_WARE, ~CMD_WARE};    //串口调试 使用的前命令
     static uint8 cmdr[2] = {~CMD_WARE, CMD_WARE};    //串口调试 使用的后命令
 
-    rt_device_write(debug_uart_device, 0,cmdf, 2);    //先发送前命令
-    rt_device_write(debug_uart_device, 0,(uint8 *)wareaddr, waresize);    //发送数据
-    rt_device_write(debug_uart_device, 0,cmdr, 2);    //发送后命令
+    rt_device_write(control_uart_device, 0,cmdf, 2);    //先发送前命令
+    rt_device_write(control_uart_device, 0,(uint8 *)wareaddr, waresize);    //发送数据
+    rt_device_write(control_uart_device, 0,cmdr, 2);    //发送后命令
 }
 
 
+extern float target_pit ; //期望角度
+extern float target_yaw ;
+
+extern float persent_pit ;//当前角度
+extern float persent_yaw ;
 void Vcan_Send_Data(void)
 {   
 
-		static short list[8]= {0};
+		static float list[8]= {0};
 
-		list[0] = (short)(1*1000);  //俯仰角 Pitch
-		list[1] = (short)(Sensor.PowerSource.Current*1000); 	  //偏航角 Yaw
+		list[0] = target_pit;  //俯仰角 Pitch
+		list[1] = persent_pit; 	  //偏航角 Yaw
 
-		list[2] = (short)0;    //CPU温度 temp
-		list[3] = (short)1;//
+		list[2] = target_yaw;    //CPU温度 temp
+		list[3] = persent_yaw;//
 		list[4] = (short)PropellerPower.leftMiddle;//MS_TEMP;//get_vol();
 		list[5] = (short)PropellerPower.rightMiddle;//MS5837_Pressure;	
 		list[6] = (short)0;	//camera_center;

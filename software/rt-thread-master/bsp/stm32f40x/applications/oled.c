@@ -59,8 +59,8 @@ extern struct rt_event init_event;/* ALL_init 事件控制块 */
 
 /* OLED 变量 初始化. */
 Oled_Type oled = {	 
-									 .pagenum = LockPage,		 //页码 pagenum
-									 .pagechange = LockPage, //暂存页码 检测页码是否改变 pagechange
+									 .pagenum = PicturePage,		 //页码 pagenum
+									 .pagechange = PicturePage, //暂存页码 检测页码是否改变 pagechange
 									 .pagechange_flag = 0,     //页码改变标志位 pagechange flag
 									 .pagename = //页名定义 pagename
 										{	
@@ -113,9 +113,9 @@ void menu_define(void) //菜单定义
 	else {oled.pagechange_flag = 0;}
 	oled.pagechange = oled.pagenum;
 	
-	if(ControlCmd.All_Lock == LOCK){// 当拨码不是强制解锁 锁定页面
-			oled.pagenum = LockPage;
-	}
+//	if(ControlCmd.All_Lock == LOCK){// 当拨码不是强制解锁 锁定页面
+//			oled.pagenum = LockPage;
+//	}
 	switch(oled.pagenum){
 			case 1:{
 					MENU = StatusPage;	 OLED_StatusPage();		break;

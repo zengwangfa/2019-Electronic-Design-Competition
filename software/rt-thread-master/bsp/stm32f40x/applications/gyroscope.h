@@ -150,7 +150,7 @@ void print_time(void);
 /*-----------------应用函数----------------*/
 
 void JY901_Convert(JY901_Type * pArr);
-
+void gyroscope_z_zero(void);
 void CopeSerial2Data(unsigned char Data);
 
 void get_speed(float *acc,float *speed);/* 粗略 获取轴速度 */

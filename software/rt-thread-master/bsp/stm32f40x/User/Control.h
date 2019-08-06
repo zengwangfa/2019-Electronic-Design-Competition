@@ -4,31 +4,54 @@
 #include "DataType.h"
 #include "rc_data.h"
 
+#define STEETMAX 250
+//#define PITCH_YUNTAI_MED  1900
+//#define YAW_YUNTAI_MED    1400
 
-//typedef struct 
-//{
-//	int x;
-//	int y;
-//	int a;
-//	int b;
-//	float Angle;
-//		
-//}Cycle_Type;// 圆
+//#define PITCH_YUNTAI_MED  2200 //3D 打印的 银燕舵机云台
+//#define YAW_YUNTAI_MED    1500
 
+#define PITCH_YUNTAI_MED  1720 //买了的结构 银燕舵机云台
+#define YAW_YUNTAI_MED    1650
 typedef struct 
 {
-	float pit;
-	float yaw;
-	float l; //距离
-	float r; //半径
+	float x;
+	float y;
+	float a;
+	float b;
+	float Angle;
 
-		
 }Cycle_Type;// 圆
 
+typedef struct
+{
+	float x;
+	float y;
+}Star_Type; //五角星
+
+typedef struct
+{
+	float x;
+	float y;
+}Trigonometric_Type;//三角函数
+
+typedef struct
+{
+	int x;
+	int y;	
+}Rectange_Type; //矩形
+
+typedef struct
+{
+	float yaw_rad; //x轴
+	float pit_rad;
+	float yaw_deg; //x轴
+	float pit_deg;
+
+}ExpectAngle_Type;//期望角度
 
 
-
-
+void Car_Pitch_Control(void);
 void Angle_Control(void);
 void Depth_PID_Control(float expect_depth,float sensor_depth);
 

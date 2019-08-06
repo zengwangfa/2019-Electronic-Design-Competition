@@ -10,10 +10,11 @@
 
 #include <rtthread.h>
 #include <elog.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-
+#include <string.h>
 #include "Control.h"
 #include "PID.h"
 #include "rc_data.h"
@@ -25,15 +26,15 @@
 #include "propeller.h"
 #include "sensor.h"
 
+Rectange_Type Rectange = {100,100};
+Star_Type Star = {0,0};
+Cycle_Type Cycle = {0,0,50,50};
+Trigonometric_Type Sin = {0,0};
 
-#define PITCH_YUNTAI_MED  670
-#define YAW_YUNTAI_MEN    1810
-
-Cycle_Type Yuntai_Cycle = {-PI/4,-PI/4,0,0};
+ExpectAngle_Type ExpectAngle;
 
 int target_x = 160;//目标期望
 int target_y = 120;
-
 
 int persent_x = 160;//当前坐标
 int persent_y = 120;
@@ -44,11 +45,12 @@ float target_yaw = 0.0f;
 float persent_pit = 0.0f;//当前角度
 float persent_yaw = 0.0f;
 
+
 uint16 Pitch_Axis_Output_Limit_Left(int16 value)
 {
 		//不超过+500   不超过-500
-		value = (value) > PITCH_YUNTAI_MED + 600 ? PITCH_YUNTAI_MED + 600 : value ;//正向限幅
-		value = (value) < PITCH_YUNTAI_MED - 600 ? PITCH_YUNTAI_MED - 600 : value;//反向限幅
+		value = (value) > PITCH_YUNTAI_MED + 400 ? PITCH_YUNTAI_MED + 400 : value ;//正向限幅
+		value = (value) < PITCH_YUNTAI_MED - 400 ? PITCH_YUNTAI_MED - 400 : value;//反向限幅
 	
 		return value ;
 }
@@ -56,115 +58,280 @@ uint16 Pitch_Axis_Output_Limit_Left(int16 value)
 uint16 Yaw_Axis_Output_Limit_Right(int16 value)
 {
 		//不超过+500   不超过-500
-		value = (value) > YAW_YUNTAI_MEN + 1000 ? YAW_YUNTAI_MEN + 1000 : value ;//正向限幅
-		value = (value) < YAW_YUNTAI_MEN - 1000 ? YAW_YUNTAI_MEN - 1000 : value;//反向限幅
+		value = (value) > YAW_YUNTAI_MED + 1000 ? YAW_YUNTAI_MED + 1000 : value ;//正向限幅
+		value = (value) < YAW_YUNTAI_MED - 1000 ? YAW_YUNTAI_MED - 1000 : value;//反向限幅
 	
 		return value ;
 }
 
 
 
-float draw_cycle(float pit,float yaw,float l,float r)
+void ReadExpect(ExpectAngle_Type *ExpectAngle,float x,float y)//期望角度转换
 {
-		
-		return atan(sqrt( ((r*r)/(l*l)) - (tan(pit)*tan(pit))));
+		ExpectAngle->yaw_rad = atan(x / STEETMAX); //弧度制
+		ExpectAngle->pit_rad = atan(y / STEETMAX);
+		ExpectAngle->yaw_deg = Rad2Deg(ExpectAngle->yaw_rad);//转换为角度
+		ExpectAngle->pit_deg = Rad2Deg(ExpectAngle->pit_rad);
 }
 
-void Yuntai_Draw_Cycle(Cycle_Type *cyc)
+void DrawStar(Star_Type *Star)
 {
-		cyc->l = 10;
-		cyc->r = 10;
-		
-		cyc->pit += 0.01f;
-		if(cyc->pit >= PI/4){
-				cyc->pit = -PI/4;
-		}
-		
-		//cyc->yaw = draw_cycle(cyc->pit,cyc->pit,cyc->l,cyc->r);
-		cyc->yaw += 0.01f;
-		
-		if(cyc->yaw >= PI/4){
-				cyc->yaw = -PI/4;
-		}
+	static int t = 0;
+	static int Mode = 1;
+
+	switch(Mode)
+	{
+		case 1:t++;Star->x = t*cos(0.4f*PI);
+				Star->y = 50 - t*sin(0.4f*PI);
+				if(t>=100)
+				{
+					Mode  = 2;
+					t = 0;
+				}
+				break;
+		case 2:t++;Star->x = 31- t*cos(0.2f*PI);
+				Star->y = -45 + t*sin(0.2f*PI);
+				if(t>=100)
+				{
+					Mode  = 3;
+					t = 0;
+				}break;
+		case 3:t++;Star->x = -50 +t;
+				Star->y = 14 ;
+				if(t>=100)
+				{
+					Mode  = 4;
+					t = 0;
+				}break;
+		case 4:t++;Star->x = 50 - t*cos(0.2f*PI);
+				Star->y = 14- t*sin(0.2f*PI);
+				if(t>=100)
+				{
+					Mode  = 5;
+					t = 0;
+				}break;
+		case 5:t++;Star->x = -31 + t*cos(0.4f*PI);
+				   Star->y = -45 +  t*sin(0.4f*PI);
+				if(t>=100)
+				{
+					Mode  = 1;
+					t = 0;
+				}break;
+	}
+	
 }
-/* 云台画圆 */
-//void Yuntai_Draw_Cycle(Cycle_Type *cyc)
-//{
-//		cyc->x = cyc->a * cos(cyc->Angle);
-//		cyc->y = cyc->b * sin(cyc->Angle);
-//		
-//		PropellerPower.leftMiddle = YAW_YUNTAI_MEN + Yuntai_Cycle.x;
-//		PropellerPower.rightMiddle = PITCH_YUNTAI_MED + Yuntai_Cycle.y;
-//	
-//}
 
+void DrawRetange(Rectange_Type *Rec)
+{
+		static int Flag = 1, Size_X,Size_Y;
+		if(Flag)
+		{
+			Flag = 0;
+			Size_X = Rec->x;
+			Size_Y = Rec->y;
+		}
+		if(Rec->y>=Size_Y)
+		{
+			Rec->x--;
+		}
+		if(Rec->x <= -Size_X)
+		{
+			Rec->y--;		
+		}
+		if(Rec->y<=-Size_Y)
+		{
+			Rec->x++;
 
+		}
+		if(Rec->x>=Size_X)
+		{
+			Rec->y++;
+		}
 
+}
+void DrawCyc(Cycle_Type *cyc)
+{
 
+		
+		cyc->Angle += 0.01f;//( Deg2Rad(fabs(sin(2*cyc->Angle+(PI/2)))) + 0.01f);
+	
+//		if(cyc->Angle>= 2*PI){
+//				cyc->Angle = 0;
+//		}
+		cyc->x = cyc->a * cos(cyc->Angle);
+		cyc->y = cyc->b * sin(cyc->Angle);
+	
+		//sprintf(str,"x%fy%f\n",cyc->x,cyc->y);
+	
+   // rt_kprintf(str);
+}
+
+void DrawSin(Trigonometric_Type *Sin)
+{
+		Sin->x += 1;
+		Sin->y = 100*sin(Sin->x/100);
+}
 
 /* 寻找色块 */
 void Yuntai_Find_Blobs(void)
 {
-	
 
-		persent_x = get_persent_x();//获取 小球X轴
-	  persent_y = get_persent_y();//获取 小球Y轴
+		target_x = get_target_x();//获取 指示点X轴
+	  target_y = get_target_y();//获取 指示点Y轴
+	
+		persent_x = get_persent_x();//获取 
+	  persent_y = get_persent_y();//获取 
 	
 		yuntai_pid_control(persent_x,target_x,persent_y,target_y);
 
- 		PropellerPower.leftMiddle  = YAW_YUNTAI_MEN   - Total_Controller.Yaw_Angle_Control.Control_OutPut;   //水平
+ 		PropellerPower.leftMiddle  = YAW_YUNTAI_MED   - Total_Controller.Yaw_Angle_Control.Control_OutPut;   //水平
 	  PropellerPower.rightMiddle = PITCH_YUNTAI_MED + Total_Controller.Pitch_Angle_Control.Control_OutPut; //俯仰    左边是  上面控制俯仰的舵机 Y轴
 	
 }
 
-float first_yaw = 0.0f;
 
-float rad_first_yaw = 0.0f;
+
+
+float init_yaw = 0.0f;
+ 
+int last_lefeMiddle = 0;
+int last_rightMiddle = 0;
+int yuntai_mode = 0;
+
 void Close_Loop_Angle_Control(void)
 {
 
 		static uint8 ON_OFF = 0;//自锁开关
 		if(0 == ON_OFF ){
 				ON_OFF = 1;
-				first_yaw = Sensor.JY901.Euler.Yaw;
+				init_yaw = Sensor.JY901.Euler.Yaw; //获取初始
+		}
+		
+		last_lefeMiddle = PropellerPower.leftMiddle;
+	  last_rightMiddle = PropellerPower.rightMiddle;
+		
+		switch(yuntai_mode){ //默认为期望为0，则自稳状态
+		
+				case 1:	DrawCyc(&Cycle);
+								ReadExpect(&ExpectAngle,Cycle.x,Cycle.y);
+								break;
+				case 2: DrawStar(&Star);
+								ReadExpect(&ExpectAngle,Star.x,Star.y);
+								break;
+				case 3: DrawRetange(&Rectange);
+							  ReadExpect(&ExpectAngle,Rectange.x,Rectange.y);
+								break;
+				case 4: DrawSin(&Sin);
+				      	ReadExpect(&ExpectAngle,Sin.x,Sin.y);
+				default:break;
 		}
 	
-		Yuntai_Draw_Cycle(&Yuntai_Cycle);
-	
-		target_pit = -Rad2Deg(Yuntai_Cycle.pit);
+		target_yaw = ExpectAngle.yaw_deg + init_yaw;
+		persent_yaw = Sensor.JY901.Euler.Yaw;
 		
-		//rad_first_yaw = Deg2Rad(first_yaw);
-		target_yaw = Rad2Deg(Yuntai_Cycle.yaw) + first_yaw;
-	
-	  persent_yaw = Sensor.JY901.Euler.Yaw;
+		target_pit = ExpectAngle.pit_deg;
 		persent_pit = Sensor.JY901.Euler.Pitch;
 
 		yuntai_pid_control(persent_yaw,target_yaw,persent_pit,target_pit);		
 	
-		PropellerPower.leftMiddle  = YAW_YUNTAI_MEN   + Total_Controller.Yaw_Angle_Control.Control_OutPut;   //水平
-	  PropellerPower.rightMiddle = PITCH_YUNTAI_MED - Total_Controller.Pitch_Angle_Control.Control_OutPut; //俯仰    左边是  上面控制俯仰的舵机 Y轴	
+		
+		PropellerPower.leftMiddle  = YAW_YUNTAI_MED   + Total_Controller.Yaw_Angle_Control.Control_OutPut;   //水平 Yaw
+	  PropellerPower.rightMiddle = PITCH_YUNTAI_MED + Total_Controller.Pitch_Angle_Control.Control_OutPut; //俯仰    左边是  上面控制俯仰的舵机 Y轴	
+
+
+}
+
+float init_pit = 0.0f;
+void Car_Pitch_Control(void)
+{
+
+	
+		static uint8 ON_OFF = 0;//自锁开关
+		if(0 == ON_OFF ){
+				ON_OFF = 1;
+				init_pit = Sensor.JY901.Euler.Pitch; //获取初始
+		}
+		
+		target_yaw =  init_yaw;
+		persent_yaw = Sensor.JY901.Euler.Yaw;
+		
+		target_pit = ExpectAngle.pit_deg + init_pit;
+		persent_pit = Sensor.JY901.Euler.Pitch;
+
+		yuntai_pid_control(persent_yaw,target_yaw,persent_pit,target_pit);		
+	
+		Back_Wheel_Control( Total_Controller.Pitch_Angle_Control.Control_OutPut);//后轮控制
+		//PropellerPower.rightUp  = YAW_YUNTAI_MED   + Total_Controller.Yaw_Angle_Control.Control_OutPut;   //水平 Yaw
+	  //PropellerPower.rightDown = Total_Controller.Pitch_Angle_Control.Control_OutPut; //俯仰    左边是  上面控制俯仰的舵机 Y轴	
+
 
 }
 
 
-uint8 servo_test_flag = 0;//是否开启 舵机中值调试 flag
 
+
+uint8 servo_test_flag = 0;//是否开启 舵机中值调试 flag
 void Two_Axis_Yuntai_Control(void)
 {
+	  
+	
+	
 		if(0 == servo_test_flag){
-				Close_Loop_Angle_Control();
-				//Yuntai_Find_Blobs();
+				//Close_Loop_Angle_Control();
+				Yuntai_Find_Blobs();
+				PropellerPower.leftMiddle  = Yaw_Axis_Output_Limit_Right(PropellerPower.leftMiddle);  //云台
+				PropellerPower.rightMiddle = Pitch_Axis_Output_Limit_Left(PropellerPower.rightMiddle);		
 		}
+	
 
 
 
-		PropellerPower.leftMiddle  = Yaw_Axis_Output_Limit_Right(PropellerPower.leftMiddle);  //云台
-		PropellerPower.rightMiddle = Pitch_Axis_Output_Limit_Left(PropellerPower.rightMiddle);			
+	
 	
 		TIM4_PWM_CH1_D12(PropellerPower.leftMiddle);  //左中   D12
 		TIM4_PWM_CH2_D13(PropellerPower.rightMiddle); //右中   D13
 }
 
+static int set_mode(int argc, char **argv)
+{
+    int result = 0;
+    if (argc != 2){
+        log_e("Error! Proper Usage:");
+				result = -RT_ERROR;
+        goto _exit;
+    }
+		if(atoi(argv[1]) <= 10){
+				yuntai_mode = atoi(argv[1]);
+		}
+
+		else {
+				log_e("Error! The value is out of range!");
+		}
+_exit:
+    return result;
+}
+MSH_CMD_EXPORT(set_mode,ag: yaw );
+
+static int set_cycle_r(int argc, char **argv)
+{
+    int result = 0;
+    if (argc != 2){
+        log_e("Error! Proper Usage:");
+				result = -RT_ERROR;
+        goto _exit;
+    }
+		if(atoi(argv[1]) <= 5000){
+				Cycle.a = atoi(argv[1]);
+			  Cycle.b = atoi(argv[1]);
+		}
+
+		else {
+				log_e("Error! The value is out of range!");
+		}
+_exit:
+    return result;
+}
+MSH_CMD_EXPORT(set_cycle_r,ag: yaw );
 
 static int expect_yaw(int argc, char **argv)
 {
@@ -174,8 +341,8 @@ static int expect_yaw(int argc, char **argv)
 				result = -RT_ERROR;
         goto _exit;
     }
-		if(atoi(argv[1]) <= 360){
-				target_yaw = atoi(argv[1]);
+		if(atoi(argv[1]) <= 200000){
+				target_yaw = target_yaw + atoi(argv[1]);
 		}
 
 		else {
@@ -195,7 +362,7 @@ static int expect_pitch(int argc, char **argv)
 				result = -RT_ERROR;
         goto _exit;
     }
-		if(atoi(argv[1]) <= 360){
+		if(atoi(argv[1]) <= 200000){
 				target_pit = atoi(argv[1]);
 		}
 
@@ -234,7 +401,7 @@ MSH_CMD_EXPORT(servo_med_value_test_on_off,ag: servo_med_value_on_off <on/off>);
 static int servo_med_value_test(int argc, char **argv)
 {
     int result = 0;
-    if (argc >= 2){
+    if (argc != 2){
         log_e("Error! Proper Usage: coords pit yaw");
 				result = -RT_ERROR;
         goto _exit;

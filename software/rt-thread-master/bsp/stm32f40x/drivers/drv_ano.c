@@ -20,6 +20,7 @@
 #include "gyroscope.h"
 #include "rc_data.h"
 #include "propeller.h"
+#include <ioDevices.h>
 
 /*---------------------- Constant / Macro Definitions -----------------------*/		
 
@@ -586,34 +587,34 @@ void ANO_SEND_StateMachine(void)
 		static u16 ANO_Cnt = 0;
 
 		if(ANO_Cnt == 0){
-				ANO_Data_Send_Version((int)HardwareType,(int)HardwareVER,(int)SoftwareVER,(int)ProtocolVER,(int)BootloaderVER);//发送基本版本信息（硬件种类、硬件、软件、协议、Bootloader版本）【第一组】
+				//ANO_Data_Send_Version((int)HardwareType,(int)HardwareVER,(int)SoftwareVER,(int)ProtocolVER,(int)BootloaderVER);//发送基本版本信息（硬件种类、硬件、软件、协议、Bootloader版本）【第一组】
 		}
 		ANO_Cnt++;
 		
 		if(ANO_Cnt == 1){		
-				ANO_Data_Send_Status(Sensor.JY901.Euler.Roll,Sensor.JY901.Euler.Pitch,-Sensor.JY901.Euler.Yaw,Sensor.DepthSensor.Depth); //发送基本信息（欧拉三角、高度、锁定状态）【第二组】
+				//ANO_Data_Send_Status(Sensor.JY901.Euler.Roll,Sensor.JY901.Euler.Pitch,-Sensor.JY901.Euler.Yaw,Sensor.DepthSensor.Depth); //发送基本信息（欧拉三角、高度、锁定状态）【第二组】
 		}
 	
 		else if(ANO_Cnt == 2){//发送传感器原始数字量 (加速度、角速度、磁场)  【第三组】
-				ANO_DT_Send_Senser(Sensor.JY901.Acc.x,Sensor.JY901.Acc.y,Sensor.JY901.Acc.z,
-													 Sensor.JY901.Gyro.x,Sensor.JY901.Gyro.y,Sensor.JY901.Gyro.z,
-													 Sensor.JY901.Mag.x,Sensor.JY901.Mag.y,Sensor.JY901.Mag.z);
+//				ANO_DT_Send_Senser(Sensor.JY901.Acc.x,Sensor.JY901.Acc.y,Sensor.JY901.Acc.z,
+//													 Sensor.JY901.Gyro.x,Sensor.JY901.Gyro.y,Sensor.JY901.Gyro.z,
+//													 Sensor.JY901.Mag.x,Sensor.JY901.Mag.y,Sensor.JY901.Mag.z);
 		}
 		
 		else if(ANO_Cnt==3)
 		{
-				ANO_DT_Send_RCData(PropellerPower.leftUp+1500,PropellerPower.rightUp+1500,
-													 PropellerPower.leftDown+1500,PropellerPower.rightDown+1500,
-													 PropellerPower.leftMiddle+1500,PropellerPower.rightMiddle+1500,
-													 0,0,0,0);
+//				ANO_DT_Send_RCData(PropellerPower.leftUp+1500,PropellerPower.rightUp+1500,
+//													 PropellerPower.leftDown+1500,PropellerPower.rightDown+1500,
+//													 PropellerPower.leftMiddle+1500,PropellerPower.rightMiddle+1500,
+//													 0,0,0,0);
 		}
 		else if(ANO_Cnt == 4){
-				ANO_Data_Send_Voltage_Current(Sensor.PowerSource.Voltage,Sensor.PowerSource.Current);
+				//ANO_Data_Send_Voltage_Current(Sensor.PowerSource.Voltage,Sensor.PowerSource.Current);
 		}
 		
 		else if(ANO_Cnt == 5) //发送高度数据 (气压计高度、超声波高低)  【第七组】
 		{
-				ANO_DT_Send_High(Sensor.DepthSensor.PessureValue,0); //发送高度数据 (气压计高度、超声波高低)
+				//ANO_DT_Send_High(Sensor.DepthSensor.PessureValue,0); //发送高度数据 (气压计高度、超声波高低)
 		}
 
 		else if(ANO_Cnt == 6 //发送PID数据
@@ -712,7 +713,8 @@ void ANO_SEND_StateMachine(void)
 												0);
 				ANO_Send_PID_Flag[5]=0;
 				ANO_Cnt=0;
-				log_v("PID_Flash_Read -> success!");
+				Buzzer_Set(&Beep,1,1);
+				//log_v("PID_Flash_Read -> success!");
 		}					
 }
 
@@ -761,8 +763,9 @@ void Save_Or_Reset_PID_Parameter(void)
 
 			
 				
-				log_v("PID_Save_Flash -> Success!");
+				//log_v("PID_Save_Flash -> Success!");
 				Save_PID_Parameter(); //保存参数至FLASH
+				Buzzer_Set(&Beep,1,1);
 				Sort_PID_Flag=0;
 		}
 		else if(Sort_PID_Flag==2)//将复位PID参数，并写入Flash
@@ -806,7 +809,8 @@ void Save_Or_Reset_PID_Parameter(void)
 				Save_PID_Parameter(); //保存参数至FLASH
 				
 				Sort_PID_Flag = 0;
-				log_v("PID_Reset_Flash -> Success!");
+				Buzzer_Set(&Beep,1,1);
+				//log_v("PID_Reset_Flash -> Success!");
 				ANO_Send_PID_Flag[0]=1;//回复默认参数后，将更新的数据发送置地面站		
 				ANO_Send_PID_Flag[1]=1;
 				ANO_Send_PID_Flag[2]=1;

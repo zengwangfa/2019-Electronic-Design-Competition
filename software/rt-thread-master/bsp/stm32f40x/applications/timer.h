@@ -4,4 +4,8 @@
  
 #include "DataType.h"
  
+ 
+void TIM3_ENABLE(void);
+ 
+ 
 #endif

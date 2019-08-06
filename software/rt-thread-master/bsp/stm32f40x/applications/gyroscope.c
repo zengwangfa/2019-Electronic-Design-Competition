@@ -21,6 +21,7 @@
 
 #define JY901_PACKET_LENGTH      11    //数据包长度
 
+#define TIM_ETA_FLY_LENGTH  11
 /*----------------------- Variable Declarations -----------------------------*/
 struct STime		stcTime;
 struct SAcc 		stcAcc;
@@ -33,6 +34,8 @@ struct SLonLat 	stcLonLat;
 struct SGPSV 		stcGPSV;
 struct SQ       stcQ;
 
+uint8 gyroscope_z_zero_array[5]  = {0xFF,0xAA,0x52};//z轴置零 六轴模块
+
 uint8 gyroscope_save_array[5] 	 = {0xFF,0xAA,0x00,0x00,0x00};	 //0x00-设置保存  0x01-恢复出厂设置并保存
 uint8 gyroscope_package_array[5] = {0xFF,0xAA,0x02,0x1F,0x00};	 //设置回传的数据包【0x1F 0x00 为 <时间> <加速度> <角速度> <角度> <磁场>】
 uint8 gyroscope_rate_array[5] 	 = {0xFF,0xAA,0x03,0x06,0x00};	 //传输速率 0x05-5Hz  0x06-10Hz(默认)  0x07-20Hz
@@ -44,6 +47,47 @@ extern rt_device_t gyro_uart_device;
 /*----------------------- Function Implement --------------------------------*/
 
 //CopeSerialData为串口2中断调用函数，串口每收到一个数据，调用一次这个函数。
+//uint8 eta_fly_data[20] = {0};
+//uint8 eta_fly_ok = 0;
+//void CopeSerial2Data(uint8 Data)
+//{
+
+//		static uint8 RxCheck = 0;	  //尾校验字
+//		static uint8 RxCount = 0;	  //接收计数
+//		static uint8 i = 0;	   		  //
+
+//		eta_fly_data[RxCount++] = Data;	//将收到的数据存入缓冲区中
+//	
+//	
+//		if(RxCount <= (TIM_ETA_FLY_LENGTH+8)){ //定义数据长度未包括包头和包长3个字节,+4)  
+//				if(eta_fly_data[0] == 0xAA){ //接收到包头0xAA
+//						if(RxCount > 4){
+//								if(eta_fly_data[1] == 0x55){ //接收到包头0x55
+//										if(RxCount >= eta_fly_data[3]+4){ //接收到数据包长度位，开始判断什么时候开始计算校验
+//												for(i = 0;i <= (RxCount-2);i++){ //累加和校验
+//														RxCheck += eta_fly_data[i];
+//												}
+//												if(RxCheck == eta_fly_data[RxCount-1]){
+//														eta_fly_ok = 1; //接收数据包成功
+//												}
+//												else {eta_fly_ok = 0;}
+//												
+//												RxCheck = 0; //接收完成清零
+//												RxCount = 0;	
+//										}
+//								}
+//								else {eta_fly_ok = 0;RxCount = 0;return;} //接收不成功清零
+//						}
+//				}
+//				else {eta_fly_ok = 0;RxCount = 0;return;} //接收不成功清零
+//		}
+//		else {eta_fly_ok = 0;RxCount = 0;return;} //接收不成功清零
+//		
+//		Sensor.JY901.Euler.Yaw   = (float)(((short)((eta_fly_data[4]<<8) | eta_fly_data[5]  ))/100.0f);
+//		Sensor.JY901.Euler.Pitch = (float)(((short)((eta_fly_data[6]<<8) | eta_fly_data[7]  ))/100.0f);
+//		Sensor.JY901.Euler.Roll  = (float)(((short)((eta_fly_data[8]<<8) | eta_fly_data[9] ))/100.0f);
+//}
+
 void CopeSerial2Data(uint8 Data)
 {
 		static uint8 RxBuffer[20] = {0};  //数据包
@@ -89,6 +133,7 @@ void CopeSerial2Data(uint8 Data)
 		/*********** ------------------------------------- ************/
 
 }
+
 
 /* Sensor.JY901 数据转换 */
 void JY901_Convert(JY901_Type * pArr) 
@@ -190,6 +235,15 @@ MSH_CMD_EXPORT(set_compass_offset_angle,ag: set_compass_offset_angle 360);
 //		log_i(str);
 //}
 //MSH_CMD_EXPORT(print_time,print time[a]);
+
+/* 设置 九轴模块 保存配置 */
+void gyroscope_z_zero(void)
+{
+			rt_device_write(gyro_uart_device, 0, gyroscope_z_zero_array, 3);  //进入加速度校准
+			log_i("Sensor.JY901 Save successed!");
+}
+MSH_CMD_EXPORT(gyroscope_z_zero,gyroscope_save);
+
 
 
 /* 设置 九轴模块 保存配置 */

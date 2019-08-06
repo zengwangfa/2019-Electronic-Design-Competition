@@ -22,7 +22,7 @@ void DirectionProportion(int Mode);
 
 当前x，期望x;当前y，期望y
 */
-void yuntai_pid_control(short present_x,short expect_x,short persent_y,short expect_y) ;//
+void yuntai_pid_control(float present_x,float expect_x,float persent_y,float expect_y) ;//
 
 extern ServoType RoboticArm ;//机械臂
 

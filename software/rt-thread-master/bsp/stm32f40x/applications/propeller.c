@@ -52,18 +52,18 @@ Adjust_Parameter AdjustParameter = {1,1,1,1};
 
 void Back_Wheel_Control(int duty)
 {
-//		if(power >= 0)
-//		{
+		if(duty >= 0)
+		{
 
-//				PropellerPower.rightUp = power;
-//				PropellerPower.rightDown = 0;
-//		}
-//		else{
-//				PropellerPower.rightUp = 0;
-//				PropellerPower.rightDown = abs(power);
-//			
-//		
-//		}
+				PropellerPower.rightUp = duty;
+				PropellerPower.rightDown = 0;
+		}
+		else{
+				PropellerPower.rightUp = 0;
+				PropellerPower.rightDown = abs(duty);
+			
+		
+		}
 		TIM1_PWM_CH1_E9 (PropellerPower.rightUp);     //срио	 E9	
 		TIM1_PWM_CH4_E14(PropellerPower.rightDown);   //сроб   E14
 

@@ -235,24 +235,13 @@ void list_value(void)
 		log_i("----------------------   ---------");
 		log_i("Compass Offset Angle      %d",Compass_Offset_Angle);//指南针 偏移角度
 		log_i("----------------------   ---------");
-	  log_i("rightUp_Dir               %d",PropellerDir.rightUp);
-	  log_i("leftDown_Dir              %d",PropellerDir.leftDown);
-		log_i("leftUp_Dir                %d",PropellerDir.leftUp);
-		log_i("rightDown_Dir             %d",PropellerDir.rightDown);
-	  log_i("leftMiddle_Dir            %d",PropellerDir.leftMiddle);
-		log_i("rightMiddle_Dir           %d",PropellerDir.rightMiddle);
 		log_i("Propeller_Power           %d",PowerPercent);//推进器动力百分比【不用，动力百分比由控制字给的】
 		log_i("----------------------   ---------");
 		log_i("Battery Capacity          %0.3f",Sensor.PowerSource.Capacity);//电池容量参数
 		log_i("----------------------   ---------");
 		log_i("Extractor_Value           %d",Extractor_Value);//吸取器动力值	
 		log_i("----------------------   ---------");		
-		log_i("rightUp_Error             %d",PropellerError.rightUp);
-	  log_i("leftDown_Error            %d",PropellerError.leftDown);
-		log_i("leftUp_Error              %d",PropellerError.leftUp);
-		log_i("rightDown_Error           %d",PropellerError.rightDown);
-	  log_i("leftMiddle_Error          %d",PropellerError.leftMiddle);
-		log_i("rightMiddle_Error         %d",PropellerError.rightMiddle);
+
 		
     rt_kprintf("\n");
 }

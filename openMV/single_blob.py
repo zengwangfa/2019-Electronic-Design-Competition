@@ -44,9 +44,9 @@ def pack_blob_data(blob,ctrl,Threshold_index,flag):
         a = 0
         print("%x" %res)
     return data
-def pack_no_blob_data(ctrl,flag):
+def pack_no_blob_data(ctrl,Threshold_index,flag):
     datalist = [0xAA,0x55,ctrl.WorkMode,0x0A,
-    ctrl.Threshold_index,
+    Threshold_index,
     0x00,
     0x00,
     0x00,
@@ -57,7 +57,7 @@ def pack_no_blob_data(ctrl,flag):
     datalist.append(sum_checkout(datalist))
     data = bytearray(datalist)
     for res in data:
-        a = 0
+        print("%x" %res)
     return data
 def single_blob_LEDStatus(blobs,ctrl):
     if blobs:
@@ -82,5 +82,5 @@ def single_blob(img,ctrl,thresholds,threshold_index,uart):
     else:
         flag = 0x00
         print("No Find")
-        uart.write(pack_no_blob_data(ctrl,flag))
+        uart.write(pack_no_blob_data(ctrl,threshold_index,flag))
     single_blob_LEDStatus(blobs,ctrl)

@@ -5,9 +5,10 @@ threshold_index = 1 # 0 for red, 1 for green, 2 for blue
 
 
 # Color Tracking Thresholds (L Min, L Max, A Min, A Max, B Min, B Max)
-thresholds = [(79, 100, -37, -2, -4, 24), # 绿色激光
-              (50, 77, 16, 65, -19, 31), # 红色激光
-              (0, 30, 0, 64, -128, 0)] # generic_blue_thresholds
+thresholds = [(0, 30, 0, 64, -128, 0),
+              (79, 100, -37, -2, -4, 24), # 绿色激光
+              (50, 77, 16, 65, -19, 31) # 红色激光
+              ] # generic_blue_thresholds
 
 
 sensor.reset() # 传感器复位sensor.set_pixformat(sensor.GRAYSCALE) # use grayscale.
@@ -38,8 +39,8 @@ while(True):
     clock.tick() # 追踪时钟
     img = sensor.snapshot() # thresholds为阈值元组0
     if ctrl.WorkMode == 0x01:
-        single_blob.single_blob(img,ctrl,thresholds,0,uart)
         single_blob.single_blob(img,ctrl,thresholds,1,uart)
+        single_blob.single_blob(img,ctrl,thresholds,2,uart)
     elif ctrl.WorkMode == 0x02:
         a = 0 # 暂时为空
     elif ctrl.WorkMode == 0x03:

@@ -53,8 +53,7 @@ extern float target_yaw ;
 extern float persent_pit ;//当前角度
 extern float persent_yaw ;
 
-
-
+extern float res1,res2,res3,res4;
 /*-----------------------Debug Thread Begin-----------------------------*/
 void debug_send_thread_entry(void* parameter)
 {
@@ -62,7 +61,7 @@ void debug_send_thread_entry(void* parameter)
 	
 		while(uart_startup_flag)//当debug_uart初始化完毕后 才进行上位机通信
 		{		
-				rt_thread_mdelay(5);
+				rt_thread_mdelay(1);
 //				switch(debug_tool)//选择上位机
 //				{
 
@@ -126,11 +125,11 @@ void Vcan_Send_Data(void)
 
 		static float list[8]= {0};
 
-		list[0] = target_pit;  //俯仰角 Pitch
-		list[1] = persent_pit; 	  //偏航角 Yaw
+		list[0] = res1;  //俯仰角 Pitch
+		list[1] = res2; 	  //偏航角 Yaw
 
-		list[2] = target_yaw;    //CPU温度 temp
-		list[3] = persent_yaw;//
+		list[2] = res3;    //CPU温度 temp
+		list[3] = res4;//
 		list[4] = (short)PropellerPower.leftMiddle;//MS_TEMP;//get_vol();
 		list[5] = (short)PropellerPower.rightMiddle;//MS5837_Pressure;	
 		list[6] = (short)0;	//camera_center;

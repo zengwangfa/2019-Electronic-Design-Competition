@@ -55,12 +55,12 @@ volatile MENU_LIST_Enum MENU = StatusPage;//OLED³õÊ¼Ò³ÃæÎª ×´Ì¬Ò³. volatileÊÇÒ»Ö
 
 
 extern struct rt_event init_event;/* ALL_init ÊÂ¼ş¿ØÖÆ¿é */
-
-
+extern int PaperNumber;
+extern int ShortFlag;
 /* OLED ±äÁ¿ ³õÊ¼»¯. */
 Oled_Type oled = {	 
-									 .pagenum = PicturePage,		 //Ò³Âë pagenum
-									 .pagechange = PicturePage, //Ôİ´æÒ³Âë ¼ì²âÒ³ÂëÊÇ·ñ¸Ä±ä pagechange
+									 .pagenum = GyroscopePage,		 //Ò³Âë pagenum
+									 .pagechange = GyroscopePage, //Ôİ´æÒ³Âë ¼ì²âÒ³ÂëÊÇ·ñ¸Ä±ä pagechange
 									 .pagechange_flag = 0,     //Ò³Âë¸Ä±ä±êÖ¾Î» pagechange flag
 									 .pagename = //Ò³Ãû¶¨Òå pagename
 										{	
@@ -183,17 +183,30 @@ void OLED_StatusPage(void)
 void OLED_GyroscopePage(void)
 {
 		char str[100];
-		sprintf(str,"Acc:%.2f %.2f %.2f  ",Sensor.JY901.Acc.x,Sensor.JY901.Acc.y,Sensor.JY901.Acc.z);
-		OLED_ShowString(0,0,(uint8 *)str,12); 	
-		
-		sprintf(str,"Gyro:%.1f %.1f %.1f ",Sensor.JY901.Gyro.x,Sensor.JY901.Gyro.y,Sensor.JY901.Gyro.z);
-		OLED_ShowString(0,16,(uint8 *)str,12); 	
-		
-		sprintf(str,"Ang:%.1f %.1f %.1f  ",Sensor.JY901.Euler.Roll,Sensor.JY901.Euler.Pitch,Sensor.JY901.Euler.Yaw);
-		OLED_ShowString(0,32,(uint8 *)str,12); 	
-		 
-		sprintf(str,"Mag:%d %d %d  ",Sensor.JY901.Mag.x,Sensor.JY901.Mag.y,Sensor.JY901.Mag.z);
-		OLED_ShowString(0,48,(uint8 *)str,12); 
+	
+	
+		sprintf(str,"Paper:%d       ",PaperNumber);//ÏÔÊ¾µÄÎÂ¶È
+		OLED_ShowString(0,0,(uint8 *)str,12);
+	
+		if(ShortFlag == 1){
+				sprintf(str,"is short?   Yes      ");//ÏÔÊ¾µÄÎÂ¶È
+				OLED_ShowString(0,12,(uint8 *)str,12);
+		}
+		else if(ShortFlag == 2){
+				sprintf(str,"is short?   No      ");//ÏÔÊ¾µÄÎÂ¶È
+				OLED_ShowString(0,12,(uint8 *)str,12);
+		}
+//		sprintf(str,"Acc:%.2f %.2f %.2f  ",Sensor.JY901.Acc.x,Sensor.JY901.Acc.y,Sensor.JY901.Acc.z);
+//		OLED_ShowString(0,0,(uint8 *)str,12); 	
+//		
+//		sprintf(str,"Gyro:%.1f %.1f %.1f ",Sensor.JY901.Gyro.x,Sensor.JY901.Gyro.y,Sensor.JY901.Gyro.z);
+//		OLED_ShowString(0,16,(uint8 *)str,12); 	
+//		
+//		sprintf(str,"Ang:%.1f %.1f %.1f  ",Sensor.JY901.Euler.Roll,Sensor.JY901.Euler.Pitch,Sensor.JY901.Euler.Yaw);
+//		OLED_ShowString(0,32,(uint8 *)str,12); 	
+//		 
+//		sprintf(str,"Mag:%d %d %d  ",Sensor.JY901.Mag.x,Sensor.JY901.Mag.y,Sensor.JY901.Mag.z);
+//		OLED_ShowString(0,48,(uint8 *)str,12); 
 		
 	  OLED_Refresh_Gram();//¸üĞÂÏÔÊ¾µ½OLED
 }

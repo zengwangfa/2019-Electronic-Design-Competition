@@ -22,7 +22,7 @@
 #include "timer.h"
 #include "gyroscope.h"
 #include "PID.h"
-
+#include "DataProcess.h"
 uint8 thread_speed = 5;
 
 
@@ -65,17 +65,25 @@ MSH_CMD_EXPORT(Set_Z_Zero,ag: Set_Z_Zero  );
 void propeller_thread_entry(void *parameter)
 {
 		rt_thread_mdelay(1000);
-		Set_Z_Zero();
+		//Set_Z_Zero();
+		//TIM3_ENABLE();
 		rt_thread_mdelay(1000);
-		TIM3_ENABLE();
+
+
 		while(1)
 		{
-				//drifting_check(); //Æ¯ÒÆ ¼ì²â			
 
-				//Car_Pitch_Control();			
-				Two_Axis_Yuntai_Control();
 			
-				Servo_Dir_Control(0);			//¶æ»ú¿ØÖÆ
+			
+			
+			
+			
+			
+				//drifting_check(); //Æ¯ÒÆ ¼ì²â		
+				//Car_Pitch_Control();			
+				//Two_Axis_Yuntai_Control();
+			
+				//Servo_Dir_Control(0);			//¶æ»ú¿ØÖÆ
 
 				
 				rt_thread_mdelay(thread_speed); //5ms
@@ -163,7 +171,18 @@ int propeller_thread_init(void)
 
 		return 0;
 }
-INIT_APP_EXPORT(propeller_thread_init);
+//INIT_APP_EXPORT(propeller_thread_init);
+
+
+
+
+
+
+
+
+
+
+
 
 int devices_thread_init(void)
 {

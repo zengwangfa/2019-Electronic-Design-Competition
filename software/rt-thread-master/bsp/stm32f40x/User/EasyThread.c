@@ -92,7 +92,7 @@ void led_thread_entry(void *parameter)
     {			
 
 				Bling_Working(0);
-				led_voltage_task();
+				//led_voltage_task();
 				rt_thread_mdelay(10); //10ms
     }
 }

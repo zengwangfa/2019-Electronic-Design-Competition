@@ -25,13 +25,13 @@
 /*----------------------- Function Implement --------------------------------*/
 
 
-uint8 i = 0;
-float voltage = 0.0f;
-uint32 adc_value[10] = {0};
+
 /* 冒泡 get电压 */
 float get_voltage_value(void)
 {
-		
+		uint8 i = 0;
+		float voltage = 0.0f;
+		uint32 adc_value[10] = {0};			
 		for(i = 0;i < 10;i++){
 				rt_thread_mdelay(10);
 				adc_value[i] = get_adc2(ADC_Channel_10);//采样
@@ -41,9 +41,7 @@ float get_voltage_value(void)
 		return voltage;
 } 
 
-uint8 j = 0;
-uint32 adc1_value[10] = {0};
-float voltage1 = 0.0f,current = 0.0f;
+
 ///* 冒泡 get电流 */
 //float get_current_value(void)
 //{
@@ -61,7 +59,9 @@ float voltage1 = 0.0f,current = 0.0f;
 /* 冒泡 get电流 */
 float get_current_value(void)
 {
-
+		uint8 j = 0;
+		uint32 adc1_value[10] = {0};
+		float voltage1 = 0.0f,current = 0.0f;
 		for(j = 0;j < 10;j++){
 				rt_thread_mdelay(10);
 				adc1_value[j] = get_adc2(ADC_Channel_11);//采样

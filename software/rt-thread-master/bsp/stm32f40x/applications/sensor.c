@@ -48,13 +48,13 @@ void sensor_lowSpeed_thread_entry(void* parameter)
 			
 				Sensor.CPU.Temperature = get_cpu_temp();           //获取CPU温度
 				Sensor.PowerSource.Voltage = get_voltage_value();  //获取电源电压值
-				if(Sensor.PowerSource.Voltage > 6.0f ){							//当未接入电源时，不检测电流值
-						
-						Sensor.PowerSource.Current = get_current_value();  //获取INA169电流值
-						temp_current = Sensor.PowerSource.Current ;
-						Sensor.PowerSource.Current = KalmanFilter(&Sensor.PowerSource.Current);
-						 //电流值 进行卡尔曼滤波【该卡尔曼滤波调节r的值，滞后性相对较大】
-				}
+//				if(Sensor.PowerSource.Voltage > 6.0f ){							//当未接入电源时，不检测电流值
+//						
+//						Sensor.PowerSource.Current = get_current_value();  //获取INA169电流值
+//						temp_current = Sensor.PowerSource.Current ;
+//						Sensor.PowerSource.Current = KalmanFilter(&Sensor.PowerSource.Current);
+//						 //电流值 进行卡尔曼滤波【该卡尔曼滤波调节r的值，滞后性相对较大】
+//				}
 				cpu_usage_get(&cpu_usage_major, &cpu_usage_minor); //获取CPU使用率
 				Sensor.CPU.Usage = cpu_usage_major + (float)cpu_usage_minor/100;
 			
@@ -78,8 +78,8 @@ void sensor_highSpeed_thread_entry(void* parameter)
 	
 		while(1)
 		{
-				JY901_Convert(&Sensor.JY901); //JY901数据转换
-				
+			
+				//JY901_Convert(&Sensor.JY901); //JY901数据转换
 				//Depth_Sensor_Data_Convert();  //深度数据转换
 
 				rt_thread_mdelay(20);
@@ -110,18 +110,7 @@ int sensor_thread_init(void)
 
     if (sensor_lowSpeed_tid != RT_NULL && sensor_highSpeed_tid != RT_NULL){
 			
-				if(MS5837 == Sensor.DepthSensor.Type){ //深度传感器类型判定
-						if(MS5837_Init()){log_i("MS5837_Init()");}
-						else {log_e("MS5837 Init Failed!");}
-				}
-				else if(SPL1301 == Sensor.DepthSensor.Type){
-						if(spl1301_init()){log_i("SPL1301_Init()");}
-						else {log_e("SPL1301 Init Failed!");}
-				}
-				else if(DS_NULL == Sensor.DepthSensor.Type){
-						log_e("not set Depth Senor");
 
-				}
 
 
 				if(adc_init()){ log_i("Adc_Init()");}//ADC电压采集初始化

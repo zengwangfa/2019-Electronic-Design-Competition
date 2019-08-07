@@ -105,9 +105,7 @@ void Camera_Focus_Data_Analysis(uint8 Data) //控制数据解析
 				persent_blob_x = ((focus_data[8] <<8) | focus_data[9] );
 				persent_blob_y = ((focus_data[10]<<8) | focus_data[11]);		
 		}
-		
-		
-		
+
 }
 
 int get_target_x(void) //0为绿,1为红

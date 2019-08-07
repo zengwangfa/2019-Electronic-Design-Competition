@@ -17,11 +17,15 @@ typedef struct
 
 uint32 Bubble_Filter(uint32 *value);
 
-float KalmanFilter(float *Original_Data);
+float KalmanFilter1(float *Original_Data);
+float KalmanFilter2(float *Original_Data);
+
+float KalmanFilter3(float *Original_Data);
+float KalmanFilter4(float *Original_Data);
 
 
 
-
+float Bubble_Filter_Float(float *value);
 
 
 #endif

@@ -224,7 +224,7 @@ MSH_CMD_EXPORT(propeller_dir_set,propeller <1 1 1 1 1 1>);
 
 
 
-uint8 is_in_range(short value)
+uint8 is_range(short value)
 {
 		return abs(value) < 100?1:0;
 }
@@ -239,8 +239,8 @@ static int propeller_error_set(int argc, char **argv){
         goto _exit;
     }
 		
-		if(is_in_range(atoi(argv[1])) && is_in_range(atoi(argv[2]))  && is_in_range(atoi(argv[3]))   && \
-			 is_in_range(atoi(argv[4])) && is_in_range(atoi(argv[5])) && is_in_range(atoi(argv[6]))  ) {
+		if(is_range(atoi(argv[1])) && is_range(atoi(argv[2]))  && is_range(atoi(argv[3]))   && \
+			 is_range(atoi(argv[4])) && is_range(atoi(argv[5])) && is_range(atoi(argv[6]))  ) {
 				 
 				PropellerError.rightUp     = atoi(argv[1]);
 				PropellerError.leftDown    = atoi(argv[2]);

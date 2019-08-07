@@ -67,6 +67,7 @@ void TIM3_ENABLE(void)
 
 static int cnt = 0;
 int timer3_cnt = 0;
+
 //定时器3中断服务函数
 void TIM3_IRQHandler(void)
 {
@@ -150,12 +151,12 @@ int timer1_init(void)
                         RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_HARD_TIMER); /* 周期性定时器 */
     /* 启动定时器 */
     if (timer1 != RT_NULL){ 
-				TIM3_Int_Init(10000-1,84-1); //84M/84 = 1M,  1M/10000 = 100Hz  = 10MS
+				//TIM3_Int_Init(10000-1,84-1); //84M/84 = 1M,  1M/10000 = 100Hz  = 10MS
 				//rt_timer_start(timer1);
 				
 		}
 
     return 0;
 }
-INIT_APP_EXPORT(timer1_init);
+//INIT_APP_EXPORT(timer1_init);
 

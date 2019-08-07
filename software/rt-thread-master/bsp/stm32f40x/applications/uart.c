@@ -16,11 +16,12 @@
 #include "uart.h"
 #include "rc_data.h"
 #include "focus.h"
+#include "HMI.h"
 /*---------------------- Constant / Macro Definitions -----------------------*/
 
 char GYRO_UART_NAME[]    = "uart2";  //JY901 uart2
 
-char DEBUG_UART_NAME[]  =  "uart1" ; //WIFI uart3
+char DEBUG_UART_NAME[]  =  "uart3" ; //WIFI uart3
 
 char CONTROL_UART_NAME[] = "uart4";  //CP2101 uart4
 
@@ -159,7 +160,7 @@ static void focus_thread_entry(void *parameter)
 						/* 阻塞等待接收信号量，等到信号量后再次读取数据 */
 						rt_sem_take(&focus_rx_sem, RT_WAITING_FOREVER);
 				}
-				Camera_Focus_Data_Analysis(ch);
+				//Camera_Focus_Data_Analysis(ch);
 				
 		}
 }

@@ -22,6 +22,8 @@ float res1_arr[10],res2_arr[10],res3_arr[10],res4_arr[10];//电容暂存值
 int PaperNumber = 0;      //纸张数量
 int ShortFlag = 0;        //短路标志位
 
+extern int HMI_Status_Flag;
+
 //判断data是否在 value ± range内
 int is_in_range(float data,float value,float range)
 {
@@ -46,8 +48,8 @@ void get_capcity_value(void)
 		
 		res1 = Cap_Calculate(&CH0_DATA);//电容赋值
 		res2 = Cap_Calculate(&CH1_DATA);
-		res3 = Cap_Calculate(&CH2_DATA);
-		res4 = Cap_Calculate(&CH3_DATA);
+		//res3 = Cap_Calculate(&CH2_DATA);
+		//res4 = Cap_Calculate(&CH3_DATA);
 
 	
 		res1 = KalmanFilter1(&res1); //数据进行卡尔曼滤波
@@ -58,6 +60,7 @@ void get_capcity_value(void)
 		/* 调度器解锁 */	
 		rt_exit_critical();
 
+		
 		if(ON_OFF == 0 && res1 != 0.0f){/* 初始化 获取短路值*/
 				ON_OFF = 1;//自锁开关
 			
@@ -74,17 +77,58 @@ void get_capcity_value(void)
 //		res4 = res4-temp4;//上面长排针
 }
 
-/* 获取上极板 容值*/
+
+
+
+/* 【校准时】获取上极板 容值*/
 float get_top_capacity(void)
 {
-		return res1;
+		static unsigned int res_CH0_DATA = 0;
+		static float res_ch1_arr[10];
+		static float res_ch1 = 0.0f;
+		static int i = 0;
+		
+		/* 调度器上锁，上锁后，将不再切换到其他线程，仅响应中断 */
+		rt_enter_critical();
+	
+		for(i = 0;i < 10;i++){
+				FDC2214_GetChannelData(FDC2214_Channel_0, &res_CH0_DATA);//获取电容
+
+				rt_thread_mdelay(10);
+				res_ch1_arr[i] = Cap_Calculate(&CH0_DATA);//电容赋值
+
+		}
+		/* 调度器解锁 */	
+		rt_exit_critical();
+		
+		res_ch1 = Bubble_Filter_Float(res_ch1_arr);
+		return res_ch1;
 
 }
-/* 获取下极板 容值 */
+/* 【校准时】获取下极板 容值 */
 float get_bottom_capacity(void)
 {
-		return res2;
 
+		static unsigned int res_CH1_DATA = 0;
+		static float res_ch2_arr[10];
+		static float res_ch2 = 0.0f;
+		static int i = 0;
+		
+		/* 调度器上锁，上锁后，将不再切换到其他线程，仅响应中断 */
+		rt_enter_critical();
+	
+		for(i = 0;i < 10;i++){
+				FDC2214_GetChannelData(FDC2214_Channel_1, &res_CH1_DATA);
+
+				rt_thread_mdelay(10);
+				res_ch2_arr[i] = Cap_Calculate(&CH1_DATA);
+		}
+		/* 调度器解锁 */	
+		rt_exit_critical();
+		
+		res_ch2 = Bubble_Filter_Float(res_ch2_arr);		
+	
+		return res_ch2;
 }
 /* 短路判断 */
 void Short_Circuit_Detection(void)
@@ -108,8 +152,17 @@ void fdc2214_thread_entry(void *parameter)//高电平1.5ms 总周期20ms  占空比7.5% v
 		while(1)
 		{
 			
-				get_capcity_value();
-				Short_Circuit_Detection();
+				
+
+				FDC2214_Data_Adjust(); //数据校准
+				if(1 == HMI_Status_Flag)//开始校准
+				{
+						
+				}
+				else{
+						get_capcity_value();
+						Short_Circuit_Detection();
+				}
 				rt_thread_mdelay(2);
 		}
 	

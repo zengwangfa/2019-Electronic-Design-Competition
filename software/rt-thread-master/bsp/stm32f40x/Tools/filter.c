@@ -32,8 +32,8 @@ uint32 Bubble_Filter(uint32 *value)
 float Bubble_Filter_Float(float *value)
 {
 		u8 i,j,swapFlag; //交换标志位
-		float res = 0;   //reserve 暂存
-		float med = 0;   //中值
+		float res = 0.0f;   //reserve 暂存
+		float med = 0.0f;   //中值
 
 		for(j = 0;j < 10-1;j++){
 			  swapFlag = 0; //每一个大循环检验
@@ -48,7 +48,7 @@ float Bubble_Filter_Float(float *value)
 				}
 				if(0 == swapFlag) break;//未发生交换，则提前结束
 		}
-		med = (*(value+4)+ *(value+5)+ *(value+6))/3;	//中间平均值	
+		med = (float)(*(value+4)+ *(value+5)+ *(value+6))/3.0f;	//中间平均值	
 		return med;
 } 
 /*

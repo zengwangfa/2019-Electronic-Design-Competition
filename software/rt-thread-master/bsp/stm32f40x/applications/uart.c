@@ -161,7 +161,7 @@ static void focus_thread_entry(void *parameter)
 						rt_sem_take(&focus_rx_sem, RT_WAITING_FOREVER);
 				}
 				//Camera_Focus_Data_Analysis(ch);
-				
+				HMI_Data_Analysis(ch);	
 		}
 }
 

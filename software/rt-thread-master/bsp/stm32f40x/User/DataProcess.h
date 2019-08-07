@@ -13,7 +13,9 @@ float get_bottom_capacity(void);
 
 
 
+void FDC2214_Data_Adjust(void);//数据校准
 
+void Uart_Send_HMI(uint8 *cmd);
 #endif
 
 

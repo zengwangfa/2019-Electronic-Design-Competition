@@ -873,6 +873,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\components\utilities\ymodem\ymodem.c</FilePath>
             </File>
+            <File>
+              <FileName>fuzzy.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\fuzzy.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

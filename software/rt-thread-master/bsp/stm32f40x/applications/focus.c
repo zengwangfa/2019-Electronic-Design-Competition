@@ -140,6 +140,6 @@ void focus_camera_clear(void)
 		rt_device_write(focus_uart_device, 0,Camera_Clear_Data,    6);
 		log_i("focus_camera_clear... ");
 }
-MSH_CMD_EXPORT(focus_camera_clear,focus camera clear);
+//MSH_CMD_EXPORT(focus_camera_clear,focus camera clear);
 
 

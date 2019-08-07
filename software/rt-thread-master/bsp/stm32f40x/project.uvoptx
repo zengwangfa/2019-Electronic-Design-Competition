@@ -154,7 +154,7 @@
           <Type>0</Type>
           <LineNumber>210</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134247682</Address>
+          <Address>134247642</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -170,7 +170,7 @@
           <Type>0</Type>
           <LineNumber>206</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134247668</Address>
+          <Address>134247628</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -186,7 +186,7 @@
           <Type>0</Type>
           <LineNumber>215</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134247696</Address>
+          <Address>134247656</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -202,7 +202,7 @@
           <Type>0</Type>
           <LineNumber>219</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134247710</Address>
+          <Address>134247670</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -218,7 +218,7 @@
           <Type>0</Type>
           <LineNumber>224</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134247724</Address>
+          <Address>134247684</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -234,7 +234,7 @@
           <Type>0</Type>
           <LineNumber>228</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134247738</Address>
+          <Address>134247698</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -250,7 +250,7 @@
           <Type>0</Type>
           <LineNumber>181</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134247612</Address>
+          <Address>134247572</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -266,7 +266,7 @@
           <Type>0</Type>
           <LineNumber>185</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134247626</Address>
+          <Address>134247586</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -282,7 +282,7 @@
           <Type>0</Type>
           <LineNumber>189</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134247640</Address>
+          <Address>134247600</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -298,7 +298,7 @@
           <Type>0</Type>
           <LineNumber>193</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134247654</Address>
+          <Address>134247614</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -445,6 +445,11 @@
           <count>26</count>
           <WinNumber>1</WinNumber>
           <ItemText>FDC2214_Page_Data_Top</ItemText>
+        </Ww>
+        <Ww>
+          <count>27</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>him_uart_cmd</ItemText>
         </Ww>
       </WatchWindow1>
       <MemoryWindow1>

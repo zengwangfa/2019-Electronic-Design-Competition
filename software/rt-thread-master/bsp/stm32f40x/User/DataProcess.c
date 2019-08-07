@@ -151,18 +151,18 @@ void fdc2214_thread_entry(void *parameter)//高电平1.5ms 总周期20ms  占空比7.5% v
 		rt_thread_mdelay(3000);
 		while(1)
 		{
-			
-				
 
-				FDC2214_Data_Adjust(); //数据校准
-				if(1 == HMI_Status_Flag)//开始校准
-				{
-						
+				if(1 == HMI_Status_Flag){//开始校准
+				
+						FDC2214_Data_Adjust(); //数据校准	
+						HMI_Status_Flag = 0;
 				}
-				else{
+				else{ //工作模式
 						get_capcity_value();
-						Short_Circuit_Detection();
+						Short_Circuit_Detection();		
 				}
+
+				
 				rt_thread_mdelay(2);
 		}
 	

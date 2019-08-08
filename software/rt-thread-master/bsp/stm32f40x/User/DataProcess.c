@@ -170,8 +170,9 @@ float get_single_capacity(void)
 void Short_Circuit_Detection(void)
 {
     //当数据在 短路数值范围变化
-		if( (is_in_range(res1,ShortValue1,40.0f) &&  is_in_range(res2,ShortValue2,40.0f)) \
-			|| (res1 < 1.0f) ||  (res2 < 1.0f)  ){//或者当值非常小的时候，判定为受到干扰
+//		if(  (is_in_range(res4,ShortValue4,40.0f)) || (is_in_range(res1,ShortValue1,40.0f) &&  is_in_range(res2,ShortValue2,40.0f)) \
+//			|| (res1 < 1.0f) ||  (res2 < 1.0f)  ){//或者当值非常小的时候，判定为受到干扰
+		if(  (is_in_range(res4,ShortValue4,40.0f)) || (res4 < 1.0f) ){//或者当值非常小的时候，判定为受到干扰
 				Paper.ShortStatus = 1;//判定短路
 				Bling_Set(&Light_Blue,200,100,0.5,0,79,0);//蓝灯提示短路
 		}			

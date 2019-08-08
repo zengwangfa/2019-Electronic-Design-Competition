@@ -191,12 +191,12 @@ void OLED_WorkPage(void)
 		sprintf(str,":");
 		OLED_ShowString(64,32, (uint8 *)str,16); 
 		
-		if( 1 == Paper.Finish_Flag )	{			//读取纸张数量完成
+		if(1 == Paper.Finish_Flag )	{			//读取纸张数量完成
 		
 			sprintf(str,"%3d",Paper.PaperNumber);  //测试纸张页数
 			OLED_ShowString(72,32, (uint8 *)str,16); 
 			Paper.Status = 1;									//将状态至于完成
-			Paper.Finish_Flag = 0;
+			Paper.Finish_Flag = 0; //锁定不显示
 		}
 		else if(2 == Paper.Finish_Flag){
 		

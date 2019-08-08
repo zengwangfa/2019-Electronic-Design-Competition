@@ -29,7 +29,7 @@
 
 uint8 thread_speed = 5;
 extern int HMI_Write_Flag;
-
+extern int HMI_Work_Button;
 
 
 void fdc2214_thread_entry(void *parameter)//高电平1.5ms 总周期20ms  占空比7.5% volatil
@@ -38,18 +38,20 @@ void fdc2214_thread_entry(void *parameter)//高电平1.5ms 总周期20ms  占空比7.5% v
 
 		while(1)
 		{
-
+				Short_Circuit_Detection();	
 				if(1 == HMI_Status_Flag){//开始校准
-						if(1 == HMI_Write_Flag){
-								uart_send_hmi_writer_status(&Paper.Status);//返回状态信息
-								FDC2214_Data_Adjust(); //数据校准	
-								HMI_Write_Flag = 0; //写入状态清零
-						}
-						
+
+						FDC2214_Data_Adjust(); //数据校准	
 				}
 				else{ //工作模式
+
 						Get_Capcity_Value(); //获取电容值
-						Short_Circuit_Detection();		
+
+						if(HMI_Work_Button == 1){
+								Paper.Finish_Flag = 1;
+						}
+							
+
 				}
 
 				

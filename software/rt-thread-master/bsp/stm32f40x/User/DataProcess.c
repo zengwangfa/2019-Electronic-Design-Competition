@@ -65,16 +65,17 @@ void Get_Capcity_Value(void)
 				uart_send_hmi_paper_numer(Paper.PaperNumber);
 				return;
 		}
-		
-		
-		
-		/*-----------------------获取50组数据、解算落区间-------------------------*/	
-		for(int i = 0;i < 50;i++){
+		for(int i = 0;i < 10;i++){
 				Cap_Value[i] = get_single_capacity();//获取50组数据
 		}
+    rt_enter_critical();
+		Paper.PaperNumber = ProbablityCapacitance(Cap_Value);	//比较数据，获取最终 纸张数
+    rt_exit_critical();		
+		/*-----------------------获取50组数据、解算落区间-------------------------*/	
+
 
 		if(0 == HMI_Work_Button){//当按键没有按下，一直读取数据
-				Paper.PaperNumber = ProbablityCapacitance(Cap_Value);	//比较数据，获取最终 纸张数
+				
 		}
 			
 		uart_send_hmi_paper_numer(Paper.PaperNumber);	//发送数据
@@ -91,14 +92,15 @@ float get_single_capacity(void)
 		static unsigned int res_CH4_DATA = 0;
 		static float res_ch4 = 0.0f;
 		static float res_ch4_arr[10] = {0.0f};
+		FDC2214_GetChannelData(FDC2214_Channel_3, &res_CH4_DATA);
+		res_ch4 = Cap_Calculate(&res_CH4_DATA);
+//		for(uint8 i = 0;i < 10;i++){
+//				FDC2214_GetChannelData(FDC2214_Channel_3, &res_CH4_DATA);
+//			
+//				res_ch4_arr[i] = Cap_Calculate(&res_CH4_DATA);
+//		}
 		
-		for(uint8 i = 0;i < 10;i++){
-				FDC2214_GetChannelData(FDC2214_Channel_3, &res_CH4_DATA);
-			
-				res_ch4_arr[i] = Cap_Calculate(&res_CH4_DATA);
-		}
-		
-		res_ch4 = Bubble_Filter_Float(res_ch4_arr);
+		//res_ch4 = Bubble_Filter_Float(res_ch4_arr);
 		return res_ch4;
 }
 
@@ -132,7 +134,6 @@ void DataSubsection(float Cap_Division[],float arrey[],int Number)
 {
 
 		static int rec = 1;
-
 		
 		for(int i = 2;i < Number;i++){
 				CapacitanceDP = (arrey[i-1]-arrey[i]) /2.0f;
@@ -140,12 +141,12 @@ void DataSubsection(float Cap_Division[],float arrey[],int Number)
 
 		}
 		if(rec==1){
-				Cap_Division[0] = arrey[1] + CapacitanceDP;
+				Cap_Division[0] =arrey[1]+(arrey[1]-arrey[2]) /2.0f;
 				rec = 0;
 		}
 }
 
-int Probability_Max=0;
+int Probability_Max = 0;
 /*
 CompareArrey 
 */
@@ -154,16 +155,19 @@ uint8 ProbablityCapacitance(float CompareArrey[])	//传入 需要比较的数据
 
 		memset(Cap_Probability,0,sizeof(Cap_Probability));//清空电容值落点可能性
 		for(int i=0;i<=50;i++ ){
-				for(int j=0; j<50 ;j++){
+				for(int j=0; j<10 ;j++){
 						if( (CompareArrey[j] < Cap_Division[i])  && (CompareArrey[j] >= Cap_Division[i+1])){
 								Cap_Probability[i]++;
 						}
 				}
 		}
-		for(int n=0;n<49;n++){
+		for(int n = 0;n < 49;n++){
 				if(Cap_Probability[n] > Cap_Probability[Probability_Max]){
-						Probability_Max = n+1;
+						Probability_Max = (n + 1);
 				}
+				if(Cap_Probability[0] >= 25){	//1纸张的特殊处理
+						Probability_Max = 1;
+				}	
 		}
 		return Probability_Max;
 }

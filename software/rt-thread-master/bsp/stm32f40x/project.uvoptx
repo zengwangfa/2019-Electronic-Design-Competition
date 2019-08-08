@@ -213,7 +213,17 @@
         <Ww>
           <count>12</count>
           <WinNumber>1</WinNumber>
-          <ItemText>CapacitanceDP</ItemText>
+          <ItemText>CapacitanceDP,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>13</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Cap_Probability,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>14</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>HMI_Work_Button,0x0A</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>

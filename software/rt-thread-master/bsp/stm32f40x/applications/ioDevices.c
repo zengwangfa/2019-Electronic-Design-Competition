@@ -45,7 +45,7 @@ int ioDevices_thread_init(void)
 {
    rt_thread_t ioDecices_tid;
 
-    ioDecices_tid = rt_thread_create("ioDev",ioDevices_thread_entry, RT_NULL,512,10, 10);
+    ioDecices_tid = rt_thread_create("ioDev",ioDevices_thread_entry, RT_NULL,1024,15, 10);
 
     if (ioDecices_tid != RT_NULL){			
 				rt_pin_mode(KEY_PIN , PIN_MODE_INPUT_PULLUP);    //功能按键、拨码开关  上拉输入

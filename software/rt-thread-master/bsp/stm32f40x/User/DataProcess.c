@@ -9,11 +9,12 @@
 
 #include "DataProcess.h"
 #include "FDC2214.h"
+#include <math.h>
 #include <rtthread.h>
 #include "filter.h"
 #include "led.h"
 #include "HMI.h"
-
+#include <string.h>
 unsigned int CH0_DATA,CH1_DATA,CH2_DATA,CH3_DATA;//通道值
 
 float ShortValue1,ShortValue2,ShortValue3,ShortValue4;//短路值
@@ -22,11 +23,17 @@ float res1,res2,res3,res4;//电容暂存值
 
 float res1_arr[10],res2_arr[10],res3_arr[10],res4_arr[10];//电容暂存值
 
+float CapacitanceSubsection[51]= {0};/**/
+
+float CapacityValue[10] ={0}; //存放 10次采集的电容值
+
+int CapacitanceProbability[50] ={0}; //存放可能性
 
 PaperCountEngine_Type Paper = {
 			.Finish_Flag = 2
 };/*Paper数据结构体*/
 
+extern float FDC2214_Flash_Data_Single[50] ;
 extern int HMI_Status_Flag;
 
 //判断data是否在 value ± range内
@@ -44,38 +51,41 @@ void Get_Capcity_Value(void)
 {
 		static uint8 ON_OFF = 0;
 		/* 调度器上锁，上锁后，将不再切换到其他线程，仅响应中断 */
-		rt_enter_critical();
+		//rt_enter_critical();
+		for(int i = 0;i < 10;i++){
+				//FDC2214_GetChannelData(FDC2214_Channel_0, &CH0_DATA);//获取电容
+				//FDC2214_GetChannelData(FDC2214_Channel_1, &CH1_DATA);
+				//FDC2214_GetChannelData(FDC2214_Channel_2, &CH2_DATA);
+				FDC2214_GetChannelData(FDC2214_Channel_3, &CH3_DATA);
+				
+				//res1 = Cap_Calculate(&CH0_DATA);//电容赋值
+				//res2 = Cap_Calculate(&CH1_DATA);
+				//res3 = Cap_Calculate(&CH2_DATA);
+				res4 = Cap_Calculate(&CH3_DATA);
 
-		FDC2214_GetChannelData(FDC2214_Channel_0, &CH0_DATA);//获取电容
-		FDC2214_GetChannelData(FDC2214_Channel_1, &CH1_DATA);
-		FDC2214_GetChannelData(FDC2214_Channel_2, &CH2_DATA);
-		FDC2214_GetChannelData(FDC2214_Channel_3, &CH3_DATA);
-		
-		res1 = Cap_Calculate(&CH0_DATA);//电容赋值
-		res2 = Cap_Calculate(&CH1_DATA);
-		res3 = Cap_Calculate(&CH2_DATA);
-		res4 = Cap_Calculate(&CH3_DATA);
+				//res1 = KalmanFilter1(&res1); //数据进行卡尔曼滤波
+				//res2 = KalmanFilter2(&res2);
+				//res3 = KalmanFilter3(&res3);
+				CapacityValue[i] = KalmanFilter4(&res4);
 
-	
-		res1 = KalmanFilter1(&res1); //数据进行卡尔曼滤波
-		res2 = KalmanFilter2(&res2);
-		res3 = KalmanFilter3(&res3);
-		res4 = KalmanFilter4(&res4);
+		}
 	
 		/* 调度器解锁 */	
-		rt_exit_critical();
+		//rt_exit_critical();
 
 		Paper.Capacitance = res4;
 		if(ON_OFF == 0 && res1 != 0.0f){/* 初始化 获取短路值*/
 				ON_OFF = 1;//自锁开关
 			
-				ShortValue1 = Cap_Calculate(&CH0_DATA);
-				ShortValue2 = Cap_Calculate(&CH1_DATA);
-				ShortValue3 = Cap_Calculate(&CH2_DATA);
+				//ShortValue1 = Cap_Calculate(&CH0_DATA);
+				//ShortValue2 = Cap_Calculate(&CH1_DATA);
+				//ShortValue3 = Cap_Calculate(&CH2_DATA);
 				ShortValue4 = Cap_Calculate(&CH3_DATA);
 		}
+
 		
-		
+		Paper.PaperNumber = ProbablityCapacitance(CapacityValue);
+		uart_send_hmi_paper_numer(Paper.PaperNumber);
 //		res1 = res1-temp1;//电容减去初始值 下面触摸板
 //		res2 = res2-temp2;//上面触摸板
 //		res3 = res3-temp3;//上面短排针
@@ -185,4 +195,49 @@ void Short_Circuit_Detection(void)
 }
 
 
+/*
+CapacitanceSubsection 分割
+arrey 传入的原始数组
+Number 数量
+*/
+void DataSubsection(float CapacitanceSubsection[],float arrey[],int Number)
+{
+		static float CapacitanceDP= 0;
+		static int rec = 1;
+
+		
+		for(int i = 2;i<=Number;i++){
+				CapacitanceDP = (arrey[i-1]-arrey[i]) /2.0f;
+				CapacitanceSubsection[i-1]= arrey[i-1]-CapacitanceDP;
+
+		}
+		if(rec==1)
+		{
+				CapacitanceSubsection[0] = arrey[1] + CapacitanceDP;
+				rec = 0;
+		}
+}
+
+int Probability_Max=0;
+/*
+CompareArrey 
+*/
+uint8 ProbablityCapacitance(float CompareArrey[])	//传入 需要比较的数据
+{
+
+		memset(CapacitanceProbability,0,sizeof(CapacitanceProbability));
+		for(int i=0;i<=50;i++ ){
+				for(int j=0; j<10 ;j++){
+						if( (CompareArrey[j] < CapacitanceSubsection[i])  && (CompareArrey[j] >= CapacitanceSubsection[i+1])){
+								CapacitanceProbability[i]++;
+						}
+				}
+		}
+		for(int n=0;n<49;n++){
+				if(CapacitanceProbability[n] > CapacitanceProbability[Probability_Max]){
+						Probability_Max = n+1;
+				}
+		}
+		return Probability_Max;
+}
 

@@ -9,7 +9,7 @@ void OLED_StatusPage(void);
 void OLED_WorkPage(void);
 void OLED_DebugPage(void);
 void OLED_LockPage(void);
-
+void OLED_SwitchPage(void);
 //void OLED_GyroscopePage(void);
 void draw_circle(uint8 x,uint8 y,uint8 r); //圆心(x,y),半径r
 void draw_line(uint8 x0,uint8 y0,float k,uint8 dot); //过固定点(x0,y0),斜率k  dot:0,清空;   1,填充	  
@@ -27,6 +27,7 @@ typedef struct {
 
 typedef enum
 {
+		SwitchPage = 0,
 		DebugPage = 1, //页码从第一页开始
 		WorkPage,
 		PicturePage,

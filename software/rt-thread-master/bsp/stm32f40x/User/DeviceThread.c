@@ -30,12 +30,17 @@
 uint8 thread_speed = 5;
 extern int HMI_Write_Flag;
 extern int HMI_Work_Button;
+extern float CapacitanceSubsection[];
+extern float FDC2214_Flash_Data_Single[];
 
 
 void fdc2214_thread_entry(void *parameter)//高电平1.5ms 总周期20ms  占空比7.5% volatil
 {
-		rt_thread_mdelay(3000);
 
+		rt_thread_mdelay(2000);
+		uart_send_hmi_reboot();//让HMI串口屏复位
+		rt_thread_mdelay(2000);
+		DataSubsection(CapacitanceSubsection,FDC2214_Flash_Data_Single,50);
 		while(1)
 		{
 				Short_Circuit_Detection();	
@@ -47,11 +52,10 @@ void fdc2214_thread_entry(void *parameter)//高电平1.5ms 总周期20ms  占空比7.5% v
 
 						Get_Capcity_Value(); //获取电容值
 
-						if(HMI_Work_Button == 1){
-								Paper.Finish_Flag = 1;
+						if(HMI_Work_Button == 1){//如果按下
+								Paper.Finish_Flag = 1;//显示读取完成
+								HMI_Work_Button = 0;
 						}
-							
-
 				}
 
 				

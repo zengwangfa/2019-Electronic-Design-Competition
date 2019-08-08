@@ -103,7 +103,7 @@ void Parameter_SelfCheck(uint32 *RealParameter,uint32 *TempParameter);
 void Normal_Parameter_SelfCheck_With_Flash(void); //Flash参数自检 若为-1 或 0 则为 非正常数据 
 /* FLASH 更新 普通值 */
 void Flash_Update(void);
-
+void Capacity_Flash_Update(float array[],uint8 number);
 int Normal_Parameter_Init_With_Flash(void);
 															 
 void Save_PID_Parameter(void);			

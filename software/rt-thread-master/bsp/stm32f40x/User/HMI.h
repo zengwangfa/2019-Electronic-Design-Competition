@@ -15,6 +15,8 @@ void uart_send_hmi_paper_numer(uint8 N_number);  //发送给hmi 纸张数量
 
 void uart_send_hmi_is_short(void); //发送给hmi 是否短路
 
+void uart_send_hmi_reboot(void);//让him复位
+
 extern int HMI_Status_Flag ;//串口屏 设定状态标志位 【调试 1】or【工作2】
 
 extern int HMI_Page_Number ;//串口屏发送的校准  纸张数

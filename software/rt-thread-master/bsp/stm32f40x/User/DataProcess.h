@@ -38,6 +38,10 @@ void	Get_Capcity_Value(void); //获取电容值
 
 void	Short_Circuit_Detection(void);//短路检测
 
+
+void DataSubsection(float CapacitanceSubsection[],float arrey[],int Number);
+
+uint8 ProbablityCapacitance(float CompareArrey[])	;
 #endif
 
 

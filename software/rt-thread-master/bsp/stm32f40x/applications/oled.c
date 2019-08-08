@@ -64,14 +64,14 @@ extern struct rt_event init_event;/* ALL_init 事件控制块 */
 
 /* OLED 变量 初始化. */
 Oled_Type oled = {	 
-									 .pagenum = DebugPage,		 //页码 pagenum
-									 .pagechange = WorkPage, //暂存页码 检测页码是否改变 pagechange
+									 .pagenum = SwitchPage,		 //页码 pagenum
+									 .pagechange = SwitchPage, //暂存页码 检测页码是否改变 pagechange
 									 .pagechange_flag = 0,     //页码改变标志位 pagechange flag
 									 .pagename = //页名定义 pagename
 										{	
+												"SwitchPage",
 												"DebugPage",
 												"WorkPage",
-												"PicturePage",
 												"LockPage"} 							
 };
 /*----------------------- Function Implement --------------------------------*/
@@ -125,6 +125,9 @@ void menu_define(void) //菜单定义
 			oled.pagenum = HMI_Status_Flag;
 	}
 	switch(oled.pagenum){
+			case 0:{
+					MENU = DebugPage;	 OLED_SwitchPage();		break;
+			}
 			case 1:{
 					MENU = DebugPage;	 OLED_DebugPage();		break;
 			}
@@ -137,10 +140,16 @@ void menu_define(void) //菜单定义
 //			case 4:{
 //					MENU = PicturePage;	 OLED_PicturePage(); break;
 //			}	
-			default:OLED_DebugPage();	break;
+			default:OLED_SwitchPage();	break;
 	}
 }
 
+void OLED_SwitchPage(void)
+{
+
+		
+	  OLED_Refresh_Gram();//更新显示到OLED
+}
 
 
 

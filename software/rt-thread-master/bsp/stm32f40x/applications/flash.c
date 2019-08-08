@@ -25,7 +25,7 @@
 #include "PropellerControl.h"
 #include "gyroscope.h"
 #include "EasyThread.h"
-
+#include <stdio.h>
 /*---------------------- Constant / Macro Definitions -----------------------*/
 
 //FLASHÆðÊ¼µØÖ·   W25Q128 16M µÄÈÝÁ¿·ÖÎª 256 ¸ö¿é£¨Block£©
@@ -41,6 +41,12 @@ int Extractor_Value = 0;
 PID_Parameter_Flag  PID_Parameter_Read_Flag;
 
 uint32 Normal_Parameter[PARAMEMER_MAX_NUMBER_e]={0};
+
+
+extern int HMI_Page_Number;
+
+extern float FDC2214_Flash_Data_Single[50] ;
+
 
 /*----------------------- Function Implement --------------------------------*/
 
@@ -76,7 +82,7 @@ INIT_APP_EXPORT(flash_thread_init);
 int Normal_Parameter_Init_With_Flash(void)
 {
 		uint8 i = 0;
-		for(i = 0;i < PARAMEMER_MAX_NUMBER_e;i++ ){
+		for(i = 0;i < 200;i++ ){
 				ef_port_read(Nor_FLASH_ADDRESS+4*i,(Normal_Parameter+i),4);		 //Flash¶ÁÈ¡
 		}
 		Normal_Parameter_SelfCheck_With_Flash();//Flash²ÎÊý×Ô¼ì ÈôÎª 0 ÔòÎª ·ÇÕý³£Êý¾Ý£¬Ôò²»´«µÝ¸øÕæÊµÊý¾Ý 
@@ -125,40 +131,13 @@ void Normal_Parameter_SelfCheck_With_Flash(void) //Flash²ÎÊý×Ô¼ì ÈôÎª 0 ÔòÎª ·ÇÕ
 		
 		/* ¡¾µç³ØÈÝÁ¿ÀàÐÍ¡¿  */
 		Parameter_SelfCheck( (uint32 *)&Sensor.PowerSource.Capacity,&Normal_Parameter[BATTERY_CAPACITY_e] );//µç³ØÈÝÁ¿²ÎÊý 3s/4s/6s
-		
-		/* ¡¾ÎüÈ¡Æ÷ÎüÁ¦¡¿  */
-		Parameter_SelfCheck( (uint32 *)&Extractor_Value,&Normal_Parameter[EXTRACTOR_VALUE_e] );//ÎüÈ¡Æ÷ÎüÁ¦
-		
-		/* ¡¾ÎüÈ¡Æ÷ÎüÁ¦¡¿  */
-		Parameter_SelfCheck( (uint32 *)&WorkMode,&Normal_Parameter[WORK_MODE_e] );//
 
-		/* ¡¾ÍÆ½øÆ÷Æ«²îÖµ¡¿*/
-		Parameter_SelfCheck( (uint32 *)&PropellerError.leftUp,&Normal_Parameter[PROPELLER_RIGHT_UP_ERROR_e] );
-		Parameter_SelfCheck( (uint32 *)&PropellerError.leftDown,&Normal_Parameter[PROPELLER_LEFT_DOWN_ERROR_e] );
-		Parameter_SelfCheck( (uint32 *)&PropellerError.leftUp,&Normal_Parameter[PROPELLER_LEFT_UP_ERROR_e] );
-		Parameter_SelfCheck( (uint32 *)&PropellerError.rightDown,&Normal_Parameter[PROPELLER_RIGHT_DOWN_ERROR_e] );
-		Parameter_SelfCheck( (uint32 *)&PropellerError.leftMiddle,&Normal_Parameter[PROPELLER_LEFT_MED_ERROR_e] );
-		Parameter_SelfCheck( (uint32 *)&PropellerError.rightMiddle,&Normal_Parameter[PROPELLER_RIGHT_MED_ERROR_e] );
-}
-/*
-void test_env(void) {
-    uint32_t i_boot_times = NULL;
-    char *c_old_boot_times, c_new_boot_times[11] = {0};
+		for(int i = 0;i < 50;i++){
+				Parameter_SelfCheck( (uint32 *)&FDC2214_Flash_Data_Single[i],&Normal_Parameter[BATTERY_CAPACITY_e + (i+1)] );//µç³ØÈÝÁ¿²ÎÊý 3s/4s/6s
+		}
 
-    // get the boot count number from Env 
-    c_old_boot_times = ef_get_env("boot_times");
-    RT_ASSERT(c_old_boot_times);
-    i_boot_times = atol(c_old_boot_times);//atoi
-    // boot count +1 
-    i_boot_times ++;
-    rt_kprintf("The system now boot %d times\n", i_boot_times);
-    // interger to string 
-    sprintf(c_new_boot_times,"%ld", i_boot_times);
-    // set and store the boot count number to Env 
-    ef_set_env("boot_times", c_new_boot_times);
-    ef_save_env();
 }
-*/
+
 /* FLASH ¸üÐÂ ÆÕÍ¨²ÎÊý */
 void Flash_Update(void)
 {
@@ -192,19 +171,30 @@ void Flash_Update(void)
 		ef_port_write(Nor_FLASH_ADDRESS+4*DEPTH_SENSOR_TYPE_e ,(uint32 *)&Sensor.DepthSensor.Type,4); //Éî¶È´«¸ÐÆ÷ ÀàÐÍ
 		
 		ef_port_write(Nor_FLASH_ADDRESS+4*BATTERY_CAPACITY_e ,(uint32 *)&Sensor.PowerSource.Capacity,4); //µç³ØÈÝÁ¿²ÎÊý 3s/4s/6s
-		
-		ef_port_write(Nor_FLASH_ADDRESS+4*EXTRACTOR_VALUE_e ,(uint32 *)&Extractor_Value,4); //ÎüÈ¡Æ÷ÎüÁ¦
 
-		ef_port_write(Nor_FLASH_ADDRESS+4*WORK_MODE_e ,(uint32 *)&WorkMode,4); //¹¤×÷Ä£Ê½
-		
-		ef_port_write(Nor_FLASH_ADDRESS+4*PROPELLER_RIGHT_UP_ERROR_e   ,(uint32 *)&PropellerError.rightUp,4); //
-		ef_port_write(Nor_FLASH_ADDRESS+4*PROPELLER_LEFT_DOWN_ERROR_e  ,(uint32 *)&PropellerError.leftDown,4); //
-		ef_port_write(Nor_FLASH_ADDRESS+4*PROPELLER_LEFT_UP_ERROR_e    ,(uint32 *)&PropellerError.leftUp,4); //
-		ef_port_write(Nor_FLASH_ADDRESS+4*PROPELLER_RIGHT_DOWN_ERROR_e ,(uint32 *)&PropellerError.rightDown,4); //
-		ef_port_write(Nor_FLASH_ADDRESS+4*PROPELLER_LEFT_MED_ERROR_e   ,(uint32 *)&PropellerError.leftMiddle,4); //
-		ef_port_write(Nor_FLASH_ADDRESS+4*PROPELLER_RIGHT_MED_ERROR_e  ,(uint32 *)&PropellerError.rightMiddle,4); //
+		for(int i = 0;i < 50;i++){
+				ef_port_write(Nor_FLASH_ADDRESS+4*BATTERY_CAPACITY_e + 4*(i+1) ,(uint32 *)&FDC2214_Flash_Data_Single[i],4); //µç³ØÈÝÁ¿²ÎÊý 3s/4s/6s
+		}
 }	
-MSH_CMD_EXPORT(Flash_Update,Flash Update);
+
+
+/* FLASH ¸üÐÂ ÆÕÍ¨²ÎÊý */
+//void Capacity_Flash_Update(float array[],uint8 number)
+//{
+//		float temp = 0.0f;
+//		char str[20];
+//	
+//		sprintf(str,"[flash] NO.%d:%f\n",number,array[number]);
+//		rt_kprintf(str);
+
+//	
+//		
+//		ef_port_read( Nor_FLASH_ADDRESS+4*BATTERY_CAPACITY_e + 4*(number+1) ,(uint32 *)&temp,4);		 //Flash¶ÁÈ¡
+//	
+//		sprintf(str,"[flash] NO.%d:%f\n",number,temp);
+//		rt_kprintf(str);
+//}	
+
 
 /* list Ïà¹ØÖØÒª²ÎÊý */
 void list_value(void)
@@ -240,7 +230,7 @@ void list_value(void)
 		log_i("Battery Capacity          %0.3f",Sensor.PowerSource.Capacity);//µç³ØÈÝÁ¿²ÎÊý
 		log_i("----------------------   ---------");
 		log_i("Extractor_Value           %d",Extractor_Value);//ÎüÈ¡Æ÷¶¯Á¦Öµ	
-		log_i("----------------------   ---------");		
+
 
 		
     rt_kprintf("\n");
@@ -336,6 +326,9 @@ void Parameter_SelfCheck(uint32 *RealParameter,uint32 *TempParameter)
 		//int isnan(x)º¯Êý µ±xÊ±nan·µ»Ø1£¬ÆäËü·µ»Ø0
 		if( isnan(*TempParameter) == 0 ) {//Èç¹û²»ÊÇÎÞÐ§Êý×Ö not a number,ÔòÅÐ¶¨ÎªÕýÈ·
 				*RealParameter = *TempParameter; //Flash Êý¾ÝÕýÈ·ÔòÌæ»»ÎªÕæÊµ±äÁ¿
+		}
+		else{
+				*RealParameter = 0;
 		}
 }
 

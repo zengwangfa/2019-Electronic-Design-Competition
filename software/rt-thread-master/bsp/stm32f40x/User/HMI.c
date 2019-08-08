@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include "uart.h"
 #include "DataProcess.h"
+#include "flash.h"
 /*---------------------- Constant / Macro Definitions -----------------------*/
 
 #define HMI_LEN 5
@@ -32,16 +33,22 @@ uint8 him_uart_nmber_cmd[14] = {0x76,0x61,0x31,0x2E,0x76,0x61,0x6C,0x3D,0x31,0x3
 
 //76 61 32 2E 76 61 6C 3D 31 ff ff ff   va2.val=1
 uint8 him_uart_short_cmd[12] = {0x76,0x61,0x32,0x2E,0x76,0x61,0x6C,0x3D,0x30,0xff,0xff,0xff};
-
+// rest (HMI复位指令)
+uint8 him_uart_reboot_cmd[7] = {0x72,0x65,0x73,0x74,0xff,0xff,0xff};
 
 uint8 him_ret_status = 0;
 uint8 hmi_data[10] = {0};
-float FDC2214_Page_Data_Top[100]    = {0};
-float FDC2214_Page_Data_Bottom[100] = {0};
-float FDC2214_Page_Data_Single[100] = {0};
-
+float FDC2214_Page_Data_Top[100]    = {0.0f};
+float FDC2214_Page_Data_Bottom[100] = {0.0f};
+float FDC2214_Page_Data_Single[50]  = {0.0f};
+float FDC2214_Flash_Data_Single[50] = {0.0f};
 extern int ShortFlag;        //短路标志位
 /*----------------------- Function Implement --------------------------------*/
+
+void uart_send_hmi_reboot(void)
+{
+		rt_device_write(focus_uart_device, 0,him_uart_reboot_cmd	, sizeof(him_uart_reboot_cmd));
+}
 
 /* 发送给串口屏 写入的状态
 01:写入成功
@@ -61,8 +68,6 @@ void uart_send_hmi_writer_status(uint8 *cmd)//发送给 hmi写入的状态
 
 void uart_send_hmi_paper_numer(uint8 N_number)  //发送给hmi 纸张数量
 { 	
-
-
 		N_number = N_number/100%10;
 		him_uart_nmber_cmd[8] =N_number + 0x30;  //百位
 
@@ -72,8 +77,7 @@ void uart_send_hmi_paper_numer(uint8 N_number)  //发送给hmi 纸张数量
 		N_number = N_number/10%1;
 		him_uart_nmber_cmd[10] = N_number + 0x30;//个位
 	
-		rt_device_write(focus_uart_device, 0,him_uart_nmber_cmd	, sizeof(him_uart_nmber_cmd));
-			
+		rt_device_write(focus_uart_device, 0,him_uart_nmber_cmd	, sizeof(him_uart_nmber_cmd));	
 }
 
 
@@ -89,7 +93,6 @@ void uart_send_hmi_is_short(void)  //发送给hmi 是否短路
 		else{
 				him_uart_short_cmd[8] = 0x30;				
 		}
-
 		
 		rt_device_write(focus_uart_device, 0,him_uart_short_cmd	, sizeof(him_uart_short_cmd));//向HMI发送短路信息
 			
@@ -105,23 +108,28 @@ void uart_send_hmi_is_short(void)  //发送给hmi 是否短路
 void FDC2214_Data_Adjust(void)//数据校准 存储
 {
 		static char str[30] = {0};
-		rt_thread_mdelay(1000);
+		//rt_thread_mdelay(1000);
+
+			
+		Paper.Status = 0x03; //正在写入
+		uart_send_hmi_writer_status(&Paper.Status);//返回状态信息
+		FDC2214_Page_Data_Top   [HMI_Page_Number] = get_top_capacity();   //顶板 对应页 电容值保存
+		FDC2214_Page_Data_Bottom[HMI_Page_Number] = get_bottom_capacity();//底板 对应页 电容值保存
+	
+		FDC2214_Page_Data_Single[HMI_Page_Number] = get_single_capacity();//单板 对应页 电容值保存
+	
+
+		//rt_thread_mdelay(1000);
+	
+		Paper.Status = 0x01; //写入成功
 		if(1 == HMI_Write_Flag){//只有按下才写入
-			
-				Paper.Status = 0x03; //正在写入
-				uart_send_hmi_writer_status(&Paper.Status);//返回状态信息
-				FDC2214_Page_Data_Top   [HMI_Page_Number] = get_top_capacity();   //顶板 对应页 电容值保存
-				FDC2214_Page_Data_Bottom[HMI_Page_Number] = get_bottom_capacity();//底板 对应页 电容值保存
-			
-				FDC2214_Page_Data_Single[HMI_Page_Number] = get_single_capacity();//单板 对应页 电容值保存
-			
-				sprintf(str,"pagenum:%d,cap:%f\n",HMI_Page_Number,FDC2214_Page_Data_Single[HMI_Page_Number]);
+				FDC2214_Flash_Data_Single[HMI_Page_Number] = FDC2214_Page_Data_Single[HMI_Page_Number] ;
+				Flash_Update();
+				sprintf(str,"pagenum:%d,cap:%f\n",HMI_Page_Number,FDC2214_Flash_Data_Single[HMI_Page_Number]);
 				rt_kprintf(str);
-				rt_thread_mdelay(1000);
-			
-				Paper.Status = 0x01; //写入成功
 				uart_send_hmi_writer_status(&Paper.Status);//返回状态信息
 		}
+		//}
 		HMI_Write_Flag = 0; //写入状态清零
 }
 
@@ -169,14 +177,20 @@ void HMI_Data_Analysis(uint8 Data) //控制数据解析
 		
 		if(1 == hmi_data_ok){
 				HMI_Status_Flag = hmi_data[3];//获取 工作模式位
+				
 			
-				if(hmi_data[4] == 0xFF){//如果是 0xFF  就判定为按钮拿下
-						HMI_Work_Button = 1; //工作模式的 按钮
-				}
-				else{		
+				if(0x01 == hmi_data[3]){ //调试状态
 						HMI_Write_Flag = 1; 	//写入页面状态
 						HMI_Page_Number = hmi_data[4];//获取 校准页数
 						HMI_Work_Button = 0;
+					
+				}
+				else if(0x02 == hmi_data[3]){//工作模式
+						
+						HMI_Work_Button = 1; //工作模式的 按钮按下标志
+				}
+				else{		
+
 				}
 		}
 		else{

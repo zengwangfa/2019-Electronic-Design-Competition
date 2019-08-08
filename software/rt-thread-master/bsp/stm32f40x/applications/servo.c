@@ -226,281 +226,281 @@ void YunTai_Control(uint8 *action)
 
 
 
-short _test_value = 0;
-/*【吸取器】 修改 【测试】 MSH方法 */
-static int xiquqi_value_set(int argc, char **argv)
-{
-    int result = 0;
-    if (argc != 2){
-        log_e("Error! Proper Usage: robotic_arm_currentValue_set <0~3000>");
-				result = -RT_ERROR;
-        goto _exit;
-    }
+//short _test_value = 0;
+///*【吸取器】 修改 【测试】 MSH方法 */
+//static int xiquqi_value_set(int argc, char **argv)
+//{
+//    int result = 0;
+//    if (argc != 2){
+//        log_e("Error! Proper Usage: robotic_arm_currentValue_set <0~3000>");
+//				result = -RT_ERROR;
+//        goto _exit;
+//    }
 
-		if(atoi(argv[1]) <= 3000 ){		
-				_test_value = atoi(argv[1]);
-				log_i(" Value:  %d",_test_value);
-				TIM3_PWM_CH3_B0(_test_value);
-		}
-		else {
-				log_e("Error! The value is out of range!");
-		}
-_exit:
-    return result;
-}
-MSH_CMD_EXPORT(xiquqi_value_set,ag: xiquqi_value_set <0~3000>);
-
-
-
-
-
-/*【云台】舵机 修改 【当前】 MSH方法 */
-static int robotic_arm_currentValue_set(int argc, char **argv)
-{
-    int result = 0;
-    if (argc != 2){
-        log_e("Error! Proper Usage: robotic_arm_currentValue_set <0~3000>");
-				result = -RT_ERROR;
-        goto _exit;
-    }
-
-		if(atoi(argv[1]) <= 3000 ){		
-				RoboticArm.CurrentValue = atoi(argv[1]);
-				log_i(" Value:  %d",RoboticArm.CurrentValue);
-				TIM4_PWM_CH3_D14(RoboticArm.CurrentValue);
-
-
-		}
-		else {
-				log_e("Error! The value is out of range!");
-		}
-_exit:
-    return result;
-}
-MSH_CMD_EXPORT(robotic_arm_currentValue_set,ag: robotic_arm_currentValue_set <0~3000>);
+//		if(atoi(argv[1]) <= 3000 ){		
+//				_test_value = atoi(argv[1]);
+//				log_i(" Value:  %d",_test_value);
+//				TIM3_PWM_CH3_B0(_test_value);
+//		}
+//		else {
+//				log_e("Error! The value is out of range!");
+//		}
+//_exit:
+//    return result;
+//}
+//MSH_CMD_EXPORT(xiquqi_value_set,ag: xiquqi_value_set <0~3000>);
 
 
 
 
 
-/*【机械臂】舵机 修改 速度值 */
-static int robotic_arm_speed_set(int argc, char **argv)
-{
-    int result = 0;
-    if (argc != 2){
-        log_e("Error! Proper Usage: RoboticArm_Speed 10");
-				result = -RT_ERROR;
-        goto _exit;
-    }
-		if(atoi(argv[1]) <= 255 && atoi(argv[1]) > 0){
-				RoboticArm.Speed = atoi(argv[1]);
-				Flash_Update();
-				log_i("Write_Successed! RoboticArm.Speed:  %d",RoboticArm.Speed);
-		}
-		
-		else {
-				log_e("Error! The value is out of range!");
-		}
-_exit:
-    return result;
-}
-MSH_CMD_EXPORT(robotic_arm_speed_set,ag: robotic_arm_speed_set 10);
+///*【云台】舵机 修改 【当前】 MSH方法 */
+//static int robotic_arm_currentValue_set(int argc, char **argv)
+//{
+//    int result = 0;
+//    if (argc != 2){
+//        log_e("Error! Proper Usage: robotic_arm_currentValue_set <0~3000>");
+//				result = -RT_ERROR;
+//        goto _exit;
+//    }
+
+//		if(atoi(argv[1]) <= 3000 ){		
+//				RoboticArm.CurrentValue = atoi(argv[1]);
+//				log_i(" Value:  %d",RoboticArm.CurrentValue);
+//				TIM4_PWM_CH3_D14(RoboticArm.CurrentValue);
 
 
-/*【机械臂】舵机 修改 【正向最大值】MSH方法 */
-static int robotic_arm_maxValue_set(int argc, char **argv)
-{
-    int result = 0;
-    if (argc != 2){
-        log_e("Error! Proper Usage: RoboticArm_Maxvalue_set 1600");
-				result = -RT_ERROR;
-        goto _exit;
-    }
-		if(atoi(argv[1]) <= 5000 && atoi(argv[1]) >= 1500){
-				RoboticArm.MaxValue = atoi(argv[1]);
-				Flash_Update();
-				log_i("Write_Successed!  RoboticArm.MaxValue:  %d",RoboticArm.MaxValue);
-		}
-		
-		else {
-				log_e("Error! The value is out of range!");
-		}
-_exit:
-    return result;
-}
-MSH_CMD_EXPORT(robotic_arm_maxValue_set,ag: robotic_arm_openvalue_set 2000);
+//		}
+//		else {
+//				log_e("Error! The value is out of range!");
+//		}
+//_exit:
+//    return result;
+//}
+//MSH_CMD_EXPORT(robotic_arm_currentValue_set,ag: robotic_arm_currentValue_set <0~3000>);
 
 
 
 
-/*【机械臂】舵机 修改 【反向最大值】 MSH方法 */
-static int robotic_arm_minValue_set(int argc, char **argv)
-{
-    int result = 0;
-    if (argc != 2){
-        log_e("Error! Proper Usage: RoboticArm_minvalue_set 1150");
-				result = -RT_ERROR;
-        goto _exit;
-    }
-		if(atoi(argv[1]) <= 3000 &&  atoi(argv[1]) >= 500){
-				RoboticArm.MinValue = atoi(argv[1]);
-				Flash_Update();
-				log_i("Write_Successed!  RoboticArm.MinValue:  %d",RoboticArm.MinValue);
-		}
-		else {
-				log_e("Error! The value is out of range!");
-		}
 
-		
-		
-_exit:
-    return result;
-}
-MSH_CMD_EXPORT(robotic_arm_minValue_set,ag: robotic_arm_closevalue_set 1500);
+///*【机械臂】舵机 修改 速度值 */
+//static int robotic_arm_speed_set(int argc, char **argv)
+//{
+//    int result = 0;
+//    if (argc != 2){
+//        log_e("Error! Proper Usage: RoboticArm_Speed 10");
+//				result = -RT_ERROR;
+//        goto _exit;
+//    }
+//		if(atoi(argv[1]) <= 255 && atoi(argv[1]) > 0){
+//				RoboticArm.Speed = atoi(argv[1]);
+//				Flash_Update();
+//				log_i("Write_Successed! RoboticArm.Speed:  %d",RoboticArm.Speed);
+//		}
+//		
+//		else {
+//				log_e("Error! The value is out of range!");
+//		}
+//_exit:
+//    return result;
+//}
+//MSH_CMD_EXPORT(robotic_arm_speed_set,ag: robotic_arm_speed_set 10);
 
 
-/*【机械臂】舵机 修改 速度值 */
-static int yuntai_speed_set(int argc, char **argv)
-{
-    int result = 0;
-    if (argc != 2){
-        log_e("Error! Proper Usage: yuntai_speed_set 5");
-				result = -RT_ERROR;
-        goto _exit;
-    }
-		if(atoi(argv[1]) <= 255 && atoi(argv[1]) > 0){
-				YunTai.Speed = atoi(argv[1]);
-				Flash_Update();
-				log_i("Write_Successed! YunTai.Speed:  %d",YunTai.Speed);
-		}
-		else {
-				log_e("Error! The value is out of range!");
-		}
-_exit:
-    return result;
-}
-MSH_CMD_EXPORT(yuntai_speed_set,ag: yuntai_speed_set 5);
-
-/*【云台】舵机 修改 【正向最大值】MSH方法 */
-static int yuntai_maxValue_set(int argc, char **argv)
-{
-    int result = 0;
-    if (argc != 2){
-        log_e("Error! Proper Usage: YunTai_maxvalue_set 1600");
-				result = -RT_ERROR;
-        goto _exit;
-    }
-		if(atoi(argv[1]) <= 5000){
-				YunTai.MaxValue = atoi(argv[1]);
-				Flash_Update();
-				log_i("Write_Successed! YunTai.MaxValue:  %d",YunTai.MaxValue);
-		}
-		
-		else {
-				log_e("Error! The value is out of range!");
-		}
-_exit:
-    return result;
-}
-MSH_CMD_EXPORT(yuntai_maxValue_set,ag: yuntai_maxvalue_set 2500);
+///*【机械臂】舵机 修改 【正向最大值】MSH方法 */
+//static int robotic_arm_maxValue_set(int argc, char **argv)
+//{
+//    int result = 0;
+//    if (argc != 2){
+//        log_e("Error! Proper Usage: RoboticArm_Maxvalue_set 1600");
+//				result = -RT_ERROR;
+//        goto _exit;
+//    }
+//		if(atoi(argv[1]) <= 5000 && atoi(argv[1]) >= 1500){
+//				RoboticArm.MaxValue = atoi(argv[1]);
+//				Flash_Update();
+//				log_i("Write_Successed!  RoboticArm.MaxValue:  %d",RoboticArm.MaxValue);
+//		}
+//		
+//		else {
+//				log_e("Error! The value is out of range!");
+//		}
+//_exit:
+//    return result;
+//}
+//MSH_CMD_EXPORT(robotic_arm_maxValue_set,ag: robotic_arm_openvalue_set 2000);
 
 
 
 
-/*【云台】舵机 修改 【反向最大值】 MSH方法 */
-static int yuntai_minValue_set(int argc, char **argv)
-{
-    int result = 0;
-    if (argc != 2){
-        log_e("Error! Proper Usage: YunTai_minvalue_set 1150");
-				result = -RT_ERROR;
-        goto _exit;
-    }
-		if(atoi(argv[1]) <= 3000){
-				YunTai.MinValue = atoi(argv[1]);
-				Flash_Update();
-				log_i("Write_Successed! YunTai.MinValue:  %d",YunTai.MinValue);
-		}
-		else {
-				log_e("Error! The value is out of range!");
-		}
+///*【机械臂】舵机 修改 【反向最大值】 MSH方法 */
+//static int robotic_arm_minValue_set(int argc, char **argv)
+//{
+//    int result = 0;
+//    if (argc != 2){
+//        log_e("Error! Proper Usage: RoboticArm_minvalue_set 1150");
+//				result = -RT_ERROR;
+//        goto _exit;
+//    }
+//		if(atoi(argv[1]) <= 3000 &&  atoi(argv[1]) >= 500){
+//				RoboticArm.MinValue = atoi(argv[1]);
+//				Flash_Update();
+//				log_i("Write_Successed!  RoboticArm.MinValue:  %d",RoboticArm.MinValue);
+//		}
+//		else {
+//				log_e("Error! The value is out of range!");
+//		}
 
-_exit:
-    return result;
-}
-MSH_CMD_EXPORT(yuntai_minValue_set,ag: yuntai_arm_closevalue_set 1500);
-
-/*【云台】舵机 修改 【反向最大值】 MSH方法 */
-static int yuntai_medValue_set(int argc, char **argv)
-{
-    int result = 0;
-    if (argc != 2){
-        log_e("Error! Proper Usage: YunTai_medvalue_set 2000");
-				result = -RT_ERROR;
-        goto _exit;
-    }
-		if(atoi(argv[1]) <= 3000){
-				YunTai.MedValue = atoi(argv[1]);
-				Flash_Update();
-				log_i("Write_Successed! YunTai.MedValue):  %d",YunTai.MedValue);
-		}
-		else {
-				log_e("Error! The value is out of range!");
-		}
-
-_exit:
-    return result;
-}
-MSH_CMD_EXPORT(yuntai_medValue_set,ag: yuntai_arm_medvalue_set 2000);
+//		
+//		
+//_exit:
+//    return result;
+//}
+//MSH_CMD_EXPORT(robotic_arm_minValue_set,ag: robotic_arm_closevalue_set 1500);
 
 
+///*【机械臂】舵机 修改 速度值 */
+//static int yuntai_speed_set(int argc, char **argv)
+//{
+//    int result = 0;
+//    if (argc != 2){
+//        log_e("Error! Proper Usage: yuntai_speed_set 5");
+//				result = -RT_ERROR;
+//        goto _exit;
+//    }
+//		if(atoi(argv[1]) <= 255 && atoi(argv[1]) > 0){
+//				YunTai.Speed = atoi(argv[1]);
+//				Flash_Update();
+//				log_i("Write_Successed! YunTai.Speed:  %d",YunTai.Speed);
+//		}
+//		else {
+//				log_e("Error! The value is out of range!");
+//		}
+//_exit:
+//    return result;
+//}
+//MSH_CMD_EXPORT(yuntai_speed_set,ag: yuntai_speed_set 5);
 
-/*【云台】舵机 修改 【当前】 MSH方法 */
-static int yuntai_currentValue_set(int argc, char **argv)
-{
-    int result = 0;
-    if (argc != 2){
-        log_e("Error! Proper Usage: YunTai_medvalue_set 2000");
-				result = -RT_ERROR;
-        goto _exit;
-    }
-		if(atoi(argv[1]) <= 3000 && atoi(argv[1]) >= 500){
-				YunTai.CurrentValue = atoi(argv[1]);
-				log_i("Write_Successed! Current YunTai.CurrentValue:  %d",YunTai.CurrentValue);
-		}
-		else {
-				log_e("Error! The value is out of range!");
-		}
+///*【云台】舵机 修改 【正向最大值】MSH方法 */
+//static int yuntai_maxValue_set(int argc, char **argv)
+//{
+//    int result = 0;
+//    if (argc != 2){
+//        log_e("Error! Proper Usage: YunTai_maxvalue_set 1600");
+//				result = -RT_ERROR;
+//        goto _exit;
+//    }
+//		if(atoi(argv[1]) <= 5000){
+//				YunTai.MaxValue = atoi(argv[1]);
+//				Flash_Update();
+//				log_i("Write_Successed! YunTai.MaxValue:  %d",YunTai.MaxValue);
+//		}
+//		
+//		else {
+//				log_e("Error! The value is out of range!");
+//		}
+//_exit:
+//    return result;
+//}
+//MSH_CMD_EXPORT(yuntai_maxValue_set,ag: yuntai_maxvalue_set 2500);
 
-_exit:
-    return result;
-}
-MSH_CMD_EXPORT(yuntai_currentValue_set,ag: yuntai_currentValue_set 1500);
 
 
-/*【云台】舵机 修改 【当前】 MSH方法 */
-static int yuntai(int argc, char **argv)
-{
-    int result = 0;
-		ServoType servo;
-    if (argc > 1){
-        log_e("Error! Proper Usage: YunTai_medvalue_set 2000");
-				result = -RT_ERROR;
-        goto _exit;
-    }
-		rt_kprintf("Set Min Value:");
-		scanf("%d",(int *)(&servo.MinValue));
 
-		if(servo.MinValue <= 7000 ){		
-				log_i("Write_Successed! servo.MinValue  %d",servo.MinValue);
-		}
-		else {
-				log_e("Error! The value is out of range!");
-		}
+///*【云台】舵机 修改 【反向最大值】 MSH方法 */
+//static int yuntai_minValue_set(int argc, char **argv)
+//{
+//    int result = 0;
+//    if (argc != 2){
+//        log_e("Error! Proper Usage: YunTai_minvalue_set 1150");
+//				result = -RT_ERROR;
+//        goto _exit;
+//    }
+//		if(atoi(argv[1]) <= 3000){
+//				YunTai.MinValue = atoi(argv[1]);
+//				Flash_Update();
+//				log_i("Write_Successed! YunTai.MinValue:  %d",YunTai.MinValue);
+//		}
+//		else {
+//				log_e("Error! The value is out of range!");
+//		}
 
-_exit:
-    return result;
-}
-MSH_CMD_EXPORT(yuntai,ag: yuntai_currentValue_set 1500);
+//_exit:
+//    return result;
+//}
+//MSH_CMD_EXPORT(yuntai_minValue_set,ag: yuntai_arm_closevalue_set 1500);
+
+///*【云台】舵机 修改 【反向最大值】 MSH方法 */
+//static int yuntai_medValue_set(int argc, char **argv)
+//{
+//    int result = 0;
+//    if (argc != 2){
+//        log_e("Error! Proper Usage: YunTai_medvalue_set 2000");
+//				result = -RT_ERROR;
+//        goto _exit;
+//    }
+//		if(atoi(argv[1]) <= 3000){
+//				YunTai.MedValue = atoi(argv[1]);
+//				Flash_Update();
+//				log_i("Write_Successed! YunTai.MedValue):  %d",YunTai.MedValue);
+//		}
+//		else {
+//				log_e("Error! The value is out of range!");
+//		}
+
+//_exit:
+//    return result;
+//}
+//MSH_CMD_EXPORT(yuntai_medValue_set,ag: yuntai_arm_medvalue_set 2000);
+
+
+
+///*【云台】舵机 修改 【当前】 MSH方法 */
+//static int yuntai_currentValue_set(int argc, char **argv)
+//{
+//    int result = 0;
+//    if (argc != 2){
+//        log_e("Error! Proper Usage: YunTai_medvalue_set 2000");
+//				result = -RT_ERROR;
+//        goto _exit;
+//    }
+//		if(atoi(argv[1]) <= 3000 && atoi(argv[1]) >= 500){
+//				YunTai.CurrentValue = atoi(argv[1]);
+//				log_i("Write_Successed! Current YunTai.CurrentValue:  %d",YunTai.CurrentValue);
+//		}
+//		else {
+//				log_e("Error! The value is out of range!");
+//		}
+
+//_exit:
+//    return result;
+//}
+//MSH_CMD_EXPORT(yuntai_currentValue_set,ag: yuntai_currentValue_set 1500);
+
+
+///*【云台】舵机 修改 【当前】 MSH方法 */
+//static int yuntai(int argc, char **argv)
+//{
+//    int result = 0;
+//		ServoType servo;
+//    if (argc > 1){
+//        log_e("Error! Proper Usage: YunTai_medvalue_set 2000");
+//				result = -RT_ERROR;
+//        goto _exit;
+//    }
+//		rt_kprintf("Set Min Value:");
+//		scanf("%d",(int *)(&servo.MinValue));
+
+//		if(servo.MinValue <= 7000 ){		
+//				log_i("Write_Successed! servo.MinValue  %d",servo.MinValue);
+//		}
+//		else {
+//				log_e("Error! The value is out of range!");
+//		}
+
+//_exit:
+//    return result;
+//}
+//MSH_CMD_EXPORT(yuntai,ag: yuntai_currentValue_set 1500);
 
 

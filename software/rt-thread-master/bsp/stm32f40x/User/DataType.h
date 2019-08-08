@@ -172,10 +172,7 @@ typedef enum
 
 
 /* 最重要定义 直接从设定好的模式(Flash中读取)*/
-extern volatile uint8 VehicleMode;   //【FOUR_AXIS】 or 【SIX_AXIS】
-extern volatile uint8 WorkMode;      //【WORK】or 【DEBUG】
 
-extern Sensor_Type Sensor;
 
 
 

@@ -22,6 +22,7 @@
 #include "propeller.h"
 #include <stdlib.h>
 #include "rc_data.h"
+#include "DataProcess.h"
 /*---------------------- Constant / Macro Definitions -----------------------*/		
 
 
@@ -53,7 +54,6 @@ extern float target_yaw ;
 extern float persent_pit ;//当前角度
 extern float persent_yaw ;
 
-extern float res1,res2,res3,res4;
 /*-----------------------Debug Thread Begin-----------------------------*/
 void debug_send_thread_entry(void* parameter)
 {
@@ -61,7 +61,7 @@ void debug_send_thread_entry(void* parameter)
 	
 		while(uart_startup_flag)//当debug_uart初始化完毕后 才进行上位机通信
 		{		
-				rt_thread_mdelay(1);
+				rt_thread_mdelay(10);
 //				switch(debug_tool)//选择上位机
 //				{
 
@@ -69,7 +69,7 @@ void debug_send_thread_entry(void* parameter)
 //						case PC_ANO :	ANO_SEND_StateMachine();break;
 //						default :break;
 //				}
-				Vcan_Send_Data();
+				 Vcan_Send_Data();
 			  
 
 		}
@@ -94,7 +94,7 @@ int Debug_thread_init(void)
 		}
 		return 0;
 }
-//INIT_APP_EXPORT(Debug_thread_init);
+INIT_APP_EXPORT(Debug_thread_init);
 
 /*-----------------------Debug Thread End-----------------------------*/
 
@@ -115,25 +115,21 @@ void Vcan_Send_Cmd(void *wareaddr, unsigned int waresize)
 }
 
 
-extern float target_pit ; //期望角度
-extern float target_yaw ;
 
-extern float persent_pit ;//当前角度
-extern float persent_yaw ;
 void Vcan_Send_Data(void)
 {   
 
 		static float list[8]= {0};
 
-		list[0] = res1;  //俯仰角 Pitch
-		list[1] = res2; 	  //偏航角 Yaw
+		list[0] = Paper.Capacitance;  //俯仰角 Pitch
+		list[1] = 0; 	  //偏航角 Yaw
 
-		list[2] = res3;    //CPU温度 temp
-		list[3] = res4;//
-		list[4] = (short)PropellerPower.leftMiddle;//MS_TEMP;//get_vol();
-		list[5] = (short)PropellerPower.rightMiddle;//MS5837_Pressure;	
-		list[6] = (short)0;	//camera_center;
-		list[7] = (short)1;
+		list[2] = 0;    //CPU温度 temp
+		list[3] = 0;//
+		list[4] = 0;//MS_TEMP;//get_vol();
+		list[5] = 0;//MS5837_Pressure;	
+		list[6] = 0;	//camera_center;
+		list[7] = 100;
 		
 		Vcan_Send_Cmd(list,sizeof(list));
 }
@@ -205,63 +201,5 @@ _exit:
 MSH_CMD_EXPORT(set_debug_tool,set_dubug_tool <vcan|ano|null>);
 
 
-
-/*  设置机器工作模式 (几轴：几自由度) */
-static int set_vehicle_axis(int argc,char **argv)
-{
-		int result = 0;
-    if (argc != 2){
-				log_e("Proper Usage: set_vehicle_mode <4/6>");//用法:设置工作模式
-				result = -RT_ERROR;
-        return result;
-    }
-		
-		if( !strcmp(argv[1],"4") ){ //设置为 ROV
-				VehicleMode = FOUR_AXIS;
-				Flash_Update();
-				log_i("Current Mode:%s\r\n",VehicleModeName[VehicleMode]);
-		}
-		else if( !strcmp(argv[1],"6") ){ //设置为工作模式 strcmp 检验两边相等 返回0
-				VehicleMode = SIX_AXIS;
-				Flash_Update();
-				log_i("Current Mode:%s\r\n",VehicleModeName[VehicleMode]);
-		}
-		else {
-				log_e("Proper Usage: set_vehicle_mode <4/6>");
-		}
-
-    return result;
-}
-MSH_CMD_EXPORT(set_vehicle_axis,set_vehicle_mode <4/6>);
-
-
-
-/*  设置机器工作模式 (几轴：几自由度) */
-static int set_work_mode(int argc,char **argv)
-{
-		int result = 0;
-    if (argc != 2){
-				log_e("Proper Usage: set_work_mode <work/debug>");//用法:设置工作模式
-				result = -RT_ERROR;
-        return result;
-    }
-		
-		if( !strcmp(argv[1],"work") ){ //设置为 ROV
-				WorkMode = WORK;
-				Flash_Update();
-				log_i("Current Mode: Work\r");
-		}
-		else if( !strcmp(argv[1],"debug") ){ //设置为工作模式 strcmp 检验两边相等 返回0
-				WorkMode = DEBUG;
-				Flash_Update();
-				log_i("Current Mode: Debug\r");
-		}
-		else {
-				log_e("Proper Usage: set_work_mode <work/debug>");
-		}
-
-    return result;
-}
-MSH_CMD_EXPORT(set_work_mode,set_work_mode <work/debug>);
 
 

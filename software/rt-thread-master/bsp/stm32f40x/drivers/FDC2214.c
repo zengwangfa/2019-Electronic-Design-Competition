@@ -460,20 +460,21 @@ uint8_t FDC2214_Init(void)
 	  log_w("MANUFACTURER_ID :0x%x",MANUFACTURER_ID);
     if(deviceID == 0x5449)
     {
-        log_w("FDC2214 ID:0x%x",deviceID);
         FDC2214_Reset();
           
-        FDC2214_SetRcount(FDC2214_Channel_0, 5000);//2000us 转换周期
-        FDC2214_SetRcount(FDC2214_Channel_1, 5000);//2000us 转换周期
-        FDC2214_SetRcount(FDC2214_Channel_2, 5000);//2000us 转换周期
+        //FDC2214_SetRcount(FDC2214_Channel_0, 5000);//2000us 转换周期
+        //FDC2214_SetRcount(FDC2214_Channel_1, 5000);//2000us 转换周期
+        //FDC2214_SetRcount(FDC2214_Channel_2, 5000);//2000us 转换周期
         FDC2214_SetRcount(FDC2214_Channel_3, 5000);//2000us 转换周期
-        FDC2214_SetSettleCount(FDC2214_Channel_0, 200);//200 cycles 等待时间
-        FDC2214_SetSettleCount(FDC2214_Channel_1, 200);//200 cycles 等待时间
-        FDC2214_SetSettleCount(FDC2214_Channel_2, 200);//200 cycles 等待时间
+			
+        //FDC2214_SetSettleCount(FDC2214_Channel_0, 200);//200 cycles 等待时间
+        //FDC2214_SetSettleCount(FDC2214_Channel_1, 200);//200 cycles 等待时间
+        //FDC2214_SetSettleCount(FDC2214_Channel_2, 200);//200 cycles 等待时间
         FDC2214_SetSettleCount(FDC2214_Channel_3, 200);//200 cycles 等待时间
-        FDC2214_SetChannelClock(FDC2214_Channel_0, 2, 1);//设置时钟分频，1分频，40MHz
-        FDC2214_SetChannelClock(FDC2214_Channel_1, 2, 1);//设置时钟分频，1分频，40MHz
-        FDC2214_SetChannelClock(FDC2214_Channel_2, 2, 1);//设置时钟分频，1分频，40MHz
+			
+        //FDC2214_SetChannelClock(FDC2214_Channel_0, 2, 1);//设置时钟分频，1分频，40MHz
+        //FDC2214_SetChannelClock(FDC2214_Channel_1, 2, 1);//设置时钟分频，1分频，40MHz
+        //FDC2214_SetChannelClock(FDC2214_Channel_2, 2, 1);//设置时钟分频，1分频，40MHz
         FDC2214_SetChannelClock(FDC2214_Channel_3, 2, 1);//设置时钟分频，1分频，40MHz
         
         FDC2214_SetINTB(0);//关闭INTB中断
@@ -484,9 +485,9 @@ uint8_t FDC2214_Init(void)
         
         FDC2214_SetMUX_CONFIG(1, FDC2214_Channel_Sequence_0_1_2_3, FDC2214_Bandwidth_10M);//打开自动扫描，10MHz带宽
         
-        FDC2214_SetDriveCurrent(FDC2214_Channel_0, FDC2214_Drive_Current_0_081);//通道0驱动电流0.081mA
-        FDC2214_SetDriveCurrent(FDC2214_Channel_1, FDC2214_Drive_Current_0_081);//通道1驱动电流0.081mA
-        FDC2214_SetDriveCurrent(FDC2214_Channel_2, FDC2214_Drive_Current_0_081);//通道2驱动电流0.081mA
+        //FDC2214_SetDriveCurrent(FDC2214_Channel_0, FDC2214_Drive_Current_0_081);//通道0驱动电流0.081mA
+        //FDC2214_SetDriveCurrent(FDC2214_Channel_1, FDC2214_Drive_Current_0_081);//通道1驱动电流0.081mA
+        //FDC2214_SetDriveCurrent(FDC2214_Channel_2, FDC2214_Drive_Current_0_081);//通道2驱动电流0.081mA
         FDC2214_SetDriveCurrent(FDC2214_Channel_3, FDC2214_Drive_Current_0_081);//通道3驱动电流0.081mA
              
         FDC2214_SetSleepMode(0);//退出睡眠状态，开始工作

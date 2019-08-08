@@ -38,7 +38,6 @@
 
 rt_spi_flash_device_t nor_flash;
 
-extern struct rt_event init_event;/* ALL_init 事件控制块 */
 /*----------------------- Function Implement --------------------------------*/
 
 static rt_err_t exception_hook(void *context);
@@ -50,8 +49,7 @@ static void rtt_user_assert_hook(const char* ex, const char* func, rt_size_t lin
  */
 void thread_entry_sys_monitor(void* parameter)
 {
-    while (1)
-    {
+    while (1){
         IWDG_Feed(); //喂狗,防止系统异常卡死
 				rt_thread_mdelay(500);
     }
@@ -64,7 +62,6 @@ void thread_entry_sys_monitor(void* parameter)
  */
 void sys_init_thread(void* parameter){
 	
-		rt_err_t result;
 
     if ((nor_flash = rt_sfud_flash_probe("W25Q128", "spi20")) == NULL) { /* 初始化 nor_flash W25Q128 Flash 设备 */ 
 				rt_kprintf("Error! No find W25Q128!");  //16MB Flash
@@ -76,11 +73,7 @@ void sys_init_thread(void* parameter){
 		
     rt_hw_exception_install(exception_hook);	/* 设置硬件异常钩子 */
     rt_assert_set_hook(rtt_user_assert_hook); /* 设置RTT断言钩子 */
-		
-    result = rt_event_init(&init_event, "event", RT_IPC_FLAG_FIFO);  /* 初始化事件对象 */
-    if (result != RT_EOK){
-        log_e("init event failed.\n");
-		}
+
 		Normal_Parameter_Init_With_Flash(); //Flash参数初始化读取
 
 		//rt_kprintf("file:%s,function:%s,line:%d\n",__FILE__,__FUNCTION__,__LINE__); //打印所在 文件、函数名、行号

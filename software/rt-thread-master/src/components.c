@@ -239,7 +239,6 @@ int rtthread_startup(void)
     rt_system_signal_init();
 #endif
     /* Add CPU usage to system */
-    cpu_usage_init();
 		
     /* create init_thread */
     rt_application_init();

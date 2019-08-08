@@ -34,7 +34,6 @@
 #define wifi_read 					rt_pin_read(WIFI_CONNECT_PIN)
 /*----------------------- Variable Declarations -----------------------------*/
 /* ALL_init 事件控制块. */
-extern struct rt_event init_event;
 
 Buzzer_Type Beep;  //蜂鸣器控制器
 
@@ -46,7 +45,7 @@ int ioDevices_thread_init(void)
 {
    rt_thread_t ioDecices_tid;
 
-    ioDecices_tid = rt_thread_create("ioDev",ioDevices_thread_entry, RT_NULL,512,25, 10);
+    ioDecices_tid = rt_thread_create("ioDev",ioDevices_thread_entry, RT_NULL,512,10, 10);
 
     if (ioDecices_tid != RT_NULL){			
 				rt_pin_mode(KEY_PIN , PIN_MODE_INPUT_PULLUP);    //功能按键、拨码开关  上拉输入

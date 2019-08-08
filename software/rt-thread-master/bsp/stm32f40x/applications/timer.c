@@ -34,30 +34,30 @@
 /*----------------------- Function Implement --------------------------------*/
 
 
-void TIM3_Int_Init(u16 arr,u16 psc)
-{
-	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
-	NVIC_InitTypeDef NVIC_InitStructure;
-	
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3,ENABLE);  ///使能TIM3时钟
-	
-  TIM_TimeBaseInitStructure.TIM_Period = arr; 	//自动重装载值
-	TIM_TimeBaseInitStructure.TIM_Prescaler=psc;  //定时器分频
-	TIM_TimeBaseInitStructure.TIM_CounterMode=TIM_CounterMode_Up; //向上计数模式
-	TIM_TimeBaseInitStructure.TIM_ClockDivision=TIM_CKD_DIV1; 
-	
-	TIM_TimeBaseInit(TIM3,&TIM_TimeBaseInitStructure);//初始化TIM3
-	
-	TIM_ITConfig(TIM3,TIM_IT_Update,ENABLE); //允许定时器3更新中断
-	TIM_Cmd(TIM3,DISABLE); //使能定时器3
-	
-	NVIC_InitStructure.NVIC_IRQChannel=TIM3_IRQn; //定时器3中断
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=0x01; //抢占优先级1
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority=0x01; //子优先级3
-	NVIC_InitStructure.NVIC_IRQChannelCmd=ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
-	
-}
+//void TIM3_Int_Init(u16 arr,u16 psc)
+//{
+//	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
+//	NVIC_InitTypeDef NVIC_InitStructure;
+//	
+//	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3,ENABLE);  ///使能TIM3时钟
+//	
+//  TIM_TimeBaseInitStructure.TIM_Period = arr; 	//自动重装载值
+//	TIM_TimeBaseInitStructure.TIM_Prescaler=psc;  //定时器分频
+//	TIM_TimeBaseInitStructure.TIM_CounterMode=TIM_CounterMode_Up; //向上计数模式
+//	TIM_TimeBaseInitStructure.TIM_ClockDivision=TIM_CKD_DIV1; 
+//	
+//	TIM_TimeBaseInit(TIM3,&TIM_TimeBaseInitStructure);//初始化TIM3
+//	
+//	TIM_ITConfig(TIM3,TIM_IT_Update,ENABLE); //允许定时器3更新中断
+//	TIM_Cmd(TIM3,DISABLE); //使能定时器3
+//	
+//	NVIC_InitStructure.NVIC_IRQChannel=TIM3_IRQn; //定时器3中断
+//	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=0x01; //抢占优先级1
+//	NVIC_InitStructure.NVIC_IRQChannelSubPriority=0x01; //子优先级3
+//	NVIC_InitStructure.NVIC_IRQChannelCmd=ENABLE;
+//	NVIC_Init(&NVIC_InitStructure);
+//	
+//}
 
 void TIM3_ENABLE(void)
 {
@@ -65,47 +65,47 @@ void TIM3_ENABLE(void)
 
 }
 
-static int cnt = 0;
-int timer3_cnt = 0;
+//static int cnt = 0;
+//int timer3_cnt = 0;
 
 //定时器3中断服务函数
-void TIM3_IRQHandler(void)
-{
+//void TIM3_IRQHandler(void)
+//{
 
-		if(TIM_GetITStatus(TIM3,TIM_IT_Update)==SET) //溢出中断
-		{
-			
-				ANO_SEND_StateMachine();
-//				cnt ++;
-//				if(cnt >= timer3_cnt){
-//					  cnt = 0;
-//						Two_Axis_Yuntai_Control();
-//				}
+//		if(TIM_GetITStatus(TIM3,TIM_IT_Update)==SET) //溢出中断
+//		{
+//			
+//				ANO_SEND_StateMachine();
+////				cnt ++;
+////				if(cnt >= timer3_cnt){
+////					  cnt = 0;
+////						Two_Axis_Yuntai_Control();
+////				}
 
-			
-		}
-		TIM_ClearITPendingBit(TIM3,TIM_IT_Update);  //清除中断标志位
-}
+//			
+//		}
+//		TIM_ClearITPendingBit(TIM3,TIM_IT_Update);  //清除中断标志位
+//}
 
 
-static int timer3_speed(int argc, char **argv)
-{
-    int result = 0;
-    if (argc != 2){
-        log_e("Error! Proper Usage: speed <0~100>");
-				result = -RT_ERROR;
-        goto _exit;
-    }
-		if(atoi(argv[1]) <= 1000){
-				timer3_cnt = atoi(argv[1]);
-		}
-		else {
-				log_e("Error! The value is out of range!");
-		}
-_exit:
-    return result;
-}
-MSH_CMD_EXPORT(timer3_speed,ag: speed  <0~100>);
+//static int timer3_speed(int argc, char **argv)
+//{
+//    int result = 0;
+//    if (argc != 2){
+//        log_e("Error! Proper Usage: speed <0~100>");
+//				result = -RT_ERROR;
+//        goto _exit;
+//    }
+//		if(atoi(argv[1]) <= 1000){
+//				timer3_cnt = atoi(argv[1]);
+//		}
+//		else {
+//				log_e("Error! The value is out of range!");
+//		}
+//_exit:
+//    return result;
+//}
+//MSH_CMD_EXPORT(timer3_speed,ag: speed  <0~100>);
 
 
 

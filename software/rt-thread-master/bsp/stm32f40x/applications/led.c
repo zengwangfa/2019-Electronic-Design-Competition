@@ -22,9 +22,7 @@
 const uint8 inputdata[8] = {0x00,0x04,0x02,0x01,0x03,0x05,0x06,0x07};
 
 /*----------------------- Variable Declarations -----------------------------*/
-/* ALL_init 事件控制块. */
-extern struct rt_event init_event;
-extern uint8 VehicleStatus;
+
 
 Bling_Light Light_Red,Light_Green,Light_Blue;
 
@@ -60,19 +58,7 @@ INIT_APP_EXPORT(led_thread_init);
 
 
 
-/* led 电压指示灯  */
-void led_voltage_task(void)
-{
 
-		if(Sensor.PowerSource.Voltage >= Sensor.PowerSource.Capacity/FULL_VOLTAGE*STANDARD_VOLTAGE ){ //当电压大于 锂电池标准电压时
-				Bling_Set(&Light_Green,300,1100-10*Sensor.PowerSource.Percent,0.5,0,78,0); //电量越小，闪烁越慢
-		}
-		else if(Sensor.PowerSource.Voltage < Sensor.PowerSource.Capacity/FULL_VOLTAGE*STANDARD_VOLTAGE) //当电压小于9V时，亮红灯
-		{
-				Bling_Set(&Light_Red,300,200,0.5,0,77,0);
-		}
-		
-}
 	
 
 /* 系统初始化led闪烁状态【显示7种颜色】 -->[颜色节拍表> 空  红  绿  蓝  青  粉  黄  白] */

@@ -25,8 +25,6 @@
 /*----------------------- Variable Declarations -----------------------------*/
 char *Depth_Sensor_Name[3] = {"MS5837","SPL1301","null"};
 
-extern struct rt_event init_event; /* ALL_init 事件控制块 */
-
 Sensor_Type Sensor;//传感器参数
 		float temp_current = 0.0f;
 
@@ -115,12 +113,12 @@ int sensor_thread_init(void)
 
 				if(adc_init()){ log_i("Adc_Init()");}//ADC电压采集初始化
 
-				rt_thread_startup(sensor_lowSpeed_tid);
-				rt_thread_startup(sensor_highSpeed_tid);
+//				rt_thread_startup(sensor_lowSpeed_tid);
+//				rt_thread_startup(sensor_highSpeed_tid);
 		}
 		return 0;
 }
-INIT_APP_EXPORT(sensor_thread_init);
+//INIT_APP_EXPORT(sensor_thread_init);
 
 
 void Depth_Sensor_Data_Convert(void)//深度传感器数据转换

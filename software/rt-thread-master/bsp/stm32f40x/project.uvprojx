@@ -489,29 +489,9 @@
               <FilePath>.\User\EasyThread.c</FilePath>
             </File>
             <File>
-              <FileName>user_finsh_cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>User\user_finsh_cmd.c</FilePath>
-            </File>
-            <File>
-              <FileName>Control.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>User\Control.c</FilePath>
-            </File>
-            <File>
-              <FileName>PropellerControl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>User\PropellerControl.c</FilePath>
-            </File>
-            <File>
               <FileName>DeviceThread.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\User\DeviceThread.c</FilePath>
-            </File>
-            <File>
-              <FileName>notes.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>User\notes.c</FilePath>
             </File>
             <File>
               <FileName>DataProcess.c</FileName>
@@ -523,35 +503,20 @@
               <FileType>1</FileType>
               <FilePath>.\User\HMI.c</FilePath>
             </File>
+            <File>
+              <FileName>notes.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>User\notes.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>rc_data.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\applications\rc_data.c</FilePath>
-            </File>
-            <File>
-              <FileName>ret_data.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\applications\ret_data.c</FilePath>
-            </File>
-            <File>
-              <FileName>PID.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\PID.c</FilePath>
-            </File>
-            <File>
               <FileName>flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\flash.c</FilePath>
-            </File>
-            <File>
-              <FileName>gyroscope.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\gyroscope.c</FilePath>
             </File>
             <File>
               <FileName>focus.c</FileName>
@@ -564,34 +529,14 @@
               <FilePath>applications\led.c</FilePath>
             </File>
             <File>
-              <FileName>propeller.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\propeller.c</FilePath>
-            </File>
-            <File>
               <FileName>oled.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\oled.c</FilePath>
             </File>
             <File>
-              <FileName>servo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\servo.c</FilePath>
-            </File>
-            <File>
-              <FileName>sensor.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\sensor.c</FilePath>
-            </File>
-            <File>
               <FileName>uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>self_check.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\self_check.c</FilePath>
             </File>
             <File>
               <FileName>ioDevices.c</FileName>
@@ -602,11 +547,6 @@
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\applications\timer.c</FilePath>
-            </File>
-            <File>
-              <FileName>light.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\applications\light.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -644,44 +584,9 @@
               <FilePath>drivers\drv_oled.c</FilePath>
             </File>
             <File>
-              <FileName>drv_cpu_temp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_cpu_temp.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_cpuusage.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_cpuusage.c</FilePath>
-            </File>
-            <File>
               <FileName>drv_i2c.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_i2c.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_MS5837.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_MS5837.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_ano.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_ano.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\drivers\drv_pwm.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\drivers\drv_adc.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_spl1301.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\drivers\drv_spl1301.c</FilePath>
             </File>
             <File>
               <FileName>FDC2214.c</FileName>

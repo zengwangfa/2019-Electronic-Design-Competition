@@ -35,8 +35,7 @@ unsigned char recv_data_p = 0x00;  //  串口2接收数据指针
 #endif
 
 /*----------------------- Variable Declarations -----------------------------*/
-/* ALL_init 事件控制块. */
-extern struct rt_event init_event;
+
 
 rt_device_t control_uart_device;	
 rt_device_t debug_uart_device;	
@@ -73,7 +72,7 @@ static void control_thread_entry(void *parameter)
 				  /* 阻塞等待接收信号量，等到信号量后再次读取数据 */
 						rt_sem_take(&control_rx_sem, RT_WAITING_FOREVER);
 				}
-				Remote_Control_Data_Analysis(ch);
+				//Remote_Control_Data_Analysis(ch);
 		}
 }
 
@@ -104,7 +103,7 @@ static void gyroscope_thread_entry(void *parameter)
 				recv_data_p++;
 				if(recv_data_p>127)recv_data_p = 0;
 #else 
-				CopeSerial2Data(ch); //正常传输模式 筛选数据包
+				//CopeSerial2Data(ch); //正常传输模式 筛选数据包
 #endif
 		}
 }
@@ -132,7 +131,7 @@ static void debug_thread_entry(void *parameter)
 						/* 阻塞等待接收信号量，等到信号量后再次读取数据 */
 						rt_sem_take(&debug_rx_sem, RT_WAITING_FOREVER);
 				}
-				ANO_DT_Data_Receive_Prepare(ch);
+				//ANO_DT_Data_Receive_Prepare(ch);
 
 		}
 }
@@ -297,7 +296,7 @@ int device_uart_init(void)
 		if(0x10 == uart_init_flag){ //等待所有串口设备都初始化完毕 打开uart_startup_flag
 				uart_startup_flag = 1;
 				log_i("Uart_Init()");
-			  //rt_event_send(&init_event, GYRO_EVENT); //发送事件  表示初始化完成
+
 		}
 		else {
 				uart_startup_flag = 0;

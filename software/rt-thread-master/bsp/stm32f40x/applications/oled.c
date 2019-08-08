@@ -29,6 +29,11 @@
 #include "filter.h"
 
 #include "EasyThread.h"
+#include "DataProcess.h"
+
+extern int HMI_Status_Flag ;//串口屏 设定状态标志位 【调试 1】or【工作2】
+extern int HMI_Page_Number ;//串口屏发送的校准  纸张数
+extern float  *FDC2214_Page_Data_Single;//串口屏发送的校准  纸张数
 /* 自定义OLED 坐标系如下: 
 
 	127 ↑y
@@ -50,24 +55,24 @@ static uint32 total_mem,used_mem,max_used_mem;
 
 char *VehicleModeName[2] = {"4_Axis","6_Axis"}; //定义用于显示的 模式字符 0->AUV  1->ROV
 char *WorkModeName[2] = {"Work","Debug"}; //定义用于显示的 工作模式
-volatile MENU_LIST_Enum MENU = StatusPage;//OLED初始页面为 状态页. volatile是一种类型修饰符。
+volatile MENU_LIST_Enum MENU = DebugPage;//OLED初始页面为 状态页. volatile是一种类型修饰符。
 																				  //volatile 的作用 是作为指令关键字，确保本条指令不会因编译器的优化而省略，且要求每次直接在其内存中读值。
 
 
 extern struct rt_event init_event;/* ALL_init 事件控制块 */
-extern int PaperNumber;
-extern int ShortFlag;
+
+
 /* OLED 变量 初始化. */
 Oled_Type oled = {	 
-									 .pagenum = GyroscopePage,		 //页码 pagenum
-									 .pagechange = GyroscopePage, //暂存页码 检测页码是否改变 pagechange
+									 .pagenum = DebugPage,		 //页码 pagenum
+									 .pagechange = WorkPage, //暂存页码 检测页码是否改变 pagechange
 									 .pagechange_flag = 0,     //页码改变标志位 pagechange flag
 									 .pagename = //页名定义 pagename
 										{	
-												"StatusPage",
-												"GyroscopePage",
-												"LockPage",
-												"PicturePage"} 							
+												"DebugPage",
+												"WorkPage",
+												"PicturePage",
+												"LockPage"} 							
 };
 /*----------------------- Function Implement --------------------------------*/
 
@@ -103,7 +108,7 @@ INIT_APP_EXPORT(oled_thread_init);
 ********************************************/
 void menu_define(void) //菜单定义
 {
-	if(oled.pagenum >= OLED_Page_MAX || oled.pagenum < StatusPage) oled.pagenum = StatusPage; //超出页面范围 则为第一页
+	//if(oled.pagenum >= OLED_Page_MAX || oled.pagenum < StatusPage) oled.pagenum = StatusPage; //超出页面范围 则为第一页
 	if(oled.pagechange != oled.pagenum){ //当页码改变
 			Buzzer_Set(&Beep,1,1);
 			rt_kprintf("Current Menu_Page: %s \n",oled.pagename[oled.pagenum-1]);
@@ -116,20 +121,253 @@ void menu_define(void) //菜单定义
 //	if(ControlCmd.All_Lock == LOCK){// 当拨码不是强制解锁 锁定页面
 //			oled.pagenum = LockPage;
 //	}
+	if(0 != HMI_Status_Flag){
+			oled.pagenum = HMI_Status_Flag;
+	}
 	switch(oled.pagenum){
 			case 1:{
-					MENU = StatusPage;	 OLED_StatusPage();		break;
+					MENU = DebugPage;	 OLED_DebugPage();		break;
 			}
 			case 2:{
-					MENU = GyroscopePage;OLED_GyroscopePage();break;
+					MENU = WorkPage;OLED_WorkPage();break;
 			}
-			case 3:{
-					MENU = LockPage;		 OLED_LockPage(); 	  break; //锁定界面
-			}
-			case 4:{
-					MENU = PicturePage;	 OLED_PicturePage(); break;
-			}	
+//			case 3:{
+//					MENU = LockPage;		 OLED_LockPage(); 	  break; //锁定界面
+//			}
+//			case 4:{
+//					MENU = PicturePage;	 OLED_PicturePage(); break;
+//			}	
+			default:OLED_DebugPage();	break;
 	}
+}
+
+
+
+
+float OperationTime = 0;
+/*******************************************
+* 函 数 名：OLED_GyroscopePage
+* 功    能：显示九轴模块参数【加速度、角速度、欧拉角、磁场】
+* 输入参数：none
+* 返 回 值：none
+* 注    意：OLED第二页 【九轴参数页】
+********************************************/
+void OLED_WorkPage(void)
+{
+		static char str[50];
+		
+		//PaperCount->State = KEY_Paper(KEY0)  					//【接口】需要条件改变运行状态
+		//PaperCount->Capacitance = AccountExpect(PaperCount_Capacitance,100);  // 【电容接口】计算期望电容值
+
+		switch(Paper.Status){
+			case 0:
+				OLED_ChineseString(40,0,10,10,16);
+				OLED_ChineseString(56,0,16,17,16);				//纸张测数器未开始的状态	
+			break;
+			case 1:
+				OLED_ChineseString(40,0,19,22,16);				//纸张测数器完成的状态
+			break;
+			case 2:
+				OLED_ChineseString(40,0,16,18,16); 				//纸张测数器运行的状态
+			break;		
+
+		}
+			
+		
+
+		
+		OLED_ChineseString(0,0,13,14,16);  		// 状态
+		sprintf(str,":");
+		OLED_ShowString(32,0, (uint8 *)str,16); 
+		
+
+		OLED_ChineseString(0,16,0,3,16);  		//打印当前电容
+		sprintf(str,"%f",Paper.Capacitance);
+		OLED_ShowString(72,16, (uint8 *)str,16);
+		sprintf(str,":");
+		OLED_ShowString(64,16, (uint8 *)str,16); 
+		
+		OLED_ChineseString(0,32,23,26,16);   	//打印当前张数
+		sprintf(str,":");
+		OLED_ShowString(64,32, (uint8 *)str,16); 
+		
+		if( 1 == Paper.Finish_Flag )	{			//读取纸张数量完成
+		
+			sprintf(str,"%d",Paper.PaperNumber);  //测试纸张页数
+			OLED_ShowString(0,72, (uint8 *)str,16); 
+			Paper.Status = 1;									//将状态至于完成
+			Paper.Finish_Flag = 0;
+		}
+		else if(2 == Paper.Finish_Flag){
+		
+			sprintf(str,"%d",Paper.PaperNumber);  //测试纸张页数
+			OLED_ShowString(0,72, (uint8 *)str,16); 
+		
+		}
+		
+		OLED_ChineseString(0,48,27,30,16);	  	//打印使用时间
+		sprintf(str,":%3.2fs",OperationTime);
+		OLED_ShowString(64,48, (uint8 *)str,16);
+		
+		
+		
+//		sprintf(str,"Acc:%.2f %.2f %.2f  ",Sensor.JY901.Acc.x,Sensor.JY901.Acc.y,Sensor.JY901.Acc.z);
+//		OLED_ShowString(0,0,(uint8 *)str,12); 	
+//		
+//		sprintf(str,"Gyro:%.1f %.1f %.1f ",Sensor.JY901.Gyro.x,Sensor.JY901.Gyro.y,Sensor.JY901.Gyro.z);
+//		OLED_ShowString(0,16,(uint8 *)str,12); 	
+//		
+//		sprintf(str,"Ang:%.1f %.1f %.1f  ",Sensor.JY901.Euler.Roll,Sensor.JY901.Euler.Pitch,Sensor.JY901.Euler.Yaw);
+//		OLED_ShowString(0,32,(uint8 *)str,12); 	
+//		 
+//		sprintf(str,"Mag:%d %d %d  ",Sensor.JY901.Mag.x,Sensor.JY901.Mag.y,Sensor.JY901.Mag.z);
+//		OLED_ShowString(0,48,(uint8 *)str,12); 
+		
+	  OLED_Refresh_Gram();//更新显示到OLED
+}
+
+/*******************************************
+* 函 数 名：OLED_PicturePage
+* 功    能：显示OLED电子罗盘图像页面
+* 输入参数：none
+* 返 回 值：none
+* 注    意：OLED第四页 【图像页】
+********************************************/
+void OLED_DebugPage(void)
+{
+		static char str[50];
+
+
+		OLED_ChineseString(0,0,0,3,16);  		//打印当前电容
+		sprintf(str,":%.3f",FDC2214_Page_Data_Single[HMI_Page_Number]);
+		OLED_ShowString(72,0, (uint8 *)str,16);
+
+
+		OLED_ChineseString(0,16,0,1,16);
+		OLED_ChineseString(32,16,4,4,16);
+		OLED_ChineseString(48,16,15,15,16);   //打印当前页数
+		sprintf(str,":%d",HMI_Page_Number);		  //打印当前页数
+		OLED_ShowString(72,16, (uint8 *)str,16);
+
+
+//		OLED_ChineseString(32,32,6,9,16);    //是否保存
+
+//		OLED_ChineseString(32,48,6,6,16);    //是
+//		OLED_ChineseString(32,48,7,7,16) ;   //否
+
+
+		OLED_ChineseString(0,48,13,14,16);  		// 状态
+		sprintf(str,":");
+		OLED_ShowString(32,48, (uint8 *)str,16); 		
+
+		if(1 == Paper.ShortStatus){//当短路
+				OLED_ChineseString(70,48,11,12,16);
+		}
+		else{
+				OLED_ChineseString(40,48,10,10,16);
+				OLED_ChineseString(56,48,11,12,16);
+		}
+	
+	
+	
+	
+	
+//		static uint8 y=0;
+//		static char str[100];
+//		static int Angle_x = 0,Angle_y = 0;
+//		
+//		draw_fill_circle(31+Angle_x,31+Angle_y,6,0); //清空实心圆，用于刷新坐标
+//		draw_line(31,31,slope,0); //清除上一次画的线 进行刷新
+//	
+//		OLED_Refresh_Gram();//更新显示到OLED
+//	
+//		Angle_x = Sensor.JY901.Euler.Roll/5;
+//		Angle_y = Sensor.JY901.Euler.Pitch/5;
+//		if(fabs(Sensor.JY901.Euler.Yaw) != 90) //90 deg无效
+//				slope = tan((float)Deg2Rad(Sensor.JY901.Euler.Yaw));  //转化弧度制 解算东北天坐标系下 航向斜率slope
+//	
+//		for(y = 28;y <= 36;y++){ //补圆顶、底部的缺失点
+//				OLED_DrawPoint(y,0,1);
+//				OLED_DrawPoint(y,63,1);
+//		}
+
+//		draw_line(31,31,slope,1);
+//		
+//		sprintf(str,"Rol:%3.1f  ",Sensor.JY901.Euler.Roll); //横滚角Roll 
+//		OLED_ShowString(65,0, (uint8 *)str,12);
+//		
+//		sprintf(str,"Pit:%3.1f  ",Sensor.JY901.Euler.Pitch);//俯仰角Pitch
+//		OLED_ShowString(65,16, (uint8 *)str,12);
+//		
+//		sprintf(str,"Yaw:%3.1f  ",Sensor.JY901.Euler.Yaw); //偏航角Yaw
+//		OLED_ShowString(65,32, (uint8 *)str,12);
+//		
+//		sprintf(str,"k:%.1f   ",slope);
+//		OLED_ShowString(65,48,(uint8 *)str,12); 
+//		
+
+//		OLED_ShowString(29,2 ,(uint8 *)"N",12);
+//		OLED_ShowString(29,51,(uint8 *)"S",12);
+//		OLED_ShowString(3	,28,(uint8 *)"W",12);
+//		OLED_ShowString(55,28,(uint8 *)"E",12);
+//		
+//		draw_circle(31,31,32);//画固定圆
+//		draw_fill_circle(31+Angle_x,31+Angle_y,6,1); //画实心圆
+	
+		OLED_Refresh_Gram();//更新显示到OLED						
+}
+/*******************************************
+* 函 数 OLED_LockPage
+* 功    能：显示
+* 输入参数：none
+* 返 回 值：none
+* 注    意：OLED第三页 
+********************************************/
+void OLED_LockPage(void)
+{		
+
+		static char str[30] = {0};   //暂存OLED字符串
+		static uint8 vol_box = 0; 	 //电压框 格子数
+		static uint8 vol_percent = 0;//电压百分比
+		
+		if(Sensor.PowerSource.Capacity != 0){ //判定非0
+				vol_box = (Sensor.PowerSource.Voltage-(Sensor.PowerSource.Capacity*STANDARD_VOLTAGE/FULL_VOLTAGE))*12/
+								  (Sensor.PowerSource.Capacity/(2*FULL_VOLTAGE)); //oled电量显示 = 真实电压值*12格/最大电池容量的电压
+			
+				vol_percent = (Sensor.PowerSource.Voltage-(Sensor.PowerSource.Capacity*STANDARD_VOLTAGE/FULL_VOLTAGE))/
+					            (Sensor.PowerSource.Capacity/(2*FULL_VOLTAGE))*100;  //电量百分比 = （真实电压值-安全电压值）*100%
+			
+				vol_box = vol_box > 12 ? 12 : vol_box; 						  //电压格子数 限幅
+				vol_box = vol_box <= 0  ? 0  : vol_box;
+				vol_percent = vol_percent > 100 ? 100 : vol_percent;//电压百分比限幅
+				vol_percent = vol_percent <= 0   ? 0   : vol_percent;
+			
+				Sensor.PowerSource.Percent = vol_percent;
+		}		
+		else{ //如果未设定,则不计算 <电压框格子数> 和 <电量百分比> ,并提示设定电池容量参数 
+				log_w("not yet set_battery_capacity parameter!");
+				Buzzer_Set(&Beep,1,1);	
+				rt_thread_mdelay(5000); //5s
+		}
+		
+		if(is_raspi_start()){//树莓派是否启动服务器程序
+				Buzzer_Set(&Beep,3,1);
+				//OLED_ShowPicture(0,28,raspberry_logo,28,33);//显示树莓派LOGO
+		}
+
+		sprintf(str,"Vol:%.2fV  \r\n",Sensor.PowerSource.Voltage);//电压
+		OLED_ShowString(0,0, (uint8 *)str,12);
+		
+		sprintf(str,"Cur:%.2f A  \r\n",Sensor.PowerSource.Current);//电流
+		OLED_ShowString(0,12,(uint8 *)str,12); 	
+		
+		sprintf(str,"%d%% ",vol_percent);//当前电量百分比 %
+		OLED_ShowString(80,0, (uint8 *)str,12);
+
+		//OLED_ShowPicture(107,0,bmp_battery[vol_box],10,16);//显示电量
+		//OLED_ShowPicture(49,43-15,bmp_lock[ControlCmd.All_Lock-1],30,30);//锁屏
+		
+		OLED_Refresh_Gram();//更新显示到OLED
 }
 
 
@@ -171,155 +409,6 @@ void OLED_StatusPage(void)
 		OLED_ShowString(0,48,(uint8 *)str,12);
 		OLED_Refresh_Gram();//更新显示到OLED
 }
-
-
-/*******************************************
-* 函 数 名：OLED_GyroscopePage
-* 功    能：显示九轴模块参数【加速度、角速度、欧拉角、磁场】
-* 输入参数：none
-* 返 回 值：none
-* 注    意：OLED第二页 【九轴参数页】
-********************************************/
-void OLED_GyroscopePage(void)
-{
-		char str[100];
-	
-	
-		sprintf(str,"Paper:%d       ",PaperNumber);//显示的温度
-		OLED_ShowString(0,0,(uint8 *)str,12);
-	
-		if(ShortFlag == 1){
-				sprintf(str,"is short?   Yes      ");//显示的温度
-				OLED_ShowString(0,12,(uint8 *)str,12);
-		}
-		else if(ShortFlag == 2){
-				sprintf(str,"is short?   No      ");//显示的温度
-				OLED_ShowString(0,12,(uint8 *)str,12);
-		}
-//		sprintf(str,"Acc:%.2f %.2f %.2f  ",Sensor.JY901.Acc.x,Sensor.JY901.Acc.y,Sensor.JY901.Acc.z);
-//		OLED_ShowString(0,0,(uint8 *)str,12); 	
-//		
-//		sprintf(str,"Gyro:%.1f %.1f %.1f ",Sensor.JY901.Gyro.x,Sensor.JY901.Gyro.y,Sensor.JY901.Gyro.z);
-//		OLED_ShowString(0,16,(uint8 *)str,12); 	
-//		
-//		sprintf(str,"Ang:%.1f %.1f %.1f  ",Sensor.JY901.Euler.Roll,Sensor.JY901.Euler.Pitch,Sensor.JY901.Euler.Yaw);
-//		OLED_ShowString(0,32,(uint8 *)str,12); 	
-//		 
-//		sprintf(str,"Mag:%d %d %d  ",Sensor.JY901.Mag.x,Sensor.JY901.Mag.y,Sensor.JY901.Mag.z);
-//		OLED_ShowString(0,48,(uint8 *)str,12); 
-		
-	  OLED_Refresh_Gram();//更新显示到OLED
-}
-/*******************************************
-* 函 数 OLED_LockPage
-* 功    能：显示
-* 输入参数：none
-* 返 回 值：none
-* 注    意：OLED第三页 
-********************************************/
-void OLED_LockPage(void)
-{		
-
-		static char str[30] = {0};   //暂存OLED字符串
-		static uint8 vol_box = 0; 	 //电压框 格子数
-		static uint8 vol_percent = 0;//电压百分比
-		
-		if(Sensor.PowerSource.Capacity != 0){ //判定非0
-				vol_box = (Sensor.PowerSource.Voltage-(Sensor.PowerSource.Capacity*STANDARD_VOLTAGE/FULL_VOLTAGE))*12/
-								  (Sensor.PowerSource.Capacity/(2*FULL_VOLTAGE)); //oled电量显示 = 真实电压值*12格/最大电池容量的电压
-			
-				vol_percent = (Sensor.PowerSource.Voltage-(Sensor.PowerSource.Capacity*STANDARD_VOLTAGE/FULL_VOLTAGE))/
-					            (Sensor.PowerSource.Capacity/(2*FULL_VOLTAGE))*100;  //电量百分比 = （真实电压值-安全电压值）*100%
-			
-				vol_box = vol_box > 12 ? 12 : vol_box; 						  //电压格子数 限幅
-				vol_box = vol_box <= 0  ? 0  : vol_box;
-				vol_percent = vol_percent > 100 ? 100 : vol_percent;//电压百分比限幅
-				vol_percent = vol_percent <= 0   ? 0   : vol_percent;
-			
-				Sensor.PowerSource.Percent = vol_percent;
-		}		
-		else{ //如果未设定,则不计算 <电压框格子数> 和 <电量百分比> ,并提示设定电池容量参数 
-				log_w("not yet set_battery_capacity parameter!");
-				Buzzer_Set(&Beep,1,1);	
-				rt_thread_mdelay(5000); //5s
-		}
-		
-		if(is_raspi_start()){//树莓派是否启动服务器程序
-				Buzzer_Set(&Beep,3,1);
-				OLED_ShowPicture(0,28,raspberry_logo,28,33);//显示树莓派LOGO
-		}
-
-		sprintf(str,"Vol:%.2fV  \r\n",Sensor.PowerSource.Voltage);//电压
-		OLED_ShowString(0,0, (uint8 *)str,12);
-		
-		sprintf(str,"Cur:%.2f A  \r\n",Sensor.PowerSource.Current);//电流
-		OLED_ShowString(0,12,(uint8 *)str,12); 	
-		
-		sprintf(str,"%d%% ",vol_percent);//当前电量百分比 %
-		OLED_ShowString(80,0, (uint8 *)str,12);
-
-		OLED_ShowPicture(107,0,bmp_battery[vol_box],10,16);//显示电量
-		OLED_ShowPicture(49,43-15,bmp_lock[ControlCmd.All_Lock-1],30,30);//锁屏
-		
-		OLED_Refresh_Gram();//更新显示到OLED
-}
-
-/*******************************************
-* 函 数 名：OLED_PicturePage
-* 功    能：显示OLED电子罗盘图像页面
-* 输入参数：none
-* 返 回 值：none
-* 注    意：OLED第四页 【图像页】
-********************************************/
-void OLED_PicturePage(void)
-{
-		static uint8 y=0;
-		static char str[100];
-		static int Angle_x = 0,Angle_y = 0;
-		
-		draw_fill_circle(31+Angle_x,31+Angle_y,6,0); //清空实心圆，用于刷新坐标
-		draw_line(31,31,slope,0); //清除上一次画的线 进行刷新
-	
-		OLED_Refresh_Gram();//更新显示到OLED
-	
-		Angle_x = Sensor.JY901.Euler.Roll/5;
-		Angle_y = Sensor.JY901.Euler.Pitch/5;
-		if(fabs(Sensor.JY901.Euler.Yaw) != 90) //90 deg无效
-				slope = tan((float)Deg2Rad(Sensor.JY901.Euler.Yaw));  //转化弧度制 解算东北天坐标系下 航向斜率slope
-	
-		for(y = 28;y <= 36;y++){ //补圆顶、底部的缺失点
-				OLED_DrawPoint(y,0,1);
-				OLED_DrawPoint(y,63,1);
-		}
-
-		draw_line(31,31,slope,1);
-		
-		sprintf(str,"Rol:%3.1f  ",Sensor.JY901.Euler.Roll); //横滚角Roll 
-		OLED_ShowString(65,0, (uint8 *)str,12);
-		
-		sprintf(str,"Pit:%3.1f  ",Sensor.JY901.Euler.Pitch);//俯仰角Pitch
-		OLED_ShowString(65,16, (uint8 *)str,12);
-		
-		sprintf(str,"Yaw:%3.1f  ",Sensor.JY901.Euler.Yaw); //偏航角Yaw
-		OLED_ShowString(65,32, (uint8 *)str,12);
-		
-		sprintf(str,"k:%.1f   ",slope);
-		OLED_ShowString(65,48,(uint8 *)str,12); 
-		
-
-		OLED_ShowString(29,2 ,(uint8 *)"N",12);
-		OLED_ShowString(29,51,(uint8 *)"S",12);
-		OLED_ShowString(3	,28,(uint8 *)"W",12);
-		OLED_ShowString(55,28,(uint8 *)"E",12);
-		
-		draw_circle(31,31,32);//画固定圆
-		draw_fill_circle(31+Angle_x,31+Angle_y,6,1); //画实心圆
-	
-		OLED_Refresh_Gram();//更新显示到OLED						
-}
-
-
-
 /*******************************************
 * 函 数 名：Boot_Animation
 * 功    能：开机动画

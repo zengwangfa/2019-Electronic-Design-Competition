@@ -23,7 +23,92 @@
 #include "gyroscope.h"
 #include "PID.h"
 #include "DataProcess.h"
+#include "HMI.h"
+#include "drv_i2c.h"
+#include "FDC2214.h"
+
 uint8 thread_speed = 5;
+extern int HMI_Write_Flag;
+
+
+
+void fdc2214_thread_entry(void *parameter)//高电平1.5ms 总周期20ms  占空比7.5% volatil
+{
+		rt_thread_mdelay(3000);
+
+		while(1)
+		{
+
+				if(1 == HMI_Status_Flag){//开始校准
+						if(1 == HMI_Write_Flag){
+								uart_send_hmi_writer_status(&Paper.Status);//返回状态信息
+								FDC2214_Data_Adjust(); //数据校准	
+								HMI_Write_Flag = 0; //写入状态清零
+						}
+						
+				}
+				else{ //工作模式
+						Get_Capcity_Value(); //获取电容值
+						Short_Circuit_Detection();		
+				}
+
+				
+				rt_thread_mdelay(2);
+		}
+	
+}
+
+
+int fdc2214_thread_init(void)
+{
+    rt_thread_t fdc2214_tid;
+		/*创建动态线程*/
+    fdc2214_tid = rt_thread_create("fdc2214",//线程名称
+                    fdc2214_thread_entry,			 //线程入口函数【entry】
+                    RT_NULL,							   //线程入口函数参数【parameter】
+                    2048,										 //线程栈大小，单位是字节【byte】
+                    5,										 	 //线程优先级【priority】
+                    10);										 //线程的时间片大小【tick】= 1ms
+
+    if (fdc2214_tid != RT_NULL){
+			
+				IIC_Init(); /* 初始化 */
+				rt_thread_mdelay(100);
+				FDC2214_Init();
+			
+				rt_thread_startup(fdc2214_tid);
+		}
+
+		return 0;
+}
+INIT_APP_EXPORT(fdc2214_thread_init);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -56,125 +141,122 @@ MSH_CMD_EXPORT(Set_Z_Zero,ag: Set_Z_Zero  );
 //}
 
 
-/**
-  * @brief  propeller_thread_entry(推进器控制任务函数)
-  * @param  void* parameter
-  * @retval None
-  * @notice 
-  */
-void propeller_thread_entry(void *parameter)
-{
-		rt_thread_mdelay(1000);
-		//Set_Z_Zero();
-		//TIM3_ENABLE();
-		rt_thread_mdelay(1000);
+///**
+//  * @brief  propeller_thread_entry(推进器控制任务函数)
+//  * @param  void* parameter
+//  * @retval None
+//  * @notice 
+//  */
+//void propeller_thread_entry(void *parameter)
+//{
+//		rt_thread_mdelay(1000);
+//		//Set_Z_Zero();
+//		//TIM3_ENABLE();
+//		rt_thread_mdelay(1000);
 
 
-		while(1)
-		{
+//		while(1)
+//		{
 
-			
-			
-			
-			
-			
-			
-				//drifting_check(); //漂移 检测		
-				//Car_Pitch_Control();			
-				//Two_Axis_Yuntai_Control();
-			
-				//Servo_Dir_Control(0);			//舵机控制
+//			
+//			
+//			
+//			
+//			
+//			
+//				//drifting_check(); //漂移 检测		
+//				//Car_Pitch_Control();			
+//				//Two_Axis_Yuntai_Control();
+//			
+//				//Servo_Dir_Control(0);			//舵机控制
 
-				
-				rt_thread_mdelay(thread_speed); //5ms
-		}
-}
-
-
-
-
-static int speed(int argc, char **argv)
-{
-    int result = 0;
-    if (argc != 2){
-        log_e("Error! Proper Usage: speed <0~100>");
-				result = -RT_ERROR;
-        goto _exit;
-    }
-		if(atoi(argv[1]) <= 1000){
-				thread_speed = atoi(argv[1]);
-		}
-		else {
-				log_e("Error! The value is out of range!");
-		}
-_exit:
-    return result;
-}
-MSH_CMD_EXPORT(speed,ag: speed  <0~100>);
+//				
+//				rt_thread_mdelay(thread_speed); //5ms
+//		}
+//}
 
 
 
+
+//static int speed(int argc, char **argv)
+//{
+//    int result = 0;
+//    if (argc != 2){
+//        log_e("Error! Proper Usage: speed <0~100>");
+//				result = -RT_ERROR;
+//        goto _exit;
+//    }
+//		if(atoi(argv[1]) <= 1000){
+//				thread_speed = atoi(argv[1]);
+//		}
+//		else {
+//				log_e("Error! The value is out of range!");
+//		}
+//_exit:
+//    return result;
+//}
+//MSH_CMD_EXPORT(speed,ag: speed  <0~100>);
 
 
 
 
 
-/**
-  * @brief  servo_thread_entry(舵机控制任务函数)
-  * @param  void* parameter
-  * @retval None
-  * @notice 
-  */
-void devices_thread_entry(void *parameter)//高电平1.5ms 总周期20ms  占空比7.5% volatil
-{
 
 
 
-		while(1)
-		{
-			
-				if(WORK == WorkMode){//工作模式
-
-						//Extractor_Control(&ControlCmd.Arm); //吸取器控制
-						//RoboticArm_Control(&ControlCmd.Arm);//机械臂控制
-						Search_Light_Control(&ControlCmd.Light);  //探照灯控制
-						YunTai_Control(&ControlCmd.Yuntai); //云台控制				
-						Focus_Zoom_Camera_Control(&ControlCmd.Focus);//变焦摄像头控制					
-				}
-				else if(DEBUG == WorkMode)//调试模式
-				{	
-						//Debug_Mode(get_button_value(&ControlCmd));
-				}
-				rt_thread_mdelay(20);
-		}
-	
-}
-
-
-int propeller_thread_init(void)
-{
-    rt_thread_t propeller_tid;
-		/*创建动态线程*/
-    propeller_tid = rt_thread_create("propoller",//线程名称
-                    propeller_thread_entry,			 //线程入口函数【entry】
-                    RT_NULL,							   //线程入口函数参数【parameter】
-                    2048,										 //线程栈大小，单位是字节【byte】
-                    5,										 	 //线程优先级【priority】
-                    10);										 //线程的时间片大小【tick】= 1ms
-
-    if (propeller_tid != RT_NULL){
-			
-				PWM_Init(); //推进器、舵机类PWM初始化
-			
-				rt_thread_startup(propeller_tid);
-		}
-
-		return 0;
-}
-//INIT_APP_EXPORT(propeller_thread_init);
+///**
+//  * @brief  servo_thread_entry(舵机控制任务函数)
+//  * @param  void* parameter
+//  * @retval None
+//  * @notice 
+//  */
+//void devices_thread_entry(void *parameter)//高电平1.5ms 总周期20ms  占空比7.5% volatil
+//{
 
 
 
+//		while(1)
+//		{
+//			
+//				if(WORK == WorkMode){//工作模式
+
+//						//Extractor_Control(&ControlCmd.Arm); //吸取器控制
+//						//RoboticArm_Control(&ControlCmd.Arm);//机械臂控制
+//						Search_Light_Control(&ControlCmd.Light);  //探照灯控制
+//						YunTai_Control(&ControlCmd.Yuntai); //云台控制				
+//						Focus_Zoom_Camera_Control(&ControlCmd.Focus);//变焦摄像头控制					
+//				}
+//				else if(DEBUG == WorkMode)//调试模式
+//				{	
+//						//Debug_Mode(get_button_value(&ControlCmd));
+//				}
+//				rt_thread_mdelay(20);
+//		}
+//	
+//}
+
+
+//int propeller_thread_init(void)
+//{
+//    rt_thread_t propeller_tid;
+//		/*创建动态线程*/
+//    propeller_tid = rt_thread_create("propoller",//线程名称
+//                    propeller_thread_entry,			 //线程入口函数【entry】
+//                    RT_NULL,							   //线程入口函数参数【parameter】
+//                    2048,										 //线程栈大小，单位是字节【byte】
+//                    5,										 	 //线程优先级【priority】
+//                    10);										 //线程的时间片大小【tick】= 1ms
+
+//    if (propeller_tid != RT_NULL){
+//			
+//				PWM_Init(); //推进器、舵机类PWM初始化
+//			
+//				rt_thread_startup(propeller_tid);
+//		}
+
+//		return 0;
+//}
+////INIT_APP_EXPORT(propeller_thread_init);
 
 
 
@@ -184,27 +266,30 @@ int propeller_thread_init(void)
 
 
 
-int devices_thread_init(void)
-{
-    rt_thread_t devices_tid;
-		/*创建动态线程*/
-    devices_tid = rt_thread_create("devices",//线程名称
-                    devices_thread_entry,			 //线程入口函数【entry】
-                    RT_NULL,							   //线程入口函数参数【parameter】
-                    1024,										 //线程栈大小，单位是字节【byte】
-                    12,										 	 //线程优先级【priority】
-                    10);										 //线程的时间片大小【tick】= 100ms
 
-    if (devices_tid != RT_NULL){
-				Light_PWM_Init(); //探照灯PWM初始化
-				log_i("Light_init()");
 
-				rt_thread_startup(devices_tid);
-				//rt_event_send(&init_event, PWM_EVENT); //发送事件  表示初始化完成
-		}
 
-		return 0;
-}
+//int devices_thread_init(void)
+//{
+//    rt_thread_t devices_tid;
+//		/*创建动态线程*/
+//    devices_tid = rt_thread_create("devices",//线程名称
+//                    devices_thread_entry,			 //线程入口函数【entry】
+//                    RT_NULL,							   //线程入口函数参数【parameter】
+//                    1024,										 //线程栈大小，单位是字节【byte】
+//                    12,										 	 //线程优先级【priority】
+//                    10);										 //线程的时间片大小【tick】= 100ms
+
+//    if (devices_tid != RT_NULL){
+//				Light_PWM_Init(); //探照灯PWM初始化
+//				log_i("Light_init()");
+
+//				rt_thread_startup(devices_tid);
+//				//rt_event_send(&init_event, PWM_EVENT); //发送事件  表示初始化完成
+//		}
+
+//		return 0;
+//}
 //INIT_APP_EXPORT(devices_thread_init);
 
 

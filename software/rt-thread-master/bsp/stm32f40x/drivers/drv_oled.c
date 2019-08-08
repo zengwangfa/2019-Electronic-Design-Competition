@@ -2,7 +2,7 @@
 #include "stdlib.h"
  	 
 #include "init.h"
-
+#include "oledfont.h" 	
 
 /*---------------------- Constant / Macro Definitions -----------------------*/			   
 #define OLED_CS 	PGout(9)  //未接入
@@ -295,6 +295,55 @@ void OLED_ShowString(u8 x,u8 y,const u8 *p,u8 size)
     }  
 	
 }	
+
+
+/*************************************************************************/
+/*                
+显示一个汉字                          
+x,y:起点坐标
+num :字库中第几个汉字
+size:字体大小
+mode：模式
+*/ 
+/*************************************************************************/
+void OLED_ShowGBK(u8 x, u8 y,  u8 num, u8 size,u8 mode)
+{
+	u8 temp,t,t1;
+	u8 y0=y;
+	//u8 size = 16;
+	u8 csize=(size/8 + ((size%8)?1:0)) * size;     //得到字体一个字符对应点阵集所占的字节数
+			  
+	for(t=0;t<csize;t++)
+	{  
+		  //  我只定义了16，12号字体   没有声明其他字体
+		if(size==12)      temp = gbk_1212[num][t];    //调用1212字体
+		else if(size==16) temp = gbk_1616[num][t];    //调用1616字体
+//      else if(size==24)temp=asc2_2412[chr][t];    //调用2412字体
+		else return;                                //没有的字库
+		for(t1=0;t1<8;t1++)
+		{
+			if(temp&0x80)OLED_DrawPoint(x,y,mode);
+			else OLED_DrawPoint(x,y,!mode);
+			temp<<=1;
+			y++;
+			if((y-y0)==size)
+			{
+				y=y0;
+				x++;
+				break;
+			}
+		}    
+	} 	
+}
+void OLED_ChineseString(uint8 x,uint8 y,uint8 First,uint8 Final,uint8 size)
+{
+	for(int i= First;i<=Final;i++)
+	{
+		OLED_ShowGBK(x+size*(i-First),y,i,size,1);
+	}
+}
+
+
 
 
 

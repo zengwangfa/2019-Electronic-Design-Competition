@@ -18,8 +18,10 @@
 /*----------------------- Variable Declarations -----------------------------*/
 
 uint8 hmi_data_ok = 0;
+int HMI_Write_Flag = 0; //写入数据Flag
 int HMI_Status_Flag = 0;//串口屏 设定状态标志位 【调试 1】or【工作2】
 int HMI_Page_Number = 0;//串口屏发送的校准  纸张数
+int HMI_Work_Button = 0; /* 检测 确认 按钮*/
 //76 61 30 2E 76 61 6C 3D 31 ff ff ff
 //76 61 30 2E 76 61 6C 3D 31 ff ff ff   va0.val=1
 uint8 him_uart_cmd[12] = {0x76,0x61,0x30,0x2E,0x76,0x61,0x6C,0x3D,0x31,0xFF,0xFF,0xFF};    // 01 写入成功  02 写入失败   03 正在写入... 04 提示hmi清屏
@@ -35,7 +37,7 @@ uint8 him_ret_status = 0;
 uint8 hmi_data[10] = {0};
 float FDC2214_Page_Data_Top[100]    = {0};
 float FDC2214_Page_Data_Bottom[100] = {0};
-
+float FDC2214_Page_Data_Single[100] = {0};
 
 extern int ShortFlag;        //短路标志位
 /*----------------------- Function Implement --------------------------------*/
@@ -74,13 +76,13 @@ void uart_send_hmi_paper_numer(uint8 N_number)  //发送给hmi 纸张数量
 }
 
 
-void uart_send_hmi_is_short(uint8 N_number)  //发送给hmi 是否短路
+void uart_send_hmi_is_short(void)  //发送给hmi 是否短路
 { 	
-		if(1 == ShortFlag)//当短路
+		if(1 == Paper.ShortStatus)//当短路
 		{
 				him_uart_short_cmd[8] = 0x31;
 		}
-		else if(2 == ShortFlag){
+		else if(2 == Paper.ShortStatus){
 				him_uart_short_cmd[8] = 0x32;
 		}
 		else{
@@ -88,21 +90,33 @@ void uart_send_hmi_is_short(uint8 N_number)  //发送给hmi 是否短路
 		}
 
 		
-		rt_device_write(focus_uart_device, 0,him_uart_short_cmd	, sizeof(him_uart_short_cmd));
+		rt_device_write(focus_uart_device, 0,him_uart_short_cmd	, sizeof(him_uart_short_cmd));//向HMI发送短路信息
 			
 }
 
+
+/* 发送给串口屏 写入的状态
+01:写入成功
+02:写入失败
+03:正在写入
+04:提示hmi清屏
+*/
 void FDC2214_Data_Adjust(void)//数据校准 存储
 {
-		him_ret_status = 0x03;
-		uart_send_hmi_writer_status(&him_ret_status);//正在写入
 		rt_thread_mdelay(1000);
+	
+		Paper.Status = 0x03; //正在写入
+	
 		FDC2214_Page_Data_Top   [HMI_Page_Number] = get_top_capacity();   //顶板 对应页 电容值保存
 		FDC2214_Page_Data_Bottom[HMI_Page_Number] = get_bottom_capacity();//底板 对应页 电容值保存
+	
+		FDC2214_Page_Data_Single[HMI_Page_Number] = get_single_capacity();//单板 对应页 电容值保存
+	
+		
+		rt_kprintf("pagenum:%d,cap:%f\n",HMI_Page_Number,FDC2214_Page_Data_Single[HMI_Page_Number]);
 		rt_thread_mdelay(1000);
-		him_ret_status = 0x01;
-		//Uart_Send_HMI(&him_ret_status);//正在写入
-
+	
+		Paper.Status = 0x01; //写入成功
 
 }
 
@@ -150,13 +164,19 @@ void HMI_Data_Analysis(uint8 Data) //控制数据解析
 		
 		if(1 == hmi_data_ok){
 				HMI_Status_Flag = hmi_data[3];//获取 工作模式位
-				//rt_kprintf("HMI_Status_Flag:%d\n",HMI_Status_Flag);
-				HMI_Page_Number = hmi_data[4];//获取 校准页数
 				
+				//rt_kprintf("HMI_Status_Flag:%d\n",HMI_Status_Flag);
+				if(hmi_data[4] == 0xFF){//如果是 0xFF  就判定为按钮拿下
+						HMI_Work_Button = 1; //工作模式的 按钮
+				}
+				else{		
+						HMI_Write_Flag = 1; 	//写入页面状态
+						HMI_Page_Number = hmi_data[4];//获取 校准页数
+						HMI_Work_Button = 0;
+				}
 		}
 		else{
-		
-		
+
 		}
 		hmi_data_ok = 0;
 }

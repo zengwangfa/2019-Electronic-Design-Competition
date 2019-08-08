@@ -57,14 +57,10 @@ void uart_send_hmi_reboot(void)
 */
 void uart_send_hmi_writer_status(uint8 *cmd)//发送给 hmi写入的状态
 {
-		static uint8 last_status = 0;//暂存上一次的页面数
-		
-		if(*cmd == last_status){
-				return;
-		}
+
 		*cmd += 0x30; //命令+0x30  转成对应的ASCII 对应写入
 		rt_device_write(focus_uart_device, 0,him_uart_cmd	, sizeof(him_uart_cmd));
-		last_status = *cmd;
+
 		*cmd = 0; //命令清零
 }
 
@@ -72,28 +68,19 @@ void uart_send_hmi_writer_status(uint8 *cmd)//发送给 hmi写入的状态
 
 void uart_send_hmi_paper_numer(uint8 N_number)  //发送给hmi 纸张数量
 { 	
-		static uint8 last_N_number = 0;//暂存上一次的页面数
 
-		if(last_N_number == N_number){//如果与上一次的值相等
-				return;//直接返回，不占用串口发送，减少内存的占用
-		}
 		him_uart_nmber_cmd[8]  = (N_number/100%10) + 0x30;  //百位
 		him_uart_nmber_cmd[9]  = (N_number/10%10) + 0x30; //十位
 		him_uart_nmber_cmd[10] = (N_number/1%10) + 0x30;//个位
 	
 		rt_device_write(focus_uart_device, 0,him_uart_nmber_cmd	, sizeof(him_uart_nmber_cmd));	
-		last_N_number = N_number;
+
 }
 
 
 void uart_send_hmi_is_short(void)  //发送给hmi 是否短路
 { 	
-		static uint8 last_short = 0;//暂存上一次的页面数
-	
-		if(last_short == Paper.ShortStatus){
-				return;
-		}
-		
+
 		if(1 == Paper.ShortStatus){//当短路
 				him_uart_short_cmd[8] = 0x31;
 		}
@@ -105,7 +92,7 @@ void uart_send_hmi_is_short(void)  //发送给hmi 是否短路
 		}
 		
 		rt_device_write(focus_uart_device, 0,him_uart_short_cmd	, sizeof(him_uart_short_cmd));//向HMI发送短路信息
-		last_short = Paper.ShortStatus;
+
 }
 
 
@@ -193,8 +180,11 @@ void HMI_Data_Analysis(uint8 Data) //控制数据解析
 								HMI_Debug_Write_Button = 1; 	//写入页面状态						
 						}
 				}
-				else if(0x02 == hmi_data[3] && 0x01 == hmi_data[4]  ){//工作模式					
-						HMI_Work_Button = 1; //工作模式的 按钮按下标志
+				else if(0x02 == hmi_data[3] && 0x01 == hmi_data[4] ){//工作模式			 		
+						HMI_Work_Button = 1; //工作模式的 按钮按下标志 锁定数据显示
+				}
+				else if(0x02 == hmi_data[3] && 0x02 == hmi_data[4] ){//工作模式			 		
+						HMI_Work_Button = 0; //清除锁定
 				}
 
 		}

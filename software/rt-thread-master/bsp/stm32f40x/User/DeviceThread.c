@@ -48,10 +48,7 @@ void fdc2214_thread_entry(void *parameter)//高电平1.5ms 总周期20ms  占空比7.5% v
 				}
 				else{ //工作模式
 						Get_Capcity_Value(); //获取电容值
-
-				}
-
-				
+				}	
 				rt_thread_mdelay(2);
 		}
 	

@@ -85,36 +85,6 @@ void system_init_led_blink(void)
 }
 
 
-
-
-void Light_Control(uint8 *action)//探照灯
-{
-		static uint8 Light_Mode_Count = 0;//探照灯模式计数
-		// 探照灯连续开关会产生三种模式 【高亮】【普通】【快闪】
-	
-		switch(*action)
-		{
-				case 0x01:
-						Light_Mode_Count ++;
-						if(Light_Mode_Count <= 3){// 探照灯前三次开启
-								rt_pin_write(Light_PIN ,PIN_LOW);//关闭继电器
-								rt_thread_mdelay(500);//0.5s
-								rt_pin_write(Light_PIN ,PIN_HIGH);//打开继电器
-						}
-						else {
-								Light_Mode_Count = 0;//探照灯模式计数 清零
-								rt_pin_write(Light_PIN ,PIN_LOW);// 探照灯第四次关闭
-						}
-						break;
-
-				default:break;
-		}
-		*action = 0x00;//清除控制字
-}
-
-
-
-
 /***************************************************
 函数名: void Bling_Set(Bling_Light *Light,
 uint32_t Continue_time,//持续时间

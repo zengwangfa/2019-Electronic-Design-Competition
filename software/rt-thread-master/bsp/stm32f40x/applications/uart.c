@@ -245,7 +245,7 @@ int device_uart_init(void)
 																		control_thread_entry,
 																		RT_NULL, 
 																		512, 
-																		5,
+																		15,
 																		10);
     /* 创建 九轴 serial 线程 */
 		gyroscope_uart_tid = rt_thread_create("gyro_uart",
@@ -268,7 +268,7 @@ int device_uart_init(void)
 																	focus_thread_entry,
 																	RT_NULL, 
 																	512, 
-																	15,
+																	5,
 																	10);
 		/* 创建成功则启动线程 */
     if (control_uart_tid != RT_NULL){

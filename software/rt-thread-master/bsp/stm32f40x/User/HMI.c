@@ -9,6 +9,7 @@
 #include "HMI.h"
 #include "DataType.h"
 #include <rtthread.h>
+#include <stdio.h>
 #include "uart.h"
 #include "DataProcess.h"
 /*---------------------- Constant / Macro Definitions -----------------------*/
@@ -103,6 +104,7 @@ void uart_send_hmi_is_short(void)  //发送给hmi 是否短路
 */
 void FDC2214_Data_Adjust(void)//数据校准 存储
 {
+		static char str[30] = {0};
 		rt_thread_mdelay(1000);
 	
 		Paper.Status = 0x03; //正在写入
@@ -112,9 +114,9 @@ void FDC2214_Data_Adjust(void)//数据校准 存储
 	
 		FDC2214_Page_Data_Single[HMI_Page_Number] = get_single_capacity();//单板 对应页 电容值保存
 	
-		
-		rt_kprintf("pagenum:%d,cap:%f\n",HMI_Page_Number,FDC2214_Page_Data_Single[HMI_Page_Number]);
-		rt_thread_mdelay(1000);
+		sprintf(str,"pagenum:%d,cap:%f\n",HMI_Page_Number,FDC2214_Page_Data_Single[HMI_Page_Number]);
+		rt_kprintf(str);
+		//rt_thread_mdelay(1000);
 	
 		Paper.Status = 0x01; //写入成功
 

@@ -100,7 +100,7 @@ float get_top_capacity(void)
 				FDC2214_GetChannelData(FDC2214_Channel_0, &res_CH0_DATA);//获取电容
 
 				rt_thread_mdelay(10);
-				res_ch1_arr[i] = Cap_Calculate(&CH0_DATA);//电容赋值
+				res_ch1_arr[i] = Cap_Calculate(&res_CH0_DATA);//电容赋值
 
 		}
 		/* 调度器解锁 */	
@@ -126,7 +126,7 @@ float get_bottom_capacity(void)
 				FDC2214_GetChannelData(FDC2214_Channel_1, &res_CH1_DATA);
 
 				rt_thread_mdelay(10);
-				res_ch2_arr[i] = Cap_Calculate(&CH1_DATA);
+				res_ch2_arr[i] = Cap_Calculate(&res_CH1_DATA);
 		}
 		/* 调度器解锁 */	
 		rt_exit_critical();
@@ -151,10 +151,10 @@ float get_single_capacity(void)
 		rt_enter_critical();
 	
 		for(i = 0;i < 10;i++){
-				FDC2214_GetChannelData(FDC2214_Channel_1, &res_CH4_DATA);
+				FDC2214_GetChannelData(FDC2214_Channel_3, &res_CH4_DATA);
 
 				rt_thread_mdelay(10);
-				res_ch4_arr[i] = Cap_Calculate(&CH1_DATA);
+				res_ch4_arr[i] = Cap_Calculate(&res_CH4_DATA);
 		}
 		/* 调度器解锁 */	
 		rt_exit_critical();
@@ -171,7 +171,7 @@ void Short_Circuit_Detection(void)
 {
     //当数据在 短路数值范围变化
 		if( (is_in_range(res1,ShortValue1,40.0f) &&  is_in_range(res2,ShortValue2,40.0f)) \
-			|| (res1 < 1.0f) ||  (res2 < 1.0f) ){//或者当值非常小的时候，判定为受到干扰
+			|| (res1 < 1.0f) ||  (res2 < 1.0f)  ){//或者当值非常小的时候，判定为受到干扰
 				Paper.ShortStatus = 1;//判定短路
 				Bling_Set(&Light_Blue,200,100,0.5,0,79,0);//蓝灯提示短路
 		}			

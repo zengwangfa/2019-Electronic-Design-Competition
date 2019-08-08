@@ -33,7 +33,7 @@
 
 extern int HMI_Status_Flag ;//串口屏 设定状态标志位 【调试 1】or【工作2】
 extern int HMI_Page_Number ;//串口屏发送的校准  纸张数
-extern float  *FDC2214_Page_Data_Single;//串口屏发送的校准  纸张数
+extern float FDC2214_Page_Data_Single[];//串口屏发送的校准  纸张数
 /* 自定义OLED 坐标系如下: 
 
 	127 ↑y
@@ -177,15 +177,15 @@ void OLED_WorkPage(void)
 
 		
 		OLED_ChineseString(0,0,13,14,16);  		// 状态
-		sprintf(str,":");
-		OLED_ShowString(32,0, (uint8 *)str,16); 
+
+		OLED_ShowString(32,0, (uint8 *)":",16); 
 		
 
 		OLED_ChineseString(0,16,0,3,16);  		//打印当前电容
-		sprintf(str,"%f",Paper.Capacitance);
+		sprintf(str,"%.3f",Paper.Capacitance);
 		OLED_ShowString(72,16, (uint8 *)str,16);
-		sprintf(str,":");
-		OLED_ShowString(64,16, (uint8 *)str,16); 
+
+		OLED_ShowString(64,16, (uint8 *)":",16); 
 		
 		OLED_ChineseString(0,32,23,26,16);   	//打印当前张数
 		sprintf(str,":");
@@ -193,20 +193,20 @@ void OLED_WorkPage(void)
 		
 		if( 1 == Paper.Finish_Flag )	{			//读取纸张数量完成
 		
-			sprintf(str,"%d",Paper.PaperNumber);  //测试纸张页数
-			OLED_ShowString(0,72, (uint8 *)str,16); 
+			sprintf(str,"%3d",Paper.PaperNumber);  //测试纸张页数
+			OLED_ShowString(72,32, (uint8 *)str,16); 
 			Paper.Status = 1;									//将状态至于完成
 			Paper.Finish_Flag = 0;
 		}
 		else if(2 == Paper.Finish_Flag){
 		
-			sprintf(str,"%d",Paper.PaperNumber);  //测试纸张页数
-			OLED_ShowString(0,72, (uint8 *)str,16); 
+			sprintf(str,"%3d",Paper.PaperNumber);  //测试纸张页数
+			OLED_ShowString(72,32, (uint8 *)str,16); 
 		
 		}
 		
 		OLED_ChineseString(0,48,27,30,16);	  	//打印使用时间
-		sprintf(str,":%3.2fs",OperationTime);
+		sprintf(str,":%.3fs",OperationTime);
 		OLED_ShowString(64,48, (uint8 *)str,16);
 		
 		

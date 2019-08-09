@@ -14,7 +14,7 @@
 #include "filter.h"
 #include "led.h"
 #include "HMI.h"
-#include <string.h>
+#include <string.h> 
 #include "ioDevices.h"
 #include "my2490.h"
 
@@ -142,7 +142,9 @@ int Short_Circuit_Detection(void)
 {
     //当数据在 短路数值范围变化
 		//或者当值非常小的时候，判定为受到干扰
-		if( (is_in_range(Paper.Capacitance,FDC2214_Data_In_Flash[0],50.0f)) ){//或者当值非常小的时候，判定为受到干扰
+		if( ((is_in_range(FDC2214_Paper_Data[0],FDC2214_Data_In_Flash[0],50.0f)) && HMI_Status_Flag == 1) \
+			||((is_in_range(Paper.Capacitance,FDC2214_Data_In_Flash[0],50.0f)) && HMI_Status_Flag == 2)  )
+		{
 				Paper.ShortStatus = 1;//判定短路
 				Paper.PaperNumber = 0; //如果短路即为0
 				Bling_Set(&Light_Red,100,50,0.5,0,77,0);//蓝灯提示短路

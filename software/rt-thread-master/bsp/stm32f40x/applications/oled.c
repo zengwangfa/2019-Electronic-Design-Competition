@@ -141,8 +141,11 @@ void OLED_SwitchPage(void)
 		OLED_ChineseString(0,32,35,36,16);//调试模式
 		OLED_ChineseString(0,48,37,38,16);
 		
+		OLED_ChineseString(48,32,41,42,16);//调试模式
+		OLED_ChineseString(48,48,43,44,16);
+		
 		OLED_ChineseString(96,32,39,40,16);//工作模式
-		OLED_ChineseString(96,48,37,38,16);	
+		OLED_ChineseString(96,48,37,38,16);
 	  OLED_Refresh_Gram();//更新显示到OLED
 }
 
@@ -161,7 +164,7 @@ void OLED_DebugPage(void)
 		static char str[50] = {0};
 	
 		OLED_ChineseString(0,0,2,3,16);  		//打印当前电容
-		sprintf(str,": %.5f",FDC2214_Paper_Data[HMI_Page_Number]);
+		sprintf(str,": %.5f     ",FDC2214_Paper_Data[HMI_Page_Number]);
 		OLED_ShowString(32,0, (uint8 *)str,16);
 
 		OLED_ChineseString(0,16,0,1,16);
@@ -171,11 +174,11 @@ void OLED_DebugPage(void)
 		OLED_ShowString(72,16, (uint8 *)str,16);
 
 		OLED_ChineseString(0,48,13,14,16);  		// 状态
-		sprintf(str,":");
-		OLED_ShowString(32,48, (uint8 *)str,16); 		
+		OLED_ShowString(32,48, (uint8 *)":",16); 		
 
 		if(1 == Paper.ShortStatus){//当短路
-				OLED_ChineseString(70,48,11,12,16);
+				OLED_ChineseString(40,48,11,12,16);
+				OLED_ShowString(72,48, (uint8 *)"    ",16);
 		}
 		else{
 				OLED_ChineseString(40,48,10,10,16);
@@ -243,9 +246,13 @@ void OLED_WorkPage(void)
 /* 拓展功能选择 页面*/
 void OLED_FuncSwitchPage(void)
 {
-		static char str[20] = {0};
+		OLED_ChineseString(32,0,41,44,16);
+
+		OLED_ChineseString(8,32,45,47,16);		//打印机纸盒检测
+		OLED_ChineseString(0,48,48,51,16);
 		
-		OLED_ChineseString(32,0,31,34,16);//选择菜单
+		OLED_ChineseString(96,32,52,53,16);		//材料识别
+		OLED_ChineseString(96,48,54,55,16);
 		
 		OLED_Refresh_Gram();//更新显示到OLED			
 }
@@ -254,17 +261,30 @@ void OLED_FuncSwitchPage(void)
 /* 打印机 页面*/
 void OLED_PrintPage(void)
 {
+		static uint8 PrinterFlag = 1;
 		static char str[20] = {0};
+		OLED_ChineseString(32,0,45,47,16);          	//打印机
 		
-		OLED_ChineseString(0,16,2,3,16);  		//打印当前电容
-		sprintf(str,": %.3f",Paper.Capacitance);
-		OLED_ShowString(32,16, (uint8 *)str,16);
-		
-		OLED_ChineseString(0,32,23,26,16);   	//打印当前张数
-		OLED_ShowString(64,32, (uint8 *)":",16); 
-				
+		OLED_ChineseString(0,32,0,1,16);				//打印机剩余纸张
+		OLED_ChineseString(32,32,56,57,16);
+		OLED_ShowString(64,32,(uint8 *)":",16);
+		OLED_ChineseString(108,32,24,24,16);
 		sprintf(str,"%3d",Paper.PaperNumber);  //测试纸张页数
 		OLED_ShowString(72,32, (uint8 *)str,16); 
+		
+		if(PrinterFlag == 1){
+				OLED_ChineseString(32,48,58,61,16);				//缺纸警报
+		}
+		else {
+				OLED_ChineseString(32,48,62,62,16);
+		}
+		
+		if(Paper.PaperNumber <=5){
+				PrinterFlag = 1;
+		}
+		else{
+				PrinterFlag =0;
+		}
 		
 		OLED_Refresh_Gram();//更新显示到OLED			
 		
@@ -274,11 +294,27 @@ void OLED_PrintPage(void)
 /* 材料检测 页面*/
 void OLED_MaterPage(void)
 {
-		static char str[20] = {0};
-		OLED_ChineseString(0,16,2,3,16);  		//打印当前电容
-		sprintf(str,": %.3f",Paper.Capacitance);
-		OLED_ShowString(32,16, (uint8 *)str,16);
+static uint8 MaterialFlag = 0;
+	
+		OLED_ChineseString(32,0,52,55,16);  //材料识别
+			
+		OLED_ChineseString(0,32,0,1,16);				//当前材料
+		OLED_ChineseString(32,32,52,53,16);
+		OLED_ShowString(64,32,(uint8 *)":",16);
+		if(MaterialFlag == 0)							//无
+		{
+				OLED_ChineseString(72,32,63,63,16);
+		}
+		if(MaterialFlag == 1){							//KT板
+				OLED_ShowString(72,32,(uint8 *)"KT",16);
+				OLED_ChineseString(72,32,66,66,16);
+		}
+		if(MaterialFlag == 2)	{						//纤维板
 		
+				OLED_ChineseString(72,32,64,66,16);
+		}
+
+	
 
 		OLED_Refresh_Gram();//更新显示到OLED			
 

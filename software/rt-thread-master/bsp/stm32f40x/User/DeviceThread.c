@@ -26,7 +26,7 @@
 #include "HMI.h"
 #include "drv_i2c.h"
 #include "FDC2214.h"
-
+#include "my2490.h"
 
 
 
@@ -41,14 +41,26 @@ void fdc2214_thread_entry(void *parameter)//高电平1.5ms 总周期20ms  占空比7.5% v
 	
 		while(1)
 		{
+				switch(HMI_Status_Flag){
+						case 0x01:/* 校准模式 */
 
-				if(1 == HMI_Status_Flag){//开始校准
-						Short_Circuit_Detection();
-						FDC2214_Data_Adjust(); //数据校准	
+											FDC2214_Data_Adjust(); //数据校准	
+											break;
+						case 0x02:/* 工作模式 */
+											Capcity_Paper_Detection(); //获取电容值
+											break;			
+						case 0x03:/* 拓展功能选择 */
+
+											break;																									
+						case 0x04:/* 打印机 纸张检测 */
+											Printer_Paper_Detection();
+											break;
+																								
+						case 0x05:/* 材料 检测 */
+											Material_Detection();
+											break;
+
 				}
-				else{ //工作模式
-						Get_Capcity_Value(); //获取电容值
-				}	
 				rt_thread_mdelay(2);
 		}
 	

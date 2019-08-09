@@ -27,6 +27,7 @@
 #include "EasyThread.h"
 #include <stdio.h>
 #include "HMI.h"
+#include "DataProcess.h"
 /*---------------------- Constant / Macro Definitions -----------------------*/
 
 //FLASH起始地址   W25Q128 16M 的容量分为 256 个块（Block）
@@ -58,11 +59,13 @@ uint32 Normal_Parameter[100]={0};
 int Normal_Parameter_Init_With_Flash(void)
 {
 		uint8 i = 0;
-		for(i = 0;i < 50;i++ ){
+		for(i = 0;i < 100 ;i++ ){
 				ef_port_read(Nor_FLASH_ADDRESS+4*i,(Normal_Parameter+i),4);		 //Flash读取
 		}
+		ef_port_read(Nor_FLASH_ADDRESS+4*100,(uint32 *)&KT_Board_Value_In_Flash,4);		 //Flash读取
+		ef_port_read(Nor_FLASH_ADDRESS+4*101,(uint32 *)&Fiber_Board_Value_In_Flash,4);		 //Flash读取
 		
-		for(int i = 0;i < 50;i++){
+		for(int i = 0;i < 100 ;i++){
 				Parameter_SelfCheck( (uint32 *)&FDC2214_Data_In_Flash[i],&Normal_Parameter[i] );//电池容量参数 3s/4s/6s
 		}
 		log_i("Flash_Read()");
@@ -80,9 +83,12 @@ void Flash_Update(void)
 {
 		ef_port_erase(Nor_FLASH_ADDRESS,4);	//【普通参数FLASH】先擦后写  擦除的为一个扇区4096 Byte 
 
-		for(int i = 0;i < 50;i++){
-				ef_port_write(Nor_FLASH_ADDRESS + 4*(i) ,(uint32 *)&FDC2214_Data_In_Flash[i],4); //电池容量参数 3s/4s/6s
+		for(int i = 0;i <100;i++){
+				ef_port_write(Nor_FLASH_ADDRESS + 4*(i) ,(uint32 *)&FDC2214_Data_In_Flash[i],4); //
 		}
+		ef_port_write(Nor_FLASH_ADDRESS + 4*(100) ,(uint32 *)&KT_Board_Value_In_Flash,4); //电池容量参数 3s/4s/6s
+		ef_port_write(Nor_FLASH_ADDRESS + 4*(101) ,(uint32 *)&Fiber_Board_Value_In_Flash,4); //电池容量参数 3s/4s/6s
+		
 }	
 
 
@@ -108,12 +114,13 @@ void Flash_Update(void)
 void list_value(void)
 {	
 		
-
-    log_i("----------------------   ---------");
+		static char str[30] = {0};
+    log_i("---------------------- ");
 		for(int i = 0;i < 50; i++){
-				log_i("NO.%d : %f               %s",i,FDC2214_Data_In_Flash[i]);
+				sprintf(str,"NO.%d : %f ",i,FDC2214_Data_In_Flash[i]);
+				log_i(str);
 		}
-    log_i("----------------------   ---------");
+    log_i("----------------------");
 		
     rt_kprintf("\n");
 }

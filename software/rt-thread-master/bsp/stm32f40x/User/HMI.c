@@ -20,10 +20,12 @@
 /*----------------------- Variable Declarations -----------------------------*/
 
 uint8 hmi_data_ok = 0;
-int HMI_Debug_Write_Button = 0; //写入数据Flag
 int HMI_Status_Flag = 0;//串口屏 设定状态标志位 【调试 1】or【工作2】
 int HMI_Page_Number = 0;//串口屏发送的校准  纸张数
+
+int HMI_Debug_Write_Button = 0; //写入数据Flag
 int HMI_Work_Button = 0; /* 检测 确认 按钮*/
+int Material_Button = 0; /* 材料 检测 确认按钮*/
 //76 61 30 2E 76 61 6C 3D 31 ff ff ff
 //76 61 30 2E 76 61 6C 3D 31 ff ff ff   va0.val=1
 uint8 him_uart_cmd[12] = {0x76,0x61,0x30,0x2E,0x76,0x61,0x6C,0x3D,0x31,0xFF,0xFF,0xFF};    // 01 写入成功  02 写入失败   03 正在写入... 04 提示hmi清屏
@@ -39,8 +41,8 @@ uint8 him_uart_reboot_cmd[7] = {0x72,0x65,0x73,0x74,0xff,0xff,0xff};
 uint8 him_ret_status = 0;
 uint8 hmi_data[10] = {0};
 
-float FDC2214_Paper_Data[50]  = {0.0f};
-float FDC2214_Data_In_Flash[50] = {0.0f};//写入
+float FDC2214_Paper_Data[100]  = {0.0f};
+float FDC2214_Data_In_Flash[100] = {0.0f};//写入
 
 /*----------------------- Function Implement --------------------------------*/
 
@@ -95,6 +97,22 @@ void uart_send_hmi_is_short(void)  //发送给hmi 是否短路
 
 }
 
+void uart_send_hmi_is_material(uint8 material)  //发送给hmi 是什么材料
+{ 	
+
+		if(1 == material){//当短路
+				him_uart_short_cmd[8] = 0x33;
+		}
+		else if(2 ==material){//不短路
+				him_uart_short_cmd[8] = 0x34;
+		}
+		else{
+				him_uart_short_cmd[8] = 0x30;				
+		}
+		
+		rt_device_write(focus_uart_device, 0,him_uart_short_cmd	, sizeof(him_uart_short_cmd));//向HMI发送短路信息
+
+}
 
 /* 发送给串口屏 写入的状态
 01:写入成功
@@ -105,24 +123,25 @@ void uart_send_hmi_is_short(void)  //发送给hmi 是否短路
 void FDC2214_Data_Adjust(void)//数据校准 存储
 {
 		static char str[30] = {0};
-		//rt_thread_mdelay(1000);
 
-			
-		Paper.Status = 0x03; //正在写入
-		uart_send_hmi_writer_status(&Paper.Status);//返回状态信息
-
-		FDC2214_Paper_Data[HMI_Page_Number]= get_single_capacity();
-	
-		Paper.Status = 0x01; //写入成功
-		if(1 == HMI_Debug_Write_Button){//只有按下才写入
-				FDC2214_Data_In_Flash[HMI_Page_Number] = FDC2214_Paper_Data[HMI_Page_Number] ;//单板 对应页 电容值保存
-				Flash_Update();
-				sprintf(str,"pagenum:%d,cap:%f\n",HMI_Page_Number,FDC2214_Data_In_Flash[HMI_Page_Number]);
-				rt_kprintf(str);
+		if(0x01 == HMI_Debug_Write_Button){
+				Paper.Status = 0x03; //正在写入
 				uart_send_hmi_writer_status(&Paper.Status);//返回状态信息
 		}
 
-		HMI_Debug_Write_Button = 0; //写入状态清零
+		FDC2214_Paper_Data[HMI_Page_Number]= get_single_capacity(); /* 获取电容 数值*/
+	
+		if(0x01 == HMI_Debug_Write_Button){//只有按下才写入
+				FDC2214_Data_In_Flash[HMI_Page_Number] = FDC2214_Paper_Data[HMI_Page_Number] ;//单板 对应页 电容值保存
+				Flash_Update();/* FLASH 写入 */
+				sprintf(str,"pagenum:%d,cap:%f\n",HMI_Page_Number,FDC2214_Data_In_Flash[HMI_Page_Number]);
+				rt_kprintf(str);
+				Paper.Status = 0x01; //写入成功
+				uart_send_hmi_writer_status(&Paper.Status);//返回状态信息
+				HMI_Debug_Write_Button = 0; //写入状态清零
+		}
+		Short_Circuit_Detection();  //短路检测
+
 }
 
 /**
@@ -170,7 +189,6 @@ void HMI_Data_Analysis(uint8 Data) //控制数据解析
 		if(1 == hmi_data_ok){
 				HMI_Status_Flag = hmi_data[3];//获取 工作模式位
 				
-			
 				if(0x01 == hmi_data[3] ){ 		
 						if( 0xFF == hmi_data[4]){ //调试状态,跳转进去，当数据位=0xFF时,只是跳转页面
 								HMI_Debug_Write_Button = 0; 	//写入页面状态
@@ -180,12 +198,13 @@ void HMI_Data_Analysis(uint8 Data) //控制数据解析
 								HMI_Debug_Write_Button = 1; 	//写入页面状态						
 						}
 				}
-				else if(0x02 == hmi_data[3] && 0x01 == hmi_data[4] ){//工作模式			 		
+				else if(0x02 == hmi_data[3] && 0x01 == hmi_data[4] ){//工作模式		Material_Button	 		
 						HMI_Work_Button = 1; //工作模式的 按钮按下标志 锁定数据显示
 				}
-				else if(0x02 == hmi_data[3] && 0x02 == hmi_data[4] ){//工作模式			 		
-						HMI_Work_Button = 0; //清除锁定
+				else if(0x05 == hmi_data[3] && 0x01 == hmi_data[4] ){//工作模式			 		
+						Material_Button = 1; //清除锁定
 				}
+
 
 		}
 		hmi_data_ok = 0;

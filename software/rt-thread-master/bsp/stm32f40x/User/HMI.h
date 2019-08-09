@@ -16,15 +16,18 @@ void uart_send_hmi_paper_numer(uint8 N_number);  //发送给hmi 纸张数量
 void uart_send_hmi_is_short(void); //发送给hmi 是否短路
 
 void uart_send_hmi_reboot(void);//让him复位
+
+void uart_send_hmi_is_material(uint8 material);  //发送给hmi 是什么材料
 /* -------------  */
 extern int HMI_Status_Flag ;//串口屏 设定状态标志位 【调试 1】or【工作2】
 
 extern int HMI_Page_Number ;//串口屏发送的校准  纸张数
 
-extern float FDC2214_Data_In_Flash[50];
-extern float FDC2214_Paper_Data[50];
+extern float FDC2214_Data_In_Flash[100];
+extern float FDC2214_Paper_Data[100];
 
 extern int HMI_Status_Flag;
+extern int Material_Button; 
 #endif
 
 

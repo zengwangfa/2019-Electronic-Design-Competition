@@ -519,11 +519,6 @@
               <FilePath>applications\flash.c</FilePath>
             </File>
             <File>
-              <FileName>focus.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\focus.c</FilePath>
-            </File>
-            <File>
               <FileName>led.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\led.c</FilePath>
@@ -547,6 +542,11 @@
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\applications\timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>my2490.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\my2490.c</FilePath>
             </File>
           </Files>
         </Group>

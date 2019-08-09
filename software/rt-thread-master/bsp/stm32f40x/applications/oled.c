@@ -102,24 +102,33 @@ void menu_define(void) //菜单定义
 	  if(oled.pagenum >= OLED_Page_MAX || oled.pagenum <= SwitchPage) oled.pagenum = SwitchPage; //超出页面范围 则为第一页
 		if(oled.pagechange != oled.pagenum){ //当页码改变
 				OLED_Clear(); //清屏
-				Buzzer_Set(&Beep,1,1);
+				//Buzzer_Set(&Beep,1,1);
 				//rt_kprintf("Current Menu_Page: %s \n",oled.pagename[oled.pagenum-1]);
 				oled.pagechange_flag = 1;
 		}
 		else {oled.pagechange_flag = 0;}
 		oled.pagechange = oled.pagenum;
 		
-		oled.pagenum = HMI_Status_Flag;
+		oled.pagenum = HMI_Status_Flag;//获取状态
 
 		switch(oled.pagenum){
 				case 0:{
-						MENU = DebugPage;	 OLED_SwitchPage();		break;
+						MENU = SwitchPage;OLED_SwitchPage();		break;
 				}
 				case 1:{
-						MENU = DebugPage;	 OLED_DebugPage();		break;
+						MENU = DebugPage;OLED_DebugPage();		break;
 				}
 				case 2:{
 						MENU = WorkPage;OLED_WorkPage();break;
+				}
+				case 3:{
+						MENU = FuncPage;OLED_FuncSwitchPage();break;
+				}
+				case 4:{
+						MENU = PrintPage;OLED_PrintPage();break;
+				}
+				case 5:{
+						MENU = MaterPage;OLED_MaterPage();break;
 				}
 				default:OLED_SwitchPage();	break;
 		}
@@ -185,11 +194,8 @@ void OLED_DebugPage(void)
 ********************************************/
 void OLED_WorkPage(void)
 {
-		static char str[50];
+		static char str[50] = {0};
 		
-		//PaperCount->State = KEY_Paper(KEY0)  					//【接口】需要条件改变运行状态
-		//PaperCount->Capacitance = AccountExpect(PaperCount_Capacitance,100);  // 【电容接口】计算期望电容值
-
 		switch(Paper.Status){
 				case 0:
 						OLED_ChineseString(40,0,10,10,16);
@@ -210,7 +216,6 @@ void OLED_WorkPage(void)
 		sprintf(str,": %.3f",Paper.Capacitance);
 		OLED_ShowString(32,16, (uint8 *)str,16);
 
-		
 		OLED_ChineseString(0,32,23,26,16);   	//打印当前张数
 		OLED_ShowString(64,32, (uint8 *)":",16); 
 		
@@ -234,6 +239,50 @@ void OLED_WorkPage(void)
 	  OLED_Refresh_Gram();//更新显示到OLED
 }
 
+
+/* 拓展功能选择 页面*/
+void OLED_FuncSwitchPage(void)
+{
+		static char str[20] = {0};
+		
+		OLED_ChineseString(32,0,31,34,16);//选择菜单
+		
+		OLED_Refresh_Gram();//更新显示到OLED			
+}
+
+
+/* 打印机 页面*/
+void OLED_PrintPage(void)
+{
+		static char str[20] = {0};
+		
+		OLED_ChineseString(0,16,2,3,16);  		//打印当前电容
+		sprintf(str,": %.3f",Paper.Capacitance);
+		OLED_ShowString(32,16, (uint8 *)str,16);
+		
+		OLED_ChineseString(0,32,23,26,16);   	//打印当前张数
+		OLED_ShowString(64,32, (uint8 *)":",16); 
+				
+		sprintf(str,"%3d",Paper.PaperNumber);  //测试纸张页数
+		OLED_ShowString(72,32, (uint8 *)str,16); 
+		
+		OLED_Refresh_Gram();//更新显示到OLED			
+		
+}
+
+
+/* 材料检测 页面*/
+void OLED_MaterPage(void)
+{
+		static char str[20] = {0};
+		OLED_ChineseString(0,16,2,3,16);  		//打印当前电容
+		sprintf(str,": %.3f",Paper.Capacitance);
+		OLED_ShowString(32,16, (uint8 *)str,16);
+		
+
+		OLED_Refresh_Gram();//更新显示到OLED			
+
+}
 
 /*******************************************
 * 函 数 名：Boot_Animation

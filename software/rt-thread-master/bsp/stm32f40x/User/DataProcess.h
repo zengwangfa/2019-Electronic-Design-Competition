@@ -10,6 +10,8 @@ typedef struct
 	uint8 Finish_Flag;  //读取完成的标志
 	uint8 PaperNumber;  //纸张数量
 	float Capacitance;
+	
+	int Time; //时间
 
 	
 }PaperCountEngine_Type;//纸张测数器状态
@@ -23,7 +25,7 @@ float get_single_capacity(void);
 
 void FDC2214_Data_Adjust(void);//数据校准
 
-void	Get_Capcity_Value(void); //获取电容值
+void	Capcity_Paper_Detection(void); //获取电容值
 
 int	Short_Circuit_Detection(void);//短路检测
 
@@ -41,6 +43,15 @@ extern PaperCountEngine_Type Paper; //SB
 extern int ShortFlag;        //短路标志位
 
 
+extern float KT_Board_Value_In_Flash; //KT板Flash数值
+extern float Fiber_Board_Value_In_Flash;//纤维板 Flash数值
+
+
+/* 打印机 纸张检测 */
+void Printer_Paper_Detection(void);
+
+/* 材料 检测 */
+void Material_Detection(void);
 
 #endif
 

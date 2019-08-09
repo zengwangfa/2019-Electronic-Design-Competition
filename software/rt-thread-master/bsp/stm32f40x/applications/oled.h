@@ -10,6 +10,10 @@ void OLED_WorkPage(void);
 void OLED_DebugPage(void);
 void OLED_LockPage(void);
 void OLED_SwitchPage(void);
+/* 打印机 页面*/
+void OLED_PrintPage(void);
+void OLED_MaterPage(void);
+void OLED_FuncSwitchPage(void);
 //void OLED_GyroscopePage(void);
 void draw_circle(uint8 x,uint8 y,uint8 r); //圆心(x,y),半径r
 void draw_line(uint8 x0,uint8 y0,float k,uint8 dot); //过固定点(x0,y0),斜率k  dot:0,清空;   1,填充	  
@@ -30,8 +34,9 @@ typedef enum
 		SwitchPage = 0,
 		DebugPage = 1, //页码从第一页开始
 		WorkPage,
-		PicturePage,
-		LockPage,   
+		FuncPage,
+		PrintPage,
+		MaterPage,   
 
 	
 		OLED_Page_MAX   //页码最大值

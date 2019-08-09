@@ -217,7 +217,7 @@ int device_uart_init(void)
 		
 		if(debug_uart_device != RT_NULL){
 				rt_device_open(debug_uart_device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_DMA_RX); 
-				config.baud_rate = BAUD_RATE_115200;
+				config.baud_rate = BAUD_RATE_9600;
 				config.data_bits = DATA_BITS_8;
 				config.stop_bits = STOP_BITS_1;
 				config.parity = PARITY_NONE;
@@ -260,7 +260,7 @@ int device_uart_init(void)
 																	debug_thread_entry,
 																	RT_NULL, 
 																	512, 
-																	20,
+																	15,
 																	10);
 																			
 		/* 创建 变焦 serial 线程 */

@@ -269,7 +269,7 @@ void OLED_PrintPage(void)
 		OLED_ChineseString(32,32,56,57,16);
 		OLED_ShowString(64,32,(uint8 *)":",16);
 		OLED_ChineseString(108,32,24,24,16);
-		sprintf(str,"%3d",Paper.PaperNumber);  //测试纸张页数
+		sprintf(str,"%d   ",Paper.PaperNumber);  //测试纸张页数
 		OLED_ShowString(72,32, (uint8 *)str,16); 
 		
 		if(PrinterFlag == 1){
@@ -301,8 +301,8 @@ static uint8 MaterialFlag = 0;
 		OLED_ChineseString(0,32,0,1,16);				//当前材料
 		OLED_ChineseString(32,32,52,53,16);
 		OLED_ShowString(64,32,(uint8 *)":",16);
-		if(MaterialFlag == 0)							//无
-		{
+		if(MaterialFlag == 0)	{						//无
+		
 				OLED_ChineseString(72,32,63,63,16);
 		}
 		if(MaterialFlag == 1){							//KT板

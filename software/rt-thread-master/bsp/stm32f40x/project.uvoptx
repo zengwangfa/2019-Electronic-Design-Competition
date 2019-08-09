@@ -135,7 +135,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-          <Name>d</Name>
+          <Name></Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -229,6 +229,11 @@
           <count>15</count>
           <WinNumber>1</WinNumber>
           <ItemText>my2490_number_array,0x10</ItemText>
+        </Ww>
+        <Ww>
+          <count>16</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Cap_Value</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>

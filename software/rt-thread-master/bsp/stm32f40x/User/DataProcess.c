@@ -97,7 +97,10 @@ void Capcity_Paper_Detection(void)
 /* 打印机 纸张检测 */
 void Printer_Paper_Detection(void)
 {
-		Get_Paper();/* 获取纸张数量 */
+		Paper.Capacitance = get_single_capacity();/* 获取单次 电容值*/
+		if(Short_Circuit_Detection() != 1){
+				Get_Paper();/* 获取纸张数量 */
+		}
 
 }
 
@@ -143,7 +146,9 @@ int Short_Circuit_Detection(void)
     //当数据在 短路数值范围变化
 		//或者当值非常小的时候，判定为受到干扰
 		if( ((is_in_range(FDC2214_Paper_Data[0],FDC2214_Data_In_Flash[0],50.0f)) && HMI_Status_Flag == 1) \
-			||((is_in_range(Paper.Capacitance,FDC2214_Data_In_Flash[0],50.0f)) && HMI_Status_Flag == 2)  )
+			||((is_in_range(Paper.Capacitance,FDC2214_Data_In_Flash[0],50.0f)) && HMI_Status_Flag == 2) 
+			||((is_in_range(Paper.Capacitance,FDC2214_Data_In_Flash[0],50.0f)) && HMI_Status_Flag == 4) 
+		)
 		{
 				Paper.ShortStatus = 1;//判定短路
 				Paper.PaperNumber = 0; //如果短路即为0

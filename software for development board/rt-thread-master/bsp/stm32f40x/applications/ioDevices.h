@@ -38,7 +38,7 @@ void paper_add(void *args)  ;
 void paper_min(void *args)  ;
 
 
-
+void Key_Read(void);
 
 #endif
 

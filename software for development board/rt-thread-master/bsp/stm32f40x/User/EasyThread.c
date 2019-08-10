@@ -25,7 +25,7 @@ void ioDevices_thread_entry(void* parameter)// --- 按键、拨码 ---
 	
 		Buzzer_Set(&Beep,1,1);
     while (1){
-			
+				Key_Read();
 				Buzzer_Process(&Beep); //蜂鸣器控制任务
 				rt_thread_mdelay(10);
     }

@@ -18,22 +18,21 @@
 #include "EasyThread.h"
 /*---------------------- Constant / Macro Definitions -----------------------*/
 
-#define KEY0	  				    3	 //PF5
-#define KEY1 					      2	 //PF4  
-#define NEXT_PIN  				64 	 //下一页
-#define Work_Button_PIN 					66	 //确认
+#define KEY_MIN	  				  58	 //PF5
+#define KEY_ADD 					  60	 //PF4  
+#define NEXT_PIN  				  64 	 //下一页
+#define Work_Button_PIN 		66	 //确认
 
-
-#define KEY_PIN  						88 	 //PDG3   按键IO
-
-#define WIFI_CONNECT_PIN    80 	 //PD11   WIFI连接IO检测
-#define WIFI_RELOAD_PIN     68 	 //PE15   WIFI复位IO
+#define key_min_read 					rt_pin_read(KEY_MIN)
+#define key_add_read 					rt_pin_read(KEY_ADD)
+#define next_oled_read 			  rt_pin_read(NEXT_PIN)
+#define work_button_read 			rt_pin_read(Work_Button_PIN)
 
 #define BOMA3_PIN 					13	 //PF3   拨码开关IO
 #define BOMA2_PIN	  				15	 //PF5
 #define BOMA1_PIN 					14	 //PF4  
 
-#define Buzzer_PIN 					59   //PE8   蜂鸣器IO
+#define Buzzer_PIN 					59   //
 
 #define boma1_read 					rt_pin_read(BOMA1_PIN)
 #define boma2_read 					rt_pin_read(BOMA2_PIN)
@@ -57,24 +56,24 @@ int ioDevices_thread_init(void)
 
     if (ioDecices_tid != RT_NULL){			
 				rt_pin_mode(NEXT_PIN , PIN_MODE_INPUT_PULLUP);    //功能按键、拨码开关  上拉输入
-				rt_pin_mode(KEY0, PIN_MODE_INPUT_PULLUP);  //拨码开关  上拉输入
-				rt_pin_mode(KEY1, PIN_MODE_INPUT_PULLUP);  
+				rt_pin_mode(KEY_MIN, PIN_MODE_INPUT_PULLUP);  //拨码开关  上拉输入
+				rt_pin_mode(KEY_ADD, PIN_MODE_INPUT_PULLUP);  
 				rt_pin_mode(Work_Button_PIN, PIN_MODE_INPUT_PULLUP);  
 
 				rt_pin_mode (Buzzer_PIN, PIN_MODE_OUTPUT);  //输出模式
 				rt_pin_write(Buzzer_PIN, PIN_HIGH);
 
-				rt_pin_attach_irq(NEXT_PIN, PIN_IRQ_MODE_RISING, next_oled, RT_NULL);/* 绑定中断，上升沿模式，回调函数名为key_down */
-				rt_pin_irq_enable(NEXT_PIN, PIN_IRQ_ENABLE);/* 使能中断 */
-			
-				rt_pin_attach_irq(KEY0, PIN_IRQ_MODE_FALLING, paper_min, RT_NULL);/* 绑定中断，上升沿模式，回调函数名为key_down */
-				rt_pin_irq_enable(KEY0, PIN_IRQ_ENABLE);/* 使能中断 */
+//				rt_pin_attach_irq(NEXT_PIN, PIN_IRQ_MODE_RISING_FALLING, next_oled, RT_NULL);/* 绑定中断，上升沿模式，回调函数名为key_down */
+//				rt_pin_irq_enable(NEXT_PIN, PIN_IRQ_ENABLE);/* 使能中断 */
+//			
+//				rt_pin_attach_irq(KEY_MIN, PIN_IRQ_MODE_RISING_FALLING, paper_min, RT_NULL);/* 绑定中断，上升沿模式，回调函数名为key_down */
+//				rt_pin_irq_enable(KEY_MIN, PIN_IRQ_ENABLE);/* 使能中断 */
 
-				rt_pin_attach_irq(KEY1, PIN_IRQ_MODE_FALLING, paper_add, RT_NULL);/* 绑定中断，上升沿模式，回调函数名为key_down */
-				rt_pin_irq_enable(KEY1, PIN_IRQ_ENABLE);/* 使能中断 */
-			
-				rt_pin_attach_irq(Work_Button_PIN, PIN_IRQ_MODE_FALLING, work_button, RT_NULL);/* 绑定中断，上升沿模式，回调函数名为key_down */
-				rt_pin_irq_enable(Work_Button_PIN, PIN_IRQ_ENABLE);/* 使能中断 */
+//				rt_pin_attach_irq(KEY_ADD, PIN_IRQ_MODE_RISING_FALLING, paper_add, RT_NULL);/* 绑定中断，上升沿模式，回调函数名为key_down */
+//				rt_pin_irq_enable(KEY_ADD, PIN_IRQ_ENABLE);/* 使能中断 */
+//			
+//				rt_pin_attach_irq(Work_Button_PIN, PIN_IRQ_MODE_RISING_FALLING, work_button, RT_NULL);/* 绑定中断，上升沿模式，回调函数名为key_down */
+//				rt_pin_irq_enable(Work_Button_PIN, PIN_IRQ_ENABLE);/* 使能中断 */
 
 
 				log_i("IoDev_Init()");
@@ -94,62 +93,105 @@ uint8 get_boma_value(void)
     return val;
 }
 
-/**
-	* @brief  is_wifi_connect(wifi是否连接)
-  * @param  None
-  * @retval 1 连接上   0无连接
-  * @notice 
-  */
-uint8 is_wifi_connect(void)
+
+
+void Key_Read(void)
 {
-		return !wifi_read; 
-}
-
-void work_button(void *args)
-{
-		if(oled.pagenum == 1){
-				HMI_Debug_Write_Button = 1;
-		
-		}
-		else if(oled.pagenum == 2){
-				HMI_Work_Button = 1;
-		}
-
-}
-
-
-
-/* 按键按下产生的任务 */
-void next_oled(void *args)  
-{
-		oled.pagenum += 1;				
-
-}
-
-
-/* 按键按下产生的任务 */
-void paper_add(void *args)  
-{
-		if(oled.pagenum == 1){
-				 HMI_Page_Number ++;	
-				if(HMI_Page_Number >= 50){
-						HMI_Page_Number = 50;
-				}	
-		}
-
-}
-
-
-/* 按键按下产生的任务 */
-void paper_min(void *args)  
-{
-		if(oled.pagenum == 1){
-				HMI_Page_Number --;
-				if(HMI_Page_Number <= 0){
-						HMI_Page_Number = 0;
+		if(0 == work_button_read){
+				rt_thread_mdelay(100);
+				if(oled.pagenum == 1){
+						HMI_Debug_Write_Button = 1;
+				}
+				else if(oled.pagenum == 2){
+						HMI_Work_Button = 1;
 				}
 		}
+		
+
+		if(0 == next_oled_read){
+				rt_thread_mdelay(300);
+				oled.pagenum += 1;				
+		}
+
+
+		if(0 == key_add_read ){
+				rt_thread_mdelay(200);
+				if(oled.pagenum == 1){
+						 HMI_Page_Number ++;	
+						if(HMI_Page_Number >= 50){
+								HMI_Page_Number = 50;
+						}	
+				}
+		}
+
+		if(0 == key_min_read){
+				rt_thread_mdelay(200);
+				if(oled.pagenum == 1){
+						HMI_Page_Number --;
+						if(HMI_Page_Number <= 0){
+								HMI_Page_Number = 0;
+						}
+				}
+		}
+
 }
+
+
+
+
+
+
+
+
+//void work_button(void *args)
+//{
+//			rt_thread_mdelay(1000);
+//		if(oled.pagenum == 1){
+//				HMI_Debug_Write_Button = 1;
+//		
+//		}
+//		else if(oled.pagenum == 2){
+//				HMI_Work_Button = 1;
+//		}
+//		
+//}
+
+
+
+///* 按键按下产生的任务 */
+//void next_oled(void *args)  
+//{
+//		rt_thread_mdelay(1000);
+//		oled.pagenum += 1;				
+
+//}
+
+
+///* 按键按下产生的任务 */
+//void paper_add(void *args)  
+//{
+//			rt_thread_mdelay(1000);
+//		if(oled.pagenum == 1){
+//				 HMI_Page_Number ++;	
+//				if(HMI_Page_Number >= 50){
+//						HMI_Page_Number = 50;
+//				}	
+//		}
+
+//}
+
+
+///* 按键按下产生的任务 */
+//void paper_min(void *args)  
+//{
+//			rt_thread_mdelay(1000);
+//		if(oled.pagenum == 1){
+//				HMI_Page_Number --;
+//				if(HMI_Page_Number <= 0){
+//						HMI_Page_Number = 0;
+//				}
+//		}
+//}
 
 
 /*buzzer为蜂鸣器控制器  count为响的次数  length响的时间长度  */
@@ -185,20 +227,6 @@ void Buzzer_Process(Buzzer_Type * buzzer)
 
 
 
-
-
-/*【WIFI】重启MSH命令 */
-int wifi_reload(void)
-{
-		rt_pin_write(WIFI_RELOAD_PIN ,PIN_LOW);
-		rt_thread_mdelay(4000);
-		rt_pin_write(WIFI_RELOAD_PIN ,PIN_HIGH);
-		rt_thread_mdelay(1000);
-		log_d("WIFI Reload!\r\n");
-		return 0;
-
-}
-MSH_CMD_EXPORT(wifi_reload,wifi reload);
 
 
 

@@ -18,6 +18,8 @@ void uart_send_hmi_is_short(void); //发送给hmi 是否短路
 void uart_send_hmi_reboot(void);//让him复位
 
 void uart_send_hmi_is_material(uint8 material);  //发送给hmi 是什么材料
+
+void uart_send_hmi_is_money(uint8 money);  //发送给hmi 是什么材料
 /* -------------  */
 extern int HMI_Status_Flag ;//串口屏 设定状态标志位 【调试 1】or【工作2】
 
@@ -28,6 +30,12 @@ extern float FDC2214_Paper_Data[100];
 
 extern int HMI_Status_Flag;
 extern int Material_Button; 
+extern int Material_Debug_Write_Button; /* 材料 写入数据*/
+
+extern int Money_Button; 
+extern int Money_Debug_Write_Button; /* 材料 写入数据*/
+
+extern float Data_Diff_Value; //FLash 上下两次的差值
 #endif
 
 

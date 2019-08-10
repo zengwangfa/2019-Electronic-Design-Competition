@@ -64,18 +64,17 @@ int Normal_Parameter_Init_With_Flash(void)
 		}
 		ef_port_read(Nor_FLASH_ADDRESS+4*100,(uint32 *)&KT_Board_Value_In_Flash,4);		 //Flash读取
 		ef_port_read(Nor_FLASH_ADDRESS+4*101,(uint32 *)&Fiber_Board_Value_In_Flash,4);		 //Flash读取
+
+		ef_port_read(Nor_FLASH_ADDRESS+4*102,(uint32 *)&Money_100_In_Flash,4);		 //Flash读取
+		ef_port_read(Nor_FLASH_ADDRESS+4*103,(uint32 *)&Money_50_In_Flash,4);		 //Flash读取
 		
 		for(int i = 0;i < 100 ;i++){
 				Parameter_SelfCheck( (uint32 *)&FDC2214_Data_In_Flash[i],&Normal_Parameter[i] );//电池容量参数 3s/4s/6s
 		}
 		log_i("Flash_Read()");
-		log_i("                      ----------");
-		log_i("debug_tool            |%s     |",debug_tool_name[debug_tool]);
-		log_i("                      ----------");
+		log_w("debug_tool            |%s     |",debug_tool_name[debug_tool]);
 		return 0;
 }
-
-
 
 
 /* FLASH 更新 普通参数 */
@@ -88,7 +87,9 @@ void Flash_Update(void)
 		}
 		ef_port_write(Nor_FLASH_ADDRESS + 4*(100) ,(uint32 *)&KT_Board_Value_In_Flash,4); //电池容量参数 3s/4s/6s
 		ef_port_write(Nor_FLASH_ADDRESS + 4*(101) ,(uint32 *)&Fiber_Board_Value_In_Flash,4); //电池容量参数 3s/4s/6s
-		
+	
+		ef_port_write(Nor_FLASH_ADDRESS + 4*(102) ,(uint32 *)&Money_100_In_Flash,4); //电池容量参数 3s/4s/6s
+		ef_port_write(Nor_FLASH_ADDRESS + 4*(103) ,(uint32 *)&Money_50_In_Flash,4); //电池容量参数 3s/4s/6s		
 }	
 
 

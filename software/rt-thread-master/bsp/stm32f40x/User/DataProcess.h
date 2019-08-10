@@ -34,7 +34,7 @@ void DataSubsection(float Cap_Division[],float arrey[],int Number);
 uint8 ProbablityCapacitance(float CompareArrey[])	;
 
 
-extern float Cap_Division[51];/**/
+extern float Cap_Division[101];/**/
 
 extern int HMI_Debug_Write_Button;
 extern int HMI_Work_Button;
@@ -46,12 +46,18 @@ extern int ShortFlag;        //短路标志位
 extern float KT_Board_Value_In_Flash; //KT板Flash数值
 extern float Fiber_Board_Value_In_Flash;//纤维板 Flash数值
 
+extern float Money_100_In_Flash ; //100元
+extern float Money_50_In_Flash ;  //50元
 
+extern int Div_40_50_Parameter; //切分 40~50张的系数
 /* 打印机 纸张检测 */
 void Printer_Paper_Detection(void);
 
 /* 材料 检测 */
 void Material_Detection(void);
+
+/* 材料 检测 */
+void Money_Detection(void);
 
 #endif
 

@@ -59,7 +59,10 @@ void fdc2214_thread_entry(void *parameter)//高电平1.5ms 总周期20ms  占空比7.5% v
 						case 0x05:/* 材料 检测 */
 											Material_Detection();
 											break;
-
+						case 0x07:
+											Money_Detection();
+											break;
+					
 				}
 				rt_thread_mdelay(2);
 		}

@@ -176,6 +176,8 @@ void OLED_DebugPage(void)
 		OLED_ChineseString(0,48,13,14,16);  		// ×´Ì¬
 		OLED_ShowString(32,48, (uint8 *)":",16); 		
 
+		sprintf(str,"D: %.3f",Data_Diff_Value);
+		OLED_ShowString(0,32,(uint8 *)str,16); 			
 		if(1 == Paper.ShortStatus){//µ±¶ÌÂ·
 				OLED_ChineseString(40,48,11,12,16);
 				OLED_ShowString(72,48, (uint8 *)"    ",16);

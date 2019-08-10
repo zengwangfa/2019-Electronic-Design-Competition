@@ -37,7 +37,7 @@ void fdc2214_thread_entry(void *parameter)//高电平1.5ms 总周期20ms  占空比7.5% v
 		rt_thread_mdelay(1000);
 		uart_send_hmi_reboot();//让HMI串口屏复位
 		rt_thread_mdelay(2000);
-		DataSubsection(Cap_Division,FDC2214_Data_In_Flash,50);//读取Flash中的数据，分割好 电容区间
+		DataSubsection(Cap_Division,FDC2214_Data_In_Flash,100);//读取Flash中的数据，分割好 电容区间
 	
 		while(1)
 		{

@@ -118,9 +118,9 @@ void Key_Read(void)
 				rt_thread_mdelay(200);
 				if(oled.pagenum == 1){
 						 HMI_Page_Number ++;	
-						if(HMI_Page_Number >= 50){
-								HMI_Page_Number = 50;
-						}	
+//						if(HMI_Page_Number >= 50){
+//								HMI_Page_Number = 50;
+//						}	
 				}
 		}
 

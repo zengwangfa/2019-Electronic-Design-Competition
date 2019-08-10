@@ -22,11 +22,12 @@ unsigned int CH4_DATA;//通道值
 
 float ShortValue4;//短路值
 
-float Cap_Division[51]= {0};/**/
+float Cap_Division[100]= {0};/**/
+int Cap_Probability[100] ={0}; //存放可能性
 
 float Cap_Value[10] ={0}; //存放 10次采集的电容值
 
-int Cap_Probability[50] ={0}; //存放可能性
+
 
 PaperCountEngine_Type Paper = {
 			.Finish_Flag = 2
@@ -71,6 +72,7 @@ void Capcity_Paper_Detection(void)
 						HMI_Work_Button = 0;
 				}
 				uart_send_hmi_paper_numer(Paper.PaperNumber);
+				rt_thread_mdelay(5); //当直接返回是，延时，以防读取过快
 				return;
 		}
 
@@ -173,7 +175,7 @@ void DataSubsection(float Cap_Division[],float arrey[],int Number)
 
 		}
 		for(int i=30;i<Number;i++){
-				CapacitanceDP = 3*(arrey[i-1]-arrey[i]) /10.0f;
+				CapacitanceDP = 30*(arrey[i-1]-arrey[i]) /100.0f;
 				Cap_Division[i-1]= arrey[i-1]-CapacitanceDP;
 		}
 		if(rec==1){
@@ -190,14 +192,14 @@ uint8 ProbablityCapacitance(float CompareArrey[])	//传入 需要比较的数据
 {
 
 		memset(Cap_Probability,0,sizeof(Cap_Probability));//清空电容值落点可能性
-		for(int i=0;i<=50;i++ ){
+		for(int i=0;i<=70 ;i++ ){
 				for(int j=0; j<10 ;j++){
 						if( (CompareArrey[j] < Cap_Division[i])  && (CompareArrey[j] >= Cap_Division[i+1])){
 								Cap_Probability[i]++;
 						}
 				}
 		}
-		for(int n = 0;n < 49;n++){
+		for(int n = 0;n < 69;n++){
 				if(Cap_Probability[n] > Cap_Probability[Probability_Max]){
 						Probability_Max = (n + 1);
 				}

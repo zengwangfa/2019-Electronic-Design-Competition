@@ -13,6 +13,7 @@
 #include "uart.h"
 #include "DataProcess.h"
 #include "flash.h"
+#include "ioDevices.h"
 /*---------------------- Constant / Macro Definitions -----------------------*/
 
 #define HMI_LEN 5
@@ -101,10 +102,10 @@ void uart_send_hmi_is_material(uint8 material)  //发送给hmi 是什么材料
 { 	
 
 		if(1 == material){//当短路
-				him_uart_short_cmd[8] = 0x33;
+				him_uart_short_cmd[8] = 0x31;
 		}
 		else if(2 ==material){//不短路
-				him_uart_short_cmd[8] = 0x34;
+				him_uart_short_cmd[8] = 0x32;
 		}
 		else{
 				him_uart_short_cmd[8] = 0x30;				
@@ -134,6 +135,7 @@ void FDC2214_Data_Adjust(void)//数据校准 存储
 		if(0x01 == HMI_Debug_Write_Button){//只有按下才写入
 				FDC2214_Data_In_Flash[HMI_Page_Number] = FDC2214_Paper_Data[HMI_Page_Number] ;//单板 对应页 电容值保存
 				Flash_Update();/* FLASH 写入 */
+				Buzzer_Set(&Beep,1,1);//蜂鸣器响一声
 				sprintf(str,"pagenum:%d,cap:%f\n",HMI_Page_Number,FDC2214_Data_In_Flash[HMI_Page_Number]);
 				rt_kprintf(str);
 				Paper.Status = 0x01; //写入成功

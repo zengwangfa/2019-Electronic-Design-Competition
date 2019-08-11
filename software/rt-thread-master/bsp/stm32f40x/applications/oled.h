@@ -15,6 +15,8 @@ void OLED_PrintPage(void);
 void OLED_MaterPage(void);
 void OLED_FuncSwitchPage(void);
 //void OLED_GyroscopePage(void);
+void OLED_RMBDectionPage(void);
+
 void draw_circle(uint8 x,uint8 y,uint8 r); //圆心(x,y),半径r
 void draw_line(uint8 x0,uint8 y0,float k,uint8 dot); //过固定点(x0,y0),斜率k  dot:0,清空;   1,填充	  
 void draw_fill_circle(uint8 x0,uint8 y0,uint8 r,uint8 dot);//写画实心圆心(x0,y0),半径r
@@ -38,6 +40,8 @@ typedef enum
 		PrintPage,
 		MaterPage,   
 
+		ChangePage,
+		RMBPage,
 	
 		OLED_Page_MAX   //页码最大值
 	

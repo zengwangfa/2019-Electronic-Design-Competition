@@ -152,9 +152,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>174</LineNumber>
+          <LineNumber>190</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134241452</Address>
+          <Address>134241638</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -163,46 +163,14 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>.\User\DataProcess.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\rtthread_stm32f4xx\User/DataProcess.c\174</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>177</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134241598</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\User\DataProcess.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\rtthread_stm32f4xx\User/DataProcess.c\177</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
-          <LineNumber>180</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134241606</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\User\DataProcess.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\rtthread_stm32f4xx\User/DataProcess.c\180</Expression>
+          <Expression>\\rtthread_stm32f4xx\User/DataProcess.c\190</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>hmi_data</ItemText>
+          <ItemText>hmi_data,0x10</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
@@ -313,6 +281,26 @@
           <count>22</count>
           <WinNumber>1</WinNumber>
           <ItemText>Fiber_Board_Value_In_Flash</ItemText>
+        </Ww>
+        <Ww>
+          <count>23</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Div_40_50_Parameter,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>24</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Div_50_60_Parameter,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>25</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Div_60_70_Parameter,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>26</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>adjust_str</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>

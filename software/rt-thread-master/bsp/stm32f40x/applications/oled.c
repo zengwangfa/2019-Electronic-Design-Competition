@@ -130,6 +130,10 @@ void menu_define(void) //菜单定义
 				case 5:{
 						MENU = MaterPage;OLED_MaterPage();break;
 				}
+				case 7:{
+						MENU = RMBPage; OLED_RMBDectionPage();break;
+				
+				}
 				default:OLED_SwitchPage();	break;
 		}
 }
@@ -201,21 +205,17 @@ void OLED_WorkPage(void)
 {
 		static char str[50] = {0};
 		
-		switch(Paper.Status){
-				case 0:
-						OLED_ChineseString(40,0,10,10,16);
-						OLED_ChineseString(56,0,16,17,16);				//纸张测数器未开始的状态	
-						break;
-				case 1:
-						OLED_ChineseString(40,0,19,22,16);				//纸张测数器完成的状态
-						break;
-				case 2:
-						OLED_ChineseString(40,0,16,18,16); 				//纸张测数器运行的状态
-						break;		
-		}
-			
 		OLED_ChineseString(0,0,13,14,16);  		// 状态
 		OLED_ShowString(32,0, (uint8 *)":",16); 
+		
+		if(1 == Paper.ShortStatus){//当短路
+				OLED_ChineseString(40,0,11,12,16);
+				OLED_ShowString(72,0, (uint8 *)"    ",16);
+		}
+		else{
+				OLED_ChineseString(40,0,10,10,16);
+				OLED_ChineseString(56,0,11,12,16);
+		}
 		
 		OLED_ChineseString(0,16,2,3,16);  		//打印当前电容
 		sprintf(str,": %.3f",Paper.Capacitance);
@@ -250,12 +250,15 @@ void OLED_FuncSwitchPage(void)
 {
 		OLED_ChineseString(32,0,41,44,16);
 
-		OLED_ChineseString(8,32,45,47,16);		//打印机纸盒检测
-		OLED_ChineseString(0,48,48,51,16);
+		OLED_ChineseString(0,32,48,49,16);		//纸盒检测
+		OLED_ChineseString(0,48,50,51,16);
 		
-		OLED_ChineseString(96,32,52,53,16);		//材料识别
-		OLED_ChineseString(96,48,54,55,16);
+		OLED_ChineseString(48,32,52,53,16);		//材料识别
+		OLED_ChineseString(48,48,54,55,16);
 		
+		OLED_ChineseString(96,32,67,68,16);		//面值检测
+		OLED_ChineseString(96,48,69,70,16);
+	
 		OLED_Refresh_Gram();//更新显示到OLED			
 }
 
@@ -296,13 +299,17 @@ void OLED_PrintPage(void)
 /* 材料检测 页面*/
 void OLED_MaterPage(void)
 {
-static uint8 MaterialFlag = 0;
-	
+		static uint8 MaterialFlag = 0;
+		static char str[20] = {0};
 		OLED_ChineseString(32,0,52,55,16);  //材料识别
 			
 		OLED_ChineseString(0,32,0,1,16);				//当前材料
 		OLED_ChineseString(32,32,52,53,16);
 		OLED_ShowString(64,32,(uint8 *)":",16);
+	
+		OLED_ChineseString(0,16,2,3,16);  		//打印当前电容
+		sprintf(str,": %.3f",Paper.Capacitance);
+		OLED_ShowString(32,16, (uint8 *)str,16);
 		if(MaterialFlag == 0)	{						//无
 		
 				OLED_ChineseString(72,32,63,63,16);
@@ -316,12 +323,52 @@ static uint8 MaterialFlag = 0;
 				OLED_ChineseString(72,32,64,66,16);
 		}
 
-	
-
 		OLED_Refresh_Gram();//更新显示到OLED			
 
 }
 
+
+
+/*******************************************
+* 函 数 RMBDection
+* 功    能：RMB检测界面
+* 输入参数：none
+* 返 回 值：none
+* 注    意：OLED选择界面 
+********************************************/
+
+void OLED_RMBDectionPage()
+{
+		static char str[10];
+		static char rmb_value =0;
+	
+		if(0 == RMB_Value){
+				rmb_value = 0;
+		}
+		else if(1 == RMB_Value){
+				rmb_value = 100;
+		}
+		else if(2 == RMB_Value){
+				rmb_value = 50;
+		}
+
+		
+		OLED_ShowString(20,0, (uint8 *)"RMB",16);//RMB 面值检测
+		OLED_ChineseString(48,0,67,70,16);
+		
+		
+		OLED_ChineseString(0,16,2,3,16);  		//打印当前电容
+		sprintf(str,": %.3f",Paper.Capacitance);
+		OLED_ShowString(32,16, (uint8 *)str,16);
+		
+		OLED_ChineseString(0,32,69,70,16);
+		OLED_ChineseString(32,32,67,68,16);
+		sprintf(str,":%d",rmb_value);
+		OLED_ShowString(64,32,(uint8 *)str,16);
+		
+		OLED_Refresh_Gram();//更新显示到OLED			
+
+}
 /*******************************************
 * 函 数 名：Boot_Animation
 * 功    能：开机动画

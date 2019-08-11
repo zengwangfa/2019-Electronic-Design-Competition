@@ -40,8 +40,10 @@ float Fiber_Board_Value_In_Flash = 0.0f;//纤维板 Flash数值
 float Money_100_In_Flash = 0.0f; //100元
 float Money_50_In_Flash = 0.0f;  //50元
 
-int Div_40_50_Parameter = 70; //切分 40~50张的系数
-
+int Div_40_50_Parameter = 30; //切分 40~50张的系数
+int Div_50_60_Parameter = 30; //切分 40~50张的系数
+int Div_60_70_Parameter = 30; //切分 40~50张的系数
+int RMB_Value = 0;
 //判断data是否在 value ± range内
 int is_in_range(float data,float value,float range)
 {
@@ -78,6 +80,7 @@ void Capcity_Paper_Detection(void)
 						HMI_Work_Button = 0;
 				}
 				uart_send_hmi_paper_numer(Paper.PaperNumber);
+				rt_thread_mdelay(5); //当直接返回是，延时，以防读取过快
 				return;
 		}
 
@@ -104,14 +107,14 @@ void Printer_Paper_Detection(void)
 {
 
 		Paper.Capacitance = get_single_capacity();/* 获取单次 电容值*/
-		if(Short_Circuit_Detection() != 1){
-				Get_Paper();/* 获取纸张数量 */	
-		}
-
+		Get_Paper();/* 获取纸张数量 */	
+	
+		Short_Circuit_Detection() ;
+	
 		if(Paper.PaperNumber < 5 ){//小于5就一直报警
 				Buzzer_Set(&Beep,1,1);
 		}
-		
+		rt_thread_mdelay(100);
 		uart_send_hmi_paper_numer(Paper.PaperNumber);	//发送数据
 
 }
@@ -133,8 +136,9 @@ void Material_Detection(void)
 				Flash_Update();		
 		}
 		Material_Debug_Write_Button = 0;
+		
 		if(Material_Button == 1){//当检测按钮按下
-				if( (fabs(Paper.Capacitance-KT_Board_Value_In_Flash) < fabs(Paper.Capacitance-Fiber_Board_Value_In_Flash) )  && Paper.Capacitance >= 100 )	{//比较更靠近谁
+				if( (fabs(Paper.Capacitance-KT_Board_Value_In_Flash) < fabs(Paper.Capacitance-Fiber_Board_Value_In_Flash) )  && Paper.Capacitance >= 100 ){//比较更靠近谁
 						is_material = 1; //KT板
 				}
 				else if( (fabs(Paper.Capacitance-KT_Board_Value_In_Flash) > fabs(Paper.Capacitance-Fiber_Board_Value_In_Flash) )  && Paper.Capacitance >= 100 ) {
@@ -145,6 +149,9 @@ void Material_Detection(void)
 				}
 				Material_Button = 0;
 		}
+		if(Short_Circuit_Detection() == 1){
+				Material_Button = 0; //无
+		}
 		uart_send_hmi_is_material(is_material);//1为KT板，2为纤维板
 
 }
@@ -152,17 +159,16 @@ void Material_Detection(void)
 
 
 
-/* 材料 检测 */
+/* 纸币 检测 */
 void Money_Detection(void)
 {
-		static int is_money = 0;
+
 	
 		Paper.Capacitance = get_single_capacity();/* 获取单次 电容值*/
 		if(Money_Debug_Write_Button == 1){
 				Money_100_In_Flash = Paper.Capacitance;
 				Flash_Update();
 
-		
 		}
 		else if(Money_Debug_Write_Button == 2){
 				Money_50_In_Flash = Paper.Capacitance;
@@ -170,18 +176,25 @@ void Money_Detection(void)
 		}
 		Money_Debug_Write_Button = 0;
 		if(Money_Button == 1){//当检测按钮按下
+
 				if( (fabs(Paper.Capacitance-Money_100_In_Flash) < fabs(Paper.Capacitance-Money_50_In_Flash) )  && Paper.Capacitance >= 100 )	{//比较更靠近谁
-						is_money = 1; //100元
+						RMB_Value = 1; //100元
 				}
 				else if( (fabs(Paper.Capacitance-Money_100_In_Flash) > fabs(Paper.Capacitance-Money_50_In_Flash) )  && Paper.Capacitance >= 100 ) {
-						is_money = 2; //50元
+						RMB_Value = 2; //50元
 				}
 				else{
-					  is_money = 0; //无
+					  RMB_Value = 0; //无
 				}
 				Money_Button = 0;
+				uart_send_hmi_is_money(RMB_Value);//1为KT板，2为纤维板	
 		}
-		uart_send_hmi_is_material(is_money);//1为KT板，2为纤维板
+		
+		if(Short_Circuit_Detection() == 1){
+				RMB_Value = 0; //无
+		}
+		rt_thread_mdelay(5);
+
 
 }
 
@@ -207,13 +220,13 @@ int Short_Circuit_Detection(void)
 		if( //((is_in_range(FDC2214_Paper_Data[0],FDC2214_Data_In_Flash[0],50.0f)) && HMI_Status_Flag == 1) \
 			//||((is_in_range(Paper.Capacitance,FDC2214_Data_In_Flash[0],50.0f)) && HMI_Status_Flag == 2) 
 			//||((is_in_range(Paper.Capacitance,FDC2214_Data_In_Flash[0],50.0f)) && HMI_Status_Flag == 4) )
-				(FDC2214_Paper_Data[0] <= 50.0f && HMI_Status_Flag == 1)  || (Paper.Capacitance < 50.0f && HMI_Status_Flag == 2) || (Paper.Capacitance < 50.0f && HMI_Status_Flag == 3) 
+				(FDC2214_Paper_Data[0] <= 50.0f && HMI_Status_Flag == 1)  || (Paper.Capacitance <= 50.0f && HMI_Status_Flag == 2) || (Paper.Capacitance <= 50.0f && HMI_Status_Flag == 3) 
 		
 		)
 		{
 				Paper.ShortStatus = 1;//判定短路
 				Paper.PaperNumber = 0; //如果短路即为0
-				Bling_Set(&Light_Red,100,50,0.5,0,77,0);//蓝灯提示短路
+				Bling_Set(&Light_Red,100,50,0.5,0,77,0);//红灯提示短路
 		}			
 		else{
 				Bling_Set(&Light_Green,100,50,0.5,0,78,0);//绿灯提示不短路
@@ -240,23 +253,24 @@ void DataSubsection(float Cap_Division[],float arrey[],int Number)
 
 		}
 		for(int i=30;i<40;i++){
-				CapacitanceDP = 35*(arrey[i-1]-arrey[i]) /100.0f;
+				CapacitanceDP = 30*(arrey[i-1]-arrey[i]) /100.0f;
 				Cap_Division[i-1]= arrey[i-1]-CapacitanceDP;
 		}
 		for(int i=40;i<50;i++){
-				CapacitanceDP = 30*(arrey[i-1]-arrey[i]) /100.0f;
+				CapacitanceDP = Div_40_50_Parameter*(arrey[i-1]-arrey[i]) /100.0f;
 				Cap_Division[i-1]= arrey[i-1]-CapacitanceDP;
 		}
 		
 		for(int i=50;i<60;i++){
-				CapacitanceDP = 30*(arrey[i-1]-arrey[i]) /100.0f;
+				CapacitanceDP = Div_50_60_Parameter*(arrey[i-1]-arrey[i]) /100.0f;
 				Cap_Division[i-1]= arrey[i-1]-CapacitanceDP;
 		}
 		for(int i=60;i<72;i++){
-				CapacitanceDP = 28*(arrey[i-1]-arrey[i]) /100.0f;
+				CapacitanceDP = Div_60_70_Parameter*(arrey[i-1]-arrey[i]) /100.0f;
 				Cap_Division[i-1]= arrey[i-1]-CapacitanceDP;
 		}
-				
+		
+		
 		if(rec==1){
 				Cap_Division[0] =arrey[1]+(arrey[1]-arrey[2]) /2.0f;
 				rec = 0;
@@ -279,7 +293,7 @@ uint8 ProbablityCapacitance(float CompareArrey[])	//传入 需要比较的数据
 						}
 				}
 		}
-		for(int n = 0;n < 70;n++){
+		for(int n = 0;n < 69 ;n++){
 				if(Cap_Probability[n] > Cap_Probability[Probability_Max]){
 						Probability_Max = (n + 1);
 				}

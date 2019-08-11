@@ -105,6 +105,29 @@ void uart_send_hmi_adjust_data(uint8 N_number)  //发送给hmi 前5个校准数据
 
 }
 
+char adjust_str[35];
+char adjust_str_len = 0;
+void uart_send_hmi_40_70_flash_data(void)  //发送给hmi 前5个校准数据
+{ 	
+		static uint8 end[3] = {0xFF,0xFF,0xFF};
+
+		
+		sprintf(adjust_str,"n0.val=%d",Div_40_50_Parameter);//发送给串口屏 t1.txt="xxxx"
+		adjust_str_len =  strlen(adjust_str);
+		rt_device_write(focus_uart_device, 0,adjust_str	,adjust_str_len);	
+		rt_device_write(focus_uart_device, 0,end	, 3);	
+		
+		sprintf(adjust_str,"n1.val=%d",Div_50_60_Parameter);//发送给串口屏 t1.txt="xxxx"
+		adjust_str_len =  strlen(adjust_str);
+		rt_device_write(focus_uart_device, 0,adjust_str	,adjust_str_len);	
+		rt_device_write(focus_uart_device, 0,end	, 3);			
+
+		sprintf(adjust_str,"n2.val=%d",Div_60_70_Parameter);//发送给串口屏 t1.txt="xxxx"
+		adjust_str_len =  strlen(adjust_str);
+		rt_device_write(focus_uart_device, 0,adjust_str	,adjust_str_len);	
+		rt_device_write(focus_uart_device, 0,end	, 3);			
+
+}
 void uart_send_hmi_is_short(void)  //发送给hmi 是否短路
 { 	
 
@@ -126,10 +149,10 @@ void uart_send_hmi_is_material(uint8 material)  //发送给hmi 是什么材料
 { 	
 
 		if(1 == material){//当短路
-				him_uart_short_cmd[8] = 0x33;
+				him_uart_short_cmd[8] = 0x31;
 		}
 		else if(2 ==material){//不短路
-				him_uart_short_cmd[8] = 0x34;
+				him_uart_short_cmd[8] = 0x32;
 		}
 		else{
 				him_uart_short_cmd[8] = 0x30;				
@@ -143,10 +166,10 @@ void uart_send_hmi_is_money(uint8 money)  //发送给hmi 是什么材料
 { 	
 
 		if(1 == money){//当短路
-				him_uart_short_cmd[8] = 0x35;
+				him_uart_short_cmd[8] = 0x31;
 		}
 		else if(2 ==money){//不短路
-				him_uart_short_cmd[8] = 0x36;
+				him_uart_short_cmd[8] = 0x32;
 		}
 		else{
 				him_uart_short_cmd[8] = 0x30;				
@@ -265,7 +288,7 @@ void HMI_Data_Analysis(uint8 Data) //控制数据解析
 						}
 				}
 				else if(0x06 == hmi_data[3] ){//Material_Debug_Write_Button
-						Div_40_50_Parameter = hmi_data[4];//获取数值
+						uart_send_hmi_40_70_flash_data();//进入调参界面
 				}
 				
 				else if(0x07 == hmi_data[3] ){//Material_Debug_Write_Button
@@ -278,8 +301,23 @@ void HMI_Data_Analysis(uint8 Data) //控制数据解析
 						else if(0x03 == hmi_data[4]){
 								Money_Debug_Write_Button = 2;
 						}
+						else{
+								Money_Button = 0; //清除锁定
+						}
 				}
-
+				else if(0x08 == hmi_data[3] ){//Material_Debug_Write_Button
+						Div_40_50_Parameter = hmi_data[4];//获取数值
+						Flash_Update();
+				}
+				else if(0x09 == hmi_data[3] ){//Material_Debug_Write_Button
+						Div_50_60_Parameter = hmi_data[4];//获取数值
+						Flash_Update();
+				}
+				
+				else if(0x0A == hmi_data[3] ){//Material_Debug_Write_Button
+						Div_60_70_Parameter = hmi_data[4];//获取数值
+						Flash_Update();
+				}
 		}
 		hmi_data_ok = 0;
 }

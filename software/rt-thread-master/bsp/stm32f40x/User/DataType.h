@@ -17,6 +17,16 @@
 #define my_abs(x)  (((x)>0)?(x):-(x))
 
 /* ------------------------【数据结构体定义】---------------------------------*/
+typedef struct{
+		int Div_30_40;
+		int Div_40_50;
+		int Div_50_60;
+		int Div_60_70;
+		int Div_70_80;
+		int Div_80_90;	
+}Div_Parameter_Type;
+
+
 typedef struct
 {
 		float p;

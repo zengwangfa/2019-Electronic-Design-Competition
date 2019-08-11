@@ -14,6 +14,9 @@
 #include "DataProcess.h"
 #include "flash.h"
 #include <string.h>
+#include "ioDevices.h"
+#include <easyflash.h>
+#include "flash.h"
 /*---------------------- Constant / Macro Definitions -----------------------*/
 
 #define HMI_LEN 5
@@ -22,6 +25,7 @@
 
 uint8 hmi_data_ok = 0;
 int HMI_Status_Flag = 0;//串口屏 设定状态标志位 【调试 1】or【工作2】
+int HMI_Data = 0;
 int HMI_Page_Number = 0;//串口屏发送的校准  纸张数
 
 int HMI_Debug_Write_Button = 0; //写入数据Flag
@@ -41,7 +45,7 @@ uint8 him_uart_nmber_cmd[14] = {0x76,0x61,0x31,0x2E,0x76,0x61,0x6C,0x3D,0x31,0x3
 //76 61 32 2E 76 61 6C 3D 31 ff ff ff   va2.val=1
 uint8 him_uart_short_cmd[12] = {0x76,0x61,0x32,0x2E,0x76,0x61,0x6C,0x3D,0x30,0xff,0xff,0xff};
 // rest (HMI复位指令)72 65 73 74 ff ff ff
-uint8 him_uart_reboot_cmd[7] = {0x72,0x65,0x73,0x74,0xff,0xff,0xff};
+uint8 him_uart_reboot_cmd[7] = {0x72,0x65,0x73,0x74,0xFF,0xFF,0xFF};
 
 uint8 him_ret_status = 0;
 uint8 hmi_data[10] = {0};
@@ -65,10 +69,9 @@ void uart_send_hmi_reboot(void)
 void uart_send_hmi_writer_status(uint8 *cmd)//发送给 hmi写入的状态
 {
 
-		*cmd += 0x30; //命令+0x30  转成对应的ASCII 对应写入
+		him_uart_cmd[8] = *cmd + 0x30; //命令+0x30  转成对应的ASCII 对应写入
 		rt_device_write(focus_uart_device, 0,him_uart_cmd	, sizeof(him_uart_cmd));
 
-		*cmd = 0; //命令清零
 }
 
 
@@ -88,7 +91,7 @@ void uart_send_hmi_paper_numer(uint8 N_number)  //发送给hmi 纸张数量
 void uart_send_hmi_adjust_data(uint8 N_number)  //发送给hmi 前5个校准数据
 { 	
 		static uint8 end[3] = {0xFF,0xFF,0xFF};
-    static char adjust_str[35];
+    static char adjust_str[50];
     static char adjust_str_len = 0;
 		static uint8 number = 0;
 		number = HMI_Page_Number % 5;
@@ -105,29 +108,62 @@ void uart_send_hmi_adjust_data(uint8 N_number)  //发送给hmi 前5个校准数据
 
 }
 
-char adjust_str[35];
-char adjust_str_len = 0;
-void uart_send_hmi_40_70_flash_data(void)  //发送给hmi 前5个校准数据
+
+void uart_send_hmi_30_90_flash_data(void)  //发送给hmi 前5个校准数据
 { 	
 		static uint8 end[3] = {0xFF,0xFF,0xFF};
-
+		char adjust_str[35];
+		char adjust_str_len = 0;
 		
-		sprintf(adjust_str,"n0.val=%d",Div_40_50_Parameter);//发送给串口屏 t1.txt="xxxx"
+		sprintf(adjust_str,"n1.val=%d",Div_Parameter.Div_30_40);//发送给串口屏 t1.txt="xxxx"
 		adjust_str_len =  strlen(adjust_str);
 		rt_device_write(focus_uart_device, 0,adjust_str	,adjust_str_len);	
 		rt_device_write(focus_uart_device, 0,end	, 3);	
 		
-		sprintf(adjust_str,"n1.val=%d",Div_50_60_Parameter);//发送给串口屏 t1.txt="xxxx"
+		sprintf(adjust_str,"n2.val=%d",Div_Parameter.Div_40_50);//发送给串口屏 t1.txt="xxxx"
 		adjust_str_len =  strlen(adjust_str);
 		rt_device_write(focus_uart_device, 0,adjust_str	,adjust_str_len);	
 		rt_device_write(focus_uart_device, 0,end	, 3);			
 
-		sprintf(adjust_str,"n2.val=%d",Div_60_70_Parameter);//发送给串口屏 t1.txt="xxxx"
+		sprintf(adjust_str,"n3.val=%d",Div_Parameter.Div_50_60);//发送给串口屏 t1.txt="xxxx"
 		adjust_str_len =  strlen(adjust_str);
 		rt_device_write(focus_uart_device, 0,adjust_str	,adjust_str_len);	
 		rt_device_write(focus_uart_device, 0,end	, 3);			
+		
+		sprintf(adjust_str,"n4.val=%d",Div_Parameter.Div_60_70);//发送给串口屏 t1.txt="xxxx"
+		adjust_str_len =  strlen(adjust_str);
+		rt_device_write(focus_uart_device, 0,adjust_str	,adjust_str_len);	
+		rt_device_write(focus_uart_device, 0,end	, 3);		
+		
+		sprintf(adjust_str,"n5.val=%d",Div_Parameter.Div_70_80);//发送给串口屏 t1.txt="xxxx"
+		adjust_str_len =  strlen(adjust_str);
+		rt_device_write(focus_uart_device, 0,adjust_str	,adjust_str_len);	
+		rt_device_write(focus_uart_device, 0,end	, 3);		
+		
+		sprintf(adjust_str,"n6.val=%d",Div_Parameter.Div_80_90);//发送给串口屏 t1.txt="xxxx"
+		adjust_str_len =  strlen(adjust_str);
+		rt_device_write(focus_uart_device, 0,adjust_str	,adjust_str_len);	
+		rt_device_write(focus_uart_device, 0,end	, 3);		
 
 }
+
+
+char adjust_str[35];
+char adjust_str_len = 0;
+void uart_send_hmi_now_level(void)  //发送给hmi 当前等级
+{ 	
+		static uint8 end[3] = {0xFF,0xFF,0xFF};
+
+		
+		sprintf(adjust_str,"n0.val=%d",Level);//发送给串口屏 t1.txt="xxxx"
+		adjust_str_len =  strlen(adjust_str);
+		rt_device_write(focus_uart_device, 0,adjust_str	,adjust_str_len);	
+		rt_device_write(focus_uart_device, 0,end	, 3);	
+		
+
+}
+
+
 void uart_send_hmi_is_short(void)  //发送给hmi 是否短路
 { 	
 
@@ -181,6 +217,7 @@ void uart_send_hmi_is_money(uint8 money)  //发送给hmi 是什么材料
 
 
 float Data_Diff_Value = 0.0f; //FLash 上下两次的差值
+uint32 _cnt = 0;
 /* 发送给串口屏 写入的状态
 01:写入成功
 02:写入失败
@@ -190,15 +227,11 @@ float Data_Diff_Value = 0.0f; //FLash 上下两次的差值
 void FDC2214_Data_Adjust(void)//数据校准 存储
 {
 		static char str[30] = {0};
-		
-		if(0x01 == HMI_Debug_Write_Button){
-				Paper.Status = 0x03; //正在写入
-				uart_send_hmi_writer_status(&Paper.Status);//返回状态信息
-		}
 
-		FDC2214_Paper_Data[HMI_Page_Number]= get_single_capacity(); /* 获取电容 数值*/
+		_cnt ++;
+		FDC2214_Paper_Data[HMI_Page_Number] = get_single_capacity(); /* 获取电容 数值*/
 
-		if(HMI_Page_Number > 1){
+		if(HMI_Page_Number > 1 && 0x01 == HMI_Debug_Write_Button){
 				Data_Diff_Value = FDC2214_Paper_Data[HMI_Page_Number] - FDC2214_Paper_Data[HMI_Page_Number-1];
 		}
 		if(0x01 == HMI_Debug_Write_Button){//只有按下才写入
@@ -209,12 +242,20 @@ void FDC2214_Data_Adjust(void)//数据校准 存储
 				Paper.Status = 0x01; //写入成功
 				uart_send_hmi_writer_status(&Paper.Status);//返回状态信息
 				HMI_Debug_Write_Button = 0; //写入状态清零
+
+		}
+		else if(0x00 == HMI_Debug_Write_Button && _cnt >= 200){
+				_cnt = 0;
+				Paper.Status = 0x04; //清空	
+				uart_send_hmi_writer_status(&Paper.Status);//返回状态信息	
 		}
 		Short_Circuit_Detection();  //短路检测
 		if(HMI_Page_Number != 0){//不等于0 发送
 				uart_send_hmi_adjust_data(HMI_Page_Number);
 		}
 }
+
+
 
 /**
   * @brief  HMI_Data_Analysis(串口屏返回数据解析)
@@ -228,9 +269,9 @@ void HMI_Data_Analysis(uint8 Data) //控制数据解析
 		static uint8 i = 0;	   		  //
 		static uint8 RxCheck = 0;	  //尾校验字
 		static uint8 RxCount = 0;	  //接收计数
+		static uint8 last_level = 0;
 	
 		hmi_data[RxCount++] = Data;	//将收到的数据存入缓冲区中
-	
 	
 		if(RxCount <= (HMI_LEN+4)){ //定义数据长度未包括包头和包长3个字节,+4)  
 				if(hmi_data[0] == 0xAA){ //接收到包头0xAA
@@ -259,65 +300,105 @@ void HMI_Data_Analysis(uint8 Data) //控制数据解析
 
 		
 		if(1 == hmi_data_ok){
-				HMI_Status_Flag = hmi_data[3];//获取 工作模式位
+				HMI_Status_Flag = hmi_data[3];//获取 工作模式位(页面s)
+				HMI_Data = hmi_data[4];
+				switch(HMI_Status_Flag){
 				
-				if(0x01 == hmi_data[3] ){ 		
-						if( 0xFF == hmi_data[4]){ //调试状态,跳转进去，当数据位=0xFF时,只是跳转页面
-								HMI_Debug_Write_Button = 0; 	//写入页面状态
-						}
-						else{
-								HMI_Page_Number = hmi_data[4];//获取 校准页数
-								HMI_Debug_Write_Button = 1; 	//写入页面状态						
-						}
-				}
-				else if(0x02 == hmi_data[3] && 0x01 == hmi_data[4] ){//工作模式		Material_Button	 		
-						HMI_Work_Button = 1; //工作模式的 按钮按下标志 锁定数据显示
-				}
-				else if(0x05 == hmi_data[3] && 0x01 == hmi_data[4] ){//工作模式			 		
-						Material_Button = 1; //清除锁定
-				}
-				else if(0x05 == hmi_data[3] ){//工作模式	
-						if( 0x01 == hmi_data[4]){
-								Material_Button = 1; //清除锁定
-						}
-						else if(0x02 == hmi_data[4]){
-								Material_Debug_Write_Button = 1;
-						}
-						else if(0x03 == hmi_data[4]){
-								Material_Debug_Write_Button = 2;
-						}
-				}
-				else if(0x06 == hmi_data[3] ){//Material_Debug_Write_Button
-						uart_send_hmi_40_70_flash_data();//进入调参界面
+						case 0x01:
+											HMI_Debug_Write_Button = 0; 	//【校准页面】只是单单进入页面
+											break;	
+						case 0x02:
+											HMI_Page_Number = HMI_Data;//【校准页面】 获取 指定的校准页数
+											HMI_Debug_Write_Button = 1; 	//写入Flash
+											break;				
+						case 0x03:
+											if(0x01 == HMI_Data){
+													HMI_Work_Button = 1;         	//【工作页面】 按下锁定按钮
+											}
+											else if(0x02 == HMI_Data){
+													HMI_Work_Button = 2;         	//【工作页面】 清除锁定								
+											}
+											break;				
+						case 0x04:
+											break;//扩展功能页面				
+						case 0x05:
+											break;//打印机页面
+
+
+					 case 0x06:
+										if( 0x01 == HMI_Data){
+												Material_Button = 1; //清除锁定
+										}
+										else if(0x02 == HMI_Data){
+												Money_Debug_Write_Button = 1;
+										}
+										else if(0x03 == HMI_Data){
+												Money_Debug_Write_Button = 2;
+										}
+										else{
+												Material_Button = 0; //清除锁定
+										}
+										break;	
+					 case 0x07:
+										if( 0x01 == HMI_Data){
+												Money_Button = 1; //清除锁定
+										}
+										else if(0x02 == HMI_Data){
+												Money_Debug_Write_Button = 1;
+										}
+										else if(0x03 == HMI_Data){
+												Money_Debug_Write_Button = 2;
+										}
+										else{
+												Money_Button = 0; //清除锁定
+										}
+					 case 0x08:
+										uart_send_hmi_30_90_flash_data();//进入调参界面,发送存入Flash的值
+										break;
+					 case 0x09:
+										Div_Parameter.Div_30_40 = HMI_Data;//获取数值
+										Flash_Update();
+										break;	
+					 case 0x0A:
+										Div_Parameter.Div_40_50 = HMI_Data;//获取数值
+										Flash_Update();
+
+										break;		
+					 case 0x0B:
+										Div_Parameter.Div_50_60 = HMI_Data;//获取数值
+										Flash_Update();
+										break; 
+					 case 0x0C:
+										Div_Parameter.Div_60_70 = HMI_Data;//获取数值
+										Flash_Update();
+										break;  
+					 case 0x0D:
+										Div_Parameter.Div_70_80 = HMI_Data;//获取数值
+										Flash_Update();
+										break;  
+					 case 0x0E:
+										Div_Parameter.Div_80_90 = HMI_Data;//获取数值
+										Flash_Update();
+										break;  
+					 
+					 
+					 
+					 
+					 case 0xFE:
+										uart_send_hmi_now_level();//进入等级页面
+										break;  
+					 case 0xFF:
+										ef_port_read(Nor_FLASH_ADDRESS+4*110,(uint32 *)&last_level,4);		 //Flash读取		
+										if(last_level > Level){
+											//如果大于，发送
+										}
+										Level = HMI_Data;//获取等级
+										Flash_Update();
+										break;  
 				}
 				
-				else if(0x07 == hmi_data[3] ){//Material_Debug_Write_Button
-						if( 0x01 == hmi_data[4]){
-								Money_Button = 1; //清除锁定
-						}
-						else if(0x02 == hmi_data[4]){
-								Money_Debug_Write_Button = 1;
-						}
-						else if(0x03 == hmi_data[4]){
-								Money_Debug_Write_Button = 2;
-						}
-						else{
-								Money_Button = 0; //清除锁定
-						}
-				}
-				else if(0x08 == hmi_data[3] ){//Material_Debug_Write_Button
-						Div_40_50_Parameter = hmi_data[4];//获取数值
-						Flash_Update();
-				}
-				else if(0x09 == hmi_data[3] ){//Material_Debug_Write_Button
-						Div_50_60_Parameter = hmi_data[4];//获取数值
-						Flash_Update();
-				}
-				
-				else if(0x0A == hmi_data[3] ){//Material_Debug_Write_Button
-						Div_60_70_Parameter = hmi_data[4];//获取数值
-						Flash_Update();
-				}
+			
+
 		}
 		hmi_data_ok = 0;
 }

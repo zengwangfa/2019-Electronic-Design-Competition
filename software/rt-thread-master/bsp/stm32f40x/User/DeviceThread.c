@@ -38,6 +38,7 @@ void fdc2214_thread_entry(void *parameter)//高电平1.5ms 总周期20ms  占空比7.5% v
 
 		rt_thread_mdelay(2000);
 		uart_send_hmi_reboot();//让HMI串口屏复位
+		uart_send_hmi_reboot();//发送两次 确保重启
 		DataSubsection(Cap_Division,FDC2214_Data_In_Flash,50);//读取Flash中的数据，分割好 电容区间
 	
 		while(1)
@@ -47,23 +48,32 @@ void fdc2214_thread_entry(void *parameter)//高电平1.5ms 总周期20ms  占空比7.5% v
 
 											FDC2214_Data_Adjust(); //数据校准	
 											break;
-						case 0x02:/* 工作模式 */
+						case 0x02:/* 校准模式 */
+
+											FDC2214_Data_Adjust(); //数据校准	
+											break;
+						case 0x03:/* 工作模式 */
 											Capcity_Paper_Detection(); //获取电容值
 											break;			
-						case 0x03:/* 拓展功能选择 */
-
+						case 0x04:/* 拓展功能页面选择 */
+											rt_thread_mdelay(100);
 											break;																									
-						case 0x04:/* 打印机 纸张检测 */
+						case 0x05:/* 打印机 纸张检测 */
 											Printer_Paper_Detection();
 											break;
 																								
-						case 0x05:/* 材料 检测 */
+						case 0x06:/* 材料 检测 */
 											Material_Detection();
 											break;
-						case 0x07:
+						case 0x07:/* 纸币检测 */
 											Money_Detection();
 											break;
-					
+						case 0x08:/* 分段参数 */
+											rt_thread_mdelay(100);
+											break;
+						case 0xFF:
+											rt_thread_mdelay(100);
+											break;
 				}
 				rt_thread_mdelay(2);
 		}

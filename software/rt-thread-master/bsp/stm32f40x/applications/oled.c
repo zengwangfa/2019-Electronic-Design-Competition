@@ -111,6 +111,8 @@ void menu_define(void) //菜单定义
 		
 		oled.pagenum = HMI_Status_Flag;//获取状态
 
+
+		
 		switch(oled.pagenum){
 				case 0:{
 						MENU = SwitchPage;OLED_SwitchPage();		break;
@@ -119,15 +121,18 @@ void menu_define(void) //菜单定义
 						MENU = DebugPage;OLED_DebugPage();		break;
 				}
 				case 2:{
-						MENU = WorkPage;OLED_WorkPage();break;
+						MENU = DebugPage;OLED_DebugPage();break;
 				}
 				case 3:{
+						MENU = WorkPage;OLED_WorkPage();break;
+				}	
+				case 4:{
 						MENU = FuncPage;OLED_FuncSwitchPage();break;
 				}
-				case 4:{
+				case 5:{
 						MENU = PrintPage;OLED_PrintPage();break;
 				}
-				case 5:{
+				case 6:{
 						MENU = MaterPage;OLED_MaterPage();break;
 				}
 				case 7:{
@@ -369,6 +374,38 @@ void OLED_RMBDectionPage()
 		OLED_Refresh_Gram();//更新显示到OLED			
 
 }
+
+
+/*******************************************
+* 函 数 CoefficientDebug
+* 功    能：调节页数-电容系数
+* 输入参数：none
+* 返 回 值：none
+* 注    意： 
+********************************************/
+void OLED_CoefficientDebug(void)
+{
+		static char str[10];
+			
+		OLED_ShowString(12,0, (uint8 *)"35",16);
+		OLED_ShowString(44,0, (uint8 *)"45",16);
+		OLED_ShowString(76,0, (uint8 *)"55",16);
+		OLED_ShowString(108,0, (uint8 *)"65",16);
+		
+		sprintf(str,"%d%%",Div_Parameter.Div_30_40);							//【接口】 Value写系数
+		OLED_ShowString(4,0, (uint8 *)str,16);
+		sprintf(str,"%d%%",Div_Parameter.Div_40_50);
+		OLED_ShowString(36,0, (uint8 *)str,16);
+		sprintf(str,"%d%%",Div_Parameter.Div_50_60);
+		OLED_ShowString(68,0, (uint8 *)str,16);
+		sprintf(str,"%d%%",Div_Parameter.Div_60_70);
+		OLED_ShowString(100,0, (uint8 *)str,16);
+	
+}
+
+
+
+
 /*******************************************
 * 函 数 名：Boot_Animation
 * 功    能：开机动画

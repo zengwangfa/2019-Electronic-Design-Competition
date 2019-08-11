@@ -49,11 +49,11 @@ extern float Fiber_Board_Value_In_Flash;//纤维板 Flash数值
 extern float Money_100_In_Flash ; //100元
 extern float Money_50_In_Flash ;  //50元
 
-extern int Div_40_50_Parameter; //切分 40~50张的系数
-extern int Div_50_60_Parameter; //
-extern int Div_60_70_Parameter; //
 extern int RMB_Value;
 
+extern Div_Parameter_Type Div_Parameter;//区间分段的系数
+
+extern int Level;//等级
 /* 打印机 纸张检测 */
 void Printer_Paper_Detection(void);
 

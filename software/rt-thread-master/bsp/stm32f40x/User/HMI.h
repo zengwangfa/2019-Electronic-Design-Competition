@@ -20,6 +20,10 @@ void uart_send_hmi_reboot(void);//让him复位
 void uart_send_hmi_is_material(uint8 material);  //发送给hmi 是什么材料
 
 void uart_send_hmi_is_money(uint8 money);  //发送给hmi 是什么材料
+
+void uart_send_hmi_30_90_flash_data(void);//进入调参界面,发送存入Flash的值
+
+void uart_send_hmi_now_level(void);
 /* -------------  */
 extern int HMI_Status_Flag ;//串口屏 设定状态标志位 【调试 1】or【工作2】
 

@@ -3,7 +3,10 @@
 
 #define FLIGHT_PARAMETER_TABLE_NUM  60
 #define PID_USE_NUM  	8
+//FLASH起始地址   W25Q128 16M 的容量分为 256 个块（Block）
+#define Nor_FLASH_ADDRESS    (0x0000) 	//W25Q128 FLASH的 普通起始地址   【第个扇区】
 
+#define IMP_FLASH_ADDRESS    (0x1000) 	//W25Q128 FLASH的 重要参数起始地址 【第个扇区】
 #include "DataType.h"
 
 typedef struct
@@ -103,6 +106,7 @@ void Parameter_SelfCheck(uint32 *RealParameter,uint32 *TempParameter);
 void Normal_Parameter_SelfCheck_With_Flash(void); //Flash参数自检 若为-1 或 0 则为 非正常数据 
 /* FLASH 更新 普通值 */
 void Flash_Update(void);
+
 void Capacity_Flash_Update(float array[],uint8 number);
 int Normal_Parameter_Init_With_Flash(void);
 															 

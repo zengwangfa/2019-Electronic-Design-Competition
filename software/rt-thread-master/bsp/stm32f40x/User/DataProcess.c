@@ -93,7 +93,8 @@ void Capcity_Paper_Detection(void)
 				HMI_Work_Button = 0;
 		}
 
-		if(0x02 == HMI_Work_Button){//当标志位为2，即 实时检测
+
+		if( (0x00 == HMI_Work_Button) || (0x02 == HMI_Work_Button )) {//当标志位为2，即 实时检测
 				uart_send_hmi_paper_numer(Paper.PaperNumber);	//发送数据
 		}
 			
@@ -125,11 +126,13 @@ void Material_Detection(void)
 	
 		Paper.Capacitance = get_single_capacity();/* 获取单次 电容值*/
 		if(Material_Debug_Write_Button == 1){
+				Buzzer_Set(&Beep,1,1);
 				KT_Board_Value_In_Flash = Paper.Capacitance;
 				Flash_Update();
 		
 		}
 		else if(Material_Debug_Write_Button == 2){
+				Buzzer_Set(&Beep,1,1);
 				Fiber_Board_Value_In_Flash = Paper.Capacitance;
 				Flash_Update();		
 		}
@@ -310,9 +313,9 @@ uint8 ProbablityCapacitance(float CompareArrey[])	//传入 需要比较的数据
 				}	
 		}
 		
-//		if(0 == Cap_Probability[Probability_Max]){
-//				Probability_Max = 0;
-//		}
+		if(0 == Cap_Probability[Probability_Max-1]){
+				Probability_Max = 0;
+		}
 		return Probability_Max;
 }
 

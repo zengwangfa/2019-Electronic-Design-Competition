@@ -26,8 +26,6 @@ void uart_send_my2490_now_sounds(void)//串口发送给 升级音效
 		my2490_sonud_array[4] = 111;
 		my2490_sonud_array[5] = (my2490_sonud_array[1] ^ my2490_sonud_array[2] ^ my2490_sonud_array[3] ^my2490_sonud_array[4]);
 		rt_device_write(debug_uart_device, 0,my2490_sonud_array,7);
-		
-
 }
 
 

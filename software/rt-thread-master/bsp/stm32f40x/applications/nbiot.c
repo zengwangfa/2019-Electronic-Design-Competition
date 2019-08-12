@@ -80,21 +80,30 @@ static uint16 crc16(unsigned char *q, int len)
   return crc;
 }
 
-/**
-* @brief  Notify DHT11 sensor data and LED state
-* @param  None
-* @retval None
-*/
-void Nb_Iot_Send_data(void)
+uint16 nbiot_crc;
+uint8 nbiot_tmp[15] = {0x01, 0x46, 0x00, 0x00, 0x00, 0x03, 0x06, 0x00, 0x25, 0x00, 0x35, 0x00, 0x45, 0x00, 0x00};
+
+void Nb_Iot_Send_data(uint8 paper_number,uint16 capacity_value,uint8 short_flag)
 {
-		uint16 crc;
-											//01 46 00 00 00 03 06 00 25 00 14 00 00 23 8B
-		uint8 tmp[15] = {0x01, 0x46, 0x00, 0x00, 0x00, 0x03, 0x06, 0x00, 0x25, 0x00, 0x35, 0x00, 0x45, 0x00, 0x00};
-		tmp[8] ++; //²âÊÔÓÃ
-    crc = crc16(tmp, sizeof(tmp) - 2);
-		tmp[13] = crc >> 8;
-		tmp[14] = crc & 0xff;
-		USART6_Sends(tmp,sizeof(tmp));	
+											//01 46 00 00 00 03 06 00 25 00 35 00 45 23 8B
+
+
+		
+		nbiot_tmp[7] = 0;
+		nbiot_tmp[8] = paper_number;
+	
+		nbiot_tmp[9] = capacity_value>>8;
+		nbiot_tmp[10] = capacity_value & 0xFF;
+
+		nbiot_tmp[11] = 0x00;
+		nbiot_tmp[12] = short_flag;
+	
+    nbiot_crc = crc16(nbiot_tmp, sizeof(nbiot_tmp) - 2);	
+
+		nbiot_tmp[13] = nbiot_crc & 0xff;
+		nbiot_tmp[14] = nbiot_crc >> 8;
+
+		USART6_Sends(nbiot_tmp,15);	
 }
 MSH_CMD_EXPORT(Nb_Iot_Send_data,notify_data);
 

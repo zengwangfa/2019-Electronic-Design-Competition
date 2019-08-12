@@ -108,8 +108,6 @@ void uart_send_hmi_adjust_data(uint8 N_number)  //发送给hmi 前5个校准数据
 		
 		adjust_str_len =  strlen(adjust_str);
 		rt_device_write(focus_uart_device, 0,adjust_str	,adjust_str_len);	
-		rt_kprintf(adjust_str);
-		rt_kprintf("sizeof(str):%d", sizeof(adjust_str));
 		rt_device_write(focus_uart_device, 0,end	, 3);	
 
 }
@@ -166,7 +164,6 @@ void uart_send_hmi_now_level(void)  //发送给hmi 当前等级
 		rt_device_write(focus_uart_device, 0,adjust_str	,adjust_str_len);	
 		rt_device_write(focus_uart_device, 0,end	, 3);	
 		
-
 }
 
 
@@ -369,6 +366,8 @@ void HMI_Data_Analysis(uint8 Data) //控制数据解析
 					 
 					 
 					 case 0xFE:
+										uart_send_hmi_now_level();//进入等级页面
+										rt_thread_mdelay(100);
 										uart_send_hmi_now_level();//进入等级页面
 										break;  
 					 case 0xFF:

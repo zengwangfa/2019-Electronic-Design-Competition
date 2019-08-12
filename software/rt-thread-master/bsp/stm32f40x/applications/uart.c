@@ -301,7 +301,7 @@ int device_uart_init(void)
 				rt_thread_startup(focus_uart_tid);
 				uart_init_flag <<= 1;
     }
-		uart6_init(115200); //串口6 初始化
+		uart6_init(9600); //串口6 初始化
 		
 		if(0x10 == uart_init_flag){ //等待所有串口设备都初始化完毕 打开uart_startup_flag
 				uart_startup_flag = 1;

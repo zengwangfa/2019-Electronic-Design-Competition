@@ -19,6 +19,7 @@
 #include "my2490.h"
 #include "flash.h"
 #include "ioDevices.h"
+#include "nbiot.h"
 
 unsigned int CH4_DATA;//通道值
 
@@ -67,7 +68,6 @@ void Get_Paper(void){
 /* 电容 纸张 检测 */
 void Capcity_Paper_Detection(void)
 {
-
 		Paper.Capacitance = get_single_capacity();/* 获取单次 电容值*/
 
 		/*-----------------------短路检测、如短路直接return-------------------------*/
@@ -76,24 +76,28 @@ void Capcity_Paper_Detection(void)
 						uart_send_my2490_now_status(my2490_number_array,Paper.PaperNumber);
 						Buzzer_Set(&Beep,1,1);//蜂鸣器响一声
 						HMI_Work_Button = 0;
+						Nb_Iot_Send_data(Paper.PaperNumber,(uint16)Paper.Capacitance,Paper.ShortStatus);
 				}
+				
 				uart_send_hmi_paper_numer(Paper.PaperNumber);
 				rt_thread_mdelay(5); //当直接返回是，延时，以防读取过快
 				return;
 		}
 		
 		/*-----------------------获取50组数据、解算落区间-------------------------*/	
-		Get_Paper();/* 获取纸张数量 */
+
 
 		if(0x01 == HMI_Work_Button){
+				Get_Paper();/* 获取纸张数量 */
 				uart_send_hmi_paper_numer(Paper.PaperNumber);	//发送数据
 				Buzzer_Set(&Beep,1,1);//蜂鸣器响一声
 				uart_send_my2490_now_status(my2490_number_array,Paper.PaperNumber);
 				HMI_Work_Button = 0;
+				Nb_Iot_Send_data(Paper.PaperNumber,(uint16)Paper.Capacitance,Paper.ShortStatus);//NB-IOT发送信息
 		}
 
-
-		if( (0x00 == HMI_Work_Button) || (0x02 == HMI_Work_Button )) {//当标志位为2，即 实时检测
+		else if( (0x02 == HMI_Work_Button )) {//当标志位为2，即 实时检测
+				Get_Paper();/* 获取纸张数量 */
 				uart_send_hmi_paper_numer(Paper.PaperNumber);	//发送数据
 		}
 			
@@ -315,7 +319,7 @@ uint8 ProbablityCapacitance(float CompareArrey[])	//传入 需要比较的数据
 						}
 				}
 		}
-		for(int n = 0;n < Level-1 ;n++){
+		for(int n = 0;n < Level ;n++){
 				if(Cap_Probability[n] > Cap_Probability[Probability_Max]){
 						Probability_Max = (n + 1);
 				}

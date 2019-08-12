@@ -58,8 +58,8 @@ int Normal_Parameter_Init_With_Flash(void)
 		ef_port_read(Nor_FLASH_ADDRESS+4*100,(uint32 *)&KT_Board_Value_In_Flash,4);		 //Flash读取
 		ef_port_read(Nor_FLASH_ADDRESS+4*101,(uint32 *)&Fiber_Board_Value_In_Flash,4);		 //Flash读取
 
-		ef_port_read(Nor_FLASH_ADDRESS+4*102,(uint32 *)&Money_100_In_Flash,4);		 //Flash读取
-		ef_port_read(Nor_FLASH_ADDRESS+4*103,(uint32 *)&Money_50_In_Flash,4);		 //Flash读取
+		ef_port_read(Nor_FLASH_ADDRESS+4*102,(uint32 *)&Money.RMB_100,4);		 //Flash读取
+		ef_port_read(Nor_FLASH_ADDRESS+4*103,(uint32 *)&Money.RMB_50,4);		 //Flash读取
 
 		ef_port_read(Nor_FLASH_ADDRESS+4*104,(uint32 *)&Div_Parameter.Div_30_40,4);		 //Flash读取
 		ef_port_read(Nor_FLASH_ADDRESS+4*105,(uint32 *)&Div_Parameter.Div_40_50,4);		 //Flash读取
@@ -68,7 +68,11 @@ int Normal_Parameter_Init_With_Flash(void)
 		ef_port_read(Nor_FLASH_ADDRESS+4*108,(uint32 *)&Div_Parameter.Div_70_80,4);		 //Flash读取
 		ef_port_read(Nor_FLASH_ADDRESS+4*109,(uint32 *)&Div_Parameter.Div_80_90,4);		 //Flash读取
 		
-		ef_port_read(Nor_FLASH_ADDRESS+4*110,(uint32 *)&Level,4);		 //Flash读取		
+		ef_port_read(Nor_FLASH_ADDRESS+4*110,(uint32 *)&Level,4);		 //等级
+		
+		ef_port_read(Nor_FLASH_ADDRESS+4*111,(uint32 *)&Money.RMB_10,4);		 //Flash读取
+		ef_port_read(Nor_FLASH_ADDRESS+4*112,(uint32 *)&Money.RMB_5,4);		 //Flash读取
+		
 		for(int i = 0;i < 100 ;i++){
 				Parameter_SelfCheck( (uint32 *)&FDC2214_Data_In_Flash[i],&Normal_Parameter[i] );//电池容量参数 3s/4s/6s
 		}
@@ -89,8 +93,8 @@ void Flash_Update(void)
 		ef_port_write(Nor_FLASH_ADDRESS + 4*(100) ,(uint32 *)&KT_Board_Value_In_Flash,4); 
 		ef_port_write(Nor_FLASH_ADDRESS + 4*(101) ,(uint32 *)&Fiber_Board_Value_In_Flash,4); 
 	
-		ef_port_write(Nor_FLASH_ADDRESS + 4*(102) ,(uint32 *)&Money_100_In_Flash,4);
-		ef_port_write(Nor_FLASH_ADDRESS + 4*(103) ,(uint32 *)&Money_50_In_Flash,4); 
+		ef_port_write(Nor_FLASH_ADDRESS + 4*(102) ,(uint32 *)&Money.RMB_100,4);
+		ef_port_write(Nor_FLASH_ADDRESS + 4*(103) ,(uint32 *)&Money.RMB_50,4); 
 		
 		ef_port_write(Nor_FLASH_ADDRESS + 4*(104) ,(uint32 *)&Div_Parameter.Div_30_40,4); 
 		ef_port_write(Nor_FLASH_ADDRESS + 4*(105) ,(uint32 *)&Div_Parameter.Div_40_50,4);
@@ -100,6 +104,10 @@ void Flash_Update(void)
 		ef_port_write(Nor_FLASH_ADDRESS + 4*(109) ,(uint32 *)&Div_Parameter.Div_80_90,4); 
 		
 		ef_port_write(Nor_FLASH_ADDRESS + 4*(110) ,(uint32 *)&Level,4); 
+		
+		ef_port_write(Nor_FLASH_ADDRESS + 4*(111) ,(uint32 *)&Money.RMB_10,4);
+		ef_port_write(Nor_FLASH_ADDRESS + 4*(112) ,(uint32 *)&Money.RMB_5,4); 
+			
 }	
 
 

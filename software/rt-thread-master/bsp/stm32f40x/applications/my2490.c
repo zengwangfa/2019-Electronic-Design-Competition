@@ -19,6 +19,16 @@ void uart_send_my2490_now_status(uint8 *cmd_array,uint32 number)//串口发送给 MY2
 		}
 }
 
+void uart_send_my2490_now_sounds(void)//串口发送给 升级音效
+{
+		uint8 my2490_sonud_array[7] = {0X7E,0X05,0X41,0X00,0X00,0X45,0XEF}; //my2490对应曲目
+
+		my2490_sonud_array[4] = 111;
+		my2490_sonud_array[5] = (my2490_sonud_array[1] ^ my2490_sonud_array[2] ^ my2490_sonud_array[3] ^my2490_sonud_array[4]);
+		rt_device_write(debug_uart_device, 0,my2490_sonud_array,7);
+		
+
+}
 
 
 

@@ -17,6 +17,7 @@
 #include "rc_data.h"
 #include "focus.h"
 #include "HMI.h"
+#include "drv_oled.h"
 /*---------------------- Constant / Macro Definitions -----------------------*/
 
 char GYRO_UART_NAME[]    = "uart2";  //JY901 uart2
@@ -27,6 +28,7 @@ char CONTROL_UART_NAME[] = "uart4";  //CP2101 uart4
 
 char FOCUS_UART_NAME[]  =  "uart5";  //变焦摄像头
 
+char NBIOT_UART_NAME[]  =  "uart6";  //NBIOT
 #define Query_JY901_data 0     /* "1"为调试查询  "0"为正常读取 */
 
 #if Query_JY901_data
@@ -34,13 +36,15 @@ char recv_buffer[128]; 				//串口2接收数据缓冲变量,
 unsigned char recv_data_p = 0x00;  //  串口2接收数据指针
 #endif
 
+char buffer[128];
+char buffer_p = 0x00;
 /*----------------------- Variable Declarations -----------------------------*/
 
 
 rt_device_t control_uart_device;	
 rt_device_t debug_uart_device;	
 rt_device_t gyro_uart_device;	
-rt_device_t focus_uart_device;	
+rt_device_t focus_uart_device;		
 
 struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT; /* 配置参数 */
 
@@ -48,6 +52,7 @@ struct rt_semaphore control_rx_sem;/* 用于接收消息的信号量 */
 struct rt_semaphore gyro_rx_sem;/* 用于接收消息的信号量 */
 struct rt_semaphore debug_rx_sem;/* 用于接收消息的信号量 */
 struct rt_semaphore focus_rx_sem;/* 用于接收消息的信号量 */
+
 
 uint8 uart_startup_flag = 0; //debug串口 初始化完成标志位
 /*------------------------------------------ Control Uart ------------------------------------------------*/
@@ -160,7 +165,7 @@ static void focus_thread_entry(void *parameter)
 						rt_sem_take(&focus_rx_sem, RT_WAITING_FOREVER);
 				}
 				//Camera_Focus_Data_Analysis(ch);
-				HMI_Data_Analysis(ch);	
+				HMI_Data_Analysis(ch);	//
 		}
 }
 
@@ -174,7 +179,7 @@ int device_uart_init(void)
 		rt_thread_t gyroscope_uart_tid;
 		rt_thread_t debug_uart_tid;
 		rt_thread_t focus_uart_tid;
-	
+
 	  /* 查找系统中的串口设备 */
 
 		control_uart_device = rt_device_find(CONTROL_UART_NAME); 
@@ -182,6 +187,7 @@ int device_uart_init(void)
 		debug_uart_device = rt_device_find(DEBUG_UART_NAME);
 	  focus_uart_device = rt_device_find(FOCUS_UART_NAME);
 
+	
 		list_serial_devices();
 	
     if (control_uart_device != RT_NULL){		
@@ -240,6 +246,8 @@ int device_uart_init(void)
 				/* 设置接收回调函数 */
 				rt_device_set_rx_indicate(focus_uart_device, focus_uart_input);
 		}
+		
+
     /* 创建 控制 serial 线程 */
 		control_uart_tid = rt_thread_create("control_uart",
 																		control_thread_entry,
@@ -270,6 +278,7 @@ int device_uart_init(void)
 																	512, 
 																	5,
 																	10);
+														
 		/* 创建成功则启动线程 */
     if (control_uart_tid != RT_NULL){
 				rt_thread_startup(control_uart_tid);
@@ -292,6 +301,7 @@ int device_uart_init(void)
 				rt_thread_startup(focus_uart_tid);
 				uart_init_flag <<= 1;
     }
+		uart6_init(115200); //串口6 初始化
 		
 		if(0x10 == uart_init_flag){ //等待所有串口设备都初始化完毕 打开uart_startup_flag
 				uart_startup_flag = 1;
@@ -321,3 +331,6 @@ int list_serial_devices(void)
 		return 0;
 }
 MSH_CMD_EXPORT(list_serial_devices,list serial devices to used );
+
+
+

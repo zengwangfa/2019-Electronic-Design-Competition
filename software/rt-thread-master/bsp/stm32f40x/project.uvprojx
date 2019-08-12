@@ -548,6 +548,11 @@
               <FileType>1</FileType>
               <FilePath>.\applications\my2490.c</FilePath>
             </File>
+            <File>
+              <FileName>nbiot.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\nbiot.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

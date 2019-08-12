@@ -27,6 +27,13 @@ typedef struct{
 }Div_Parameter_Type;
 
 
+typedef struct{
+		float RMB_100;
+		float RMB_50;
+		float RMB_10;
+		float RMB_5;
+}Money_Type;
+
 typedef struct
 {
 		float p;

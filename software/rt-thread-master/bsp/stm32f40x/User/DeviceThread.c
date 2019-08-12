@@ -27,7 +27,7 @@
 #include "drv_i2c.h"
 #include "FDC2214.h"
 #include "my2490.h"
-
+#include "nbiot.h"
 
 
 
@@ -75,7 +75,8 @@ void fdc2214_thread_entry(void *parameter)//高电平1.5ms 总周期20ms  占空比7.5% v
 											rt_thread_mdelay(100);
 											break;
 				}
-				rt_thread_mdelay(2);
+				rt_thread_mdelay(5);
+	
 		}
 	
 }
@@ -89,7 +90,7 @@ int fdc2214_thread_init(void)
                     fdc2214_thread_entry,			 //线程入口函数【entry】
                     RT_NULL,							   //线程入口函数参数【parameter】
                     2048,										 //线程栈大小，单位是字节【byte】
-                    5,										 	 //线程优先级【priority】
+                    10,										 	 //线程优先级【priority】
                     10);										 //线程的时间片大小【tick】= 1ms
 
     if (fdc2214_tid != RT_NULL){

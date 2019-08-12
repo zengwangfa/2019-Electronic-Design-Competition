@@ -46,6 +46,10 @@ void OLED_ShowPicture(uint8 x,uint8 y,const uint8 *p,uint8 p_w,uint8 p_h);
 void OLED_DrawBMP(uint8 x,uint8 y,uint8 chr,uint8 size,uint8 mode);
 
 void OLED_ChineseString(uint8 x,uint8 y,uint8 First,uint8 Final,uint8 size);
+
+void uart6_init(uint32 bound);
+void USART6_Sends(uint8 *buf,uint8 len);
+
 #endif  
 	 
 

@@ -61,6 +61,7 @@
 #define UART5_GPIO_RCC_RX   RCC_AHB1Periph_GPIOD
 #define RCC_APBPeriph_UART5 RCC_APB1Periph_UART5
 
+
 /* STM32 uart driver */
 struct stm32_uart
 {
@@ -548,6 +549,8 @@ void DMA1_Stream0_IRQHandler(void) {
 
 #endif /* RT_USING_UART5 */
 
+
+
 static void RCC_Configuration(void)
 {
 #ifdef RT_USING_UART1
@@ -646,6 +649,7 @@ static void GPIO_Configuration(void)
     GPIO_PinAFConfig(UART5_RX, UART5_RX_PIN_SOURCE, GPIO_AF_UART5);
     GPIO_Init(UART5_RX, &GPIO_InitStructure);
 #endif /* RT_USING_UART5 */
+
 }
 
 static void NVIC_Configuration(struct stm32_uart *uart)
@@ -772,6 +776,7 @@ int stm32_hw_usart_init(void)
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_DMA_RX,
                           uart);
 #endif /* RT_USING_UART5 */
+
     return 0;
 }
 INIT_BOARD_EXPORT(stm32_hw_usart_init);

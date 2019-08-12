@@ -45,12 +45,10 @@ extern int ShortFlag;        //短路标志位
 
 extern float KT_Board_Value_In_Flash; //KT板Flash数值
 extern float Fiber_Board_Value_In_Flash;//纤维板 Flash数值
-
-extern float Money_100_In_Flash ; //100元
-extern float Money_50_In_Flash ;  //50元
-
+ 
 extern int RMB_Value;
 
+extern Money_Type Money;
 extern Div_Parameter_Type Div_Parameter;//区间分段的系数
 
 extern int Level;//等级

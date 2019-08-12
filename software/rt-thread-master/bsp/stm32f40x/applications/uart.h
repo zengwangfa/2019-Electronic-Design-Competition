@@ -12,7 +12,7 @@ extern rt_device_t debug_uart_device;
 extern rt_device_t gyro_uart_device;	
 extern rt_device_t focus_uart_device;	
 
-
+	
 extern uint8 uart_startup_flag;
 
 

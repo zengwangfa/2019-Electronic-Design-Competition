@@ -76,7 +76,7 @@ int oled_thread_init(void)
                     oled_thread_entry,	//线程入口函数【entry】
                     RT_NULL,				    //线程入口函数参数【parameter】
                     2048,							  //线程栈大小，单位是字节【byte】
-                    10,								  //线程优先级【priority】
+                    12,								  //线程优先级【priority】
                     10);							  //线程的时间片大小【tick】= 100ms
 
     if (oled_tid != RT_NULL){
@@ -356,8 +356,12 @@ void OLED_RMBDectionPage()
 		else if(2 == RMB_Value){
 				rmb_value = 50;
 		}
-
-		
+		else if(3 == RMB_Value){
+				rmb_value = 10;
+		}
+		else if(4 == RMB_Value){
+				rmb_value = 5;
+		}		
 		OLED_ShowString(20,0, (uint8 *)"RMB",16);//RMB 面值检测
 		OLED_ChineseString(48,0,67,70,16);
 		
@@ -368,7 +372,7 @@ void OLED_RMBDectionPage()
 		
 		OLED_ChineseString(0,32,69,70,16);
 		OLED_ChineseString(32,32,67,68,16);
-		sprintf(str,":%d",rmb_value);
+		sprintf(str,":%d  ",rmb_value);
 		OLED_ShowString(64,32,(uint8 *)str,16);
 		
 		OLED_Refresh_Gram();//更新显示到OLED			

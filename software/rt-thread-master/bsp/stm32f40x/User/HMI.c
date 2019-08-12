@@ -17,6 +17,8 @@
 #include "ioDevices.h"
 #include <easyflash.h>
 #include "flash.h"
+#include "my2490.h"
+
 /*---------------------- Constant / Macro Definitions -----------------------*/
 
 #define HMI_LEN 5
@@ -46,6 +48,10 @@ uint8 him_uart_nmber_cmd[14] = {0x76,0x61,0x31,0x2E,0x76,0x61,0x6C,0x3D,0x31,0x3
 uint8 him_uart_short_cmd[12] = {0x76,0x61,0x32,0x2E,0x76,0x61,0x6C,0x3D,0x30,0xff,0xff,0xff};
 // rest (HMI复位指令)72 65 73 74 ff ff ff
 uint8 him_uart_reboot_cmd[7] = {0x72,0x65,0x73,0x74,0xFF,0xFF,0xFF};
+
+uint8 him_uart_material_cmd[12] = {0x76,0x61,0x33,0x2E,0x76,0x61,0x6C,0x3D,0x30,0xff,0xff,0xff};
+
+uint8 him_uart_money_cmd[12] = {0x76,0x61,0x34,0x2E,0x76,0x61,0x6C,0x3D,0x30,0xff,0xff,0xff};
 
 uint8 him_ret_status = 0;
 uint8 hmi_data[10] = {0};
@@ -167,15 +173,7 @@ void uart_send_hmi_now_level(void)  //发送给hmi 当前等级
 void uart_send_hmi_is_short(void)  //发送给hmi 是否短路
 { 	
 
-		if(1 == Paper.ShortStatus){//当短路
-				him_uart_short_cmd[8] = 0x31;
-		}
-		else if(2 == Paper.ShortStatus){//不短路
-				him_uart_short_cmd[8] = 0x32;
-		}
-		else{
-				him_uart_short_cmd[8] = 0x30;				
-		}
+		him_uart_short_cmd[8] = 0x30 + Paper.ShortStatus;
 		
 		rt_device_write(focus_uart_device, 0,him_uart_short_cmd	, sizeof(him_uart_short_cmd));//向HMI发送短路信息
 
@@ -183,36 +181,16 @@ void uart_send_hmi_is_short(void)  //发送给hmi 是否短路
 
 void uart_send_hmi_is_material(uint8 material)  //发送给hmi 是什么材料
 { 	
-
-		if(1 == material){//当短路
-				him_uart_short_cmd[8] = 0x31;
-		}
-		else if(2 ==material){//不短路
-				him_uart_short_cmd[8] = 0x32;
-		}
-		else{
-				him_uart_short_cmd[8] = 0x30;				
-		}
+		him_uart_material_cmd[8] = 0x30 + material;				
 		
-		rt_device_write(focus_uart_device, 0,him_uart_short_cmd	, sizeof(him_uart_short_cmd));//向HMI发送短路信息
-
+		rt_device_write(focus_uart_device, 0,him_uart_material_cmd	, sizeof(him_uart_material_cmd));//向HMI发送短路信息
 }
 
 void uart_send_hmi_is_money(uint8 money)  //发送给hmi 是什么材料
 { 	
-
-		if(1 == money){//当短路
-				him_uart_short_cmd[8] = 0x31;
-		}
-		else if(2 ==money){//不短路
-				him_uart_short_cmd[8] = 0x32;
-		}
-		else{
-				him_uart_short_cmd[8] = 0x30;				
-		}
+		him_uart_money_cmd[8] = 0x30 + money;				
 		
-		rt_device_write(focus_uart_device, 0,him_uart_short_cmd	, sizeof(him_uart_short_cmd));//向HMI发送短路信息
-
+		rt_device_write(focus_uart_device, 0,him_uart_money_cmd	, sizeof(him_uart_money_cmd));//向HMI发送短路信息
 }
 
 
@@ -256,7 +234,7 @@ void FDC2214_Data_Adjust(void)//数据校准 存储
 }
 
 
-
+uint8 last_level = 0;
 /**
   * @brief  HMI_Data_Analysis(串口屏返回数据解析)
   * @param  控制字符数据 uint8 Data
@@ -269,7 +247,7 @@ void HMI_Data_Analysis(uint8 Data) //控制数据解析
 		static uint8 i = 0;	   		  //
 		static uint8 RxCheck = 0;	  //尾校验字
 		static uint8 RxCount = 0;	  //接收计数
-		static uint8 last_level = 0;
+
 	
 		hmi_data[RxCount++] = Data;	//将收到的数据存入缓冲区中
 	
@@ -327,13 +305,13 @@ void HMI_Data_Analysis(uint8 Data) //控制数据解析
 
 					 case 0x06:
 										if( 0x01 == HMI_Data){
-												Material_Button = 1; //清除锁定
+												Material_Button = 1; 
 										}
 										else if(0x02 == HMI_Data){
-												Money_Debug_Write_Button = 1;
+												Material_Debug_Write_Button = 1;
 										}
 										else if(0x03 == HMI_Data){
-												Money_Debug_Write_Button = 2;
+												Material_Debug_Write_Button = 2;
 										}
 										else{
 												Material_Button = 0; //清除锁定
@@ -348,6 +326,12 @@ void HMI_Data_Analysis(uint8 Data) //控制数据解析
 										}
 										else if(0x03 == HMI_Data){
 												Money_Debug_Write_Button = 2;
+										}
+										else if(0x04 == HMI_Data){
+												Money_Debug_Write_Button = 3;
+										}
+										else if(0x05 == HMI_Data){
+												Money_Debug_Write_Button = 4;
 										}
 										else{
 												Money_Button = 0; //清除锁定
@@ -388,10 +372,8 @@ void HMI_Data_Analysis(uint8 Data) //控制数据解析
 										uart_send_hmi_now_level();//进入等级页面
 										break;  
 					 case 0xFF:
-										ef_port_read(Nor_FLASH_ADDRESS+4*110,(uint32 *)&last_level,4);		 //Flash读取		
-										if(last_level > Level){
-											//如果大于，发送
-										}
+										uart_send_my2490_now_sounds();//如果大于，发送
+								
 										Level = HMI_Data;//获取等级
 										Flash_Update();
 										break;  

@@ -37,11 +37,10 @@ PaperCountEngine_Type Paper = {
 float KT_Board_Value_In_Flash = 0.0f; //KT板Flash数值
 float Fiber_Board_Value_In_Flash = 0.0f;//纤维板 Flash数值
 
-float Money_100_In_Flash = 0.0f; //100元
-float Money_50_In_Flash = 0.0f;  //50元
 int RMB_Value = 0;
 
 Div_Parameter_Type Div_Parameter = {30,30,30,30};//区间分段的系数
+Money_Type Money;
 
 int Level = 0;//等级 0~100
 
@@ -108,7 +107,7 @@ void Printer_Paper_Detection(void)
 		Paper.Capacitance = get_single_capacity();/* 获取单次 电容值*/
 		Get_Paper();/* 获取纸张数量 */	
 	
-		Short_Circuit_Detection() ;
+		Short_Circuit_Detection();
 	
 		if(Paper.PaperNumber < 5 ){//小于5就一直报警
 				Buzzer_Set(&Beep,1,1);
@@ -118,31 +117,30 @@ void Printer_Paper_Detection(void)
 
 }
 
-
+int is_material = 0;
 /* 材料 检测 */
 void Material_Detection(void)
 {
-		static int is_material = 0;
-	
+
 		Paper.Capacitance = get_single_capacity();/* 获取单次 电容值*/
-		if(Material_Debug_Write_Button == 1){
-				Buzzer_Set(&Beep,1,1);
+		if(0x01 == Material_Debug_Write_Button){
 				KT_Board_Value_In_Flash = Paper.Capacitance;
-				Flash_Update();
-		
 		}
-		else if(Material_Debug_Write_Button == 2){
-				Buzzer_Set(&Beep,1,1);
+		else if(0x02 == Material_Debug_Write_Button){
 				Fiber_Board_Value_In_Flash = Paper.Capacitance;
-				Flash_Update();		
+		}
+		if(0x00 != Material_Debug_Write_Button){
+				Buzzer_Set(&Beep,1,1);		
+				Flash_Update();				
 		}
 		Material_Debug_Write_Button = 0;
 		
 		if(Material_Button == 1){//当检测按钮按下
-				if( is_in_range(Paper.Capacitance,KT_Board_Value_In_Flash,30) ){//比较更靠近谁
+				Buzzer_Set(&Beep,1,1);//蜂鸣器响一声
+				if( is_in_range(Paper.Capacitance,KT_Board_Value_In_Flash,15) ){//比较更靠近谁
 						is_material = 1; //KT板
 				}
-				else if( is_in_range(Paper.Capacitance,Fiber_Board_Value_In_Flash,30) ) {
+				else if( is_in_range(Paper.Capacitance,Fiber_Board_Value_In_Flash,15) ) {
 						is_material = 2; //纤维板
 				}
 				else{
@@ -150,7 +148,7 @@ void Material_Detection(void)
 				}
 				Material_Button = 0;
 		}
-		if(Short_Circuit_Detection() == 1){
+		if(1 == Short_Circuit_Detection()){
 				is_material = 0; //无
 		}
 		uart_send_hmi_is_material(is_material);//1为KT板，2为纤维板
@@ -167,28 +165,41 @@ void Money_Detection(void)
 
 	
 		Paper.Capacitance = get_single_capacity();/* 获取单次 电容值*/
-		if(Money_Debug_Write_Button == 0x01){
-				Money_100_In_Flash = Paper.Capacitance;
-				Flash_Update();
-
+		if(0x01 == Money_Debug_Write_Button){
+				Money.RMB_100 = Paper.Capacitance;
 		}
-		else if(Money_Debug_Write_Button == 0x02){
-				Money_50_In_Flash = Paper.Capacitance;
-				Flash_Update();		
+		else if(0x02 == Money_Debug_Write_Button){
+				Money.RMB_50 = Paper.Capacitance;
+		}
+		else if(0x03 == Money_Debug_Write_Button){
+				Money.RMB_10 = Paper.Capacitance;
+		}
+		else if(0x04 == Money_Debug_Write_Button){
+				Money.RMB_5 = Paper.Capacitance;
+		}
+		if(0x00 != Money_Debug_Write_Button){
+				Flash_Update();				
+				Buzzer_Set(&Beep,1,1);		
 		}
 		Money_Debug_Write_Button = 0;
 		if(Money_Button == 1){//当检测按钮按下 
-				if( is_in_range(Paper.Capacitance,Money_100_In_Flash,30) )	{//比较更靠近谁
+				Buzzer_Set(&Beep,1,1);//蜂鸣器响一声
+				if( is_in_range(Paper.Capacitance,Money.RMB_100,40) )	{//比较更靠近谁
 						RMB_Value = 1; //100元
 				}
-				else if( is_in_range(Paper.Capacitance,Money_50_In_Flash,30) ) {
+				else if( is_in_range(Paper.Capacitance,Money.RMB_50,40) ) {
 						RMB_Value = 2; //50元
+				}
+				else if( is_in_range(Paper.Capacitance,Money.RMB_10,40) ) {
+						RMB_Value = 3; //50元
+				}
+				else if( is_in_range(Paper.Capacitance,Money.RMB_5,40) ) {
+						RMB_Value = 4; //50元
 				}
 				else{
 					  RMB_Value = 0; //无
 				}
 				Money_Button = 0;
-
 		}
 		
 		if(Short_Circuit_Detection() == 1){

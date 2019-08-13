@@ -88,10 +88,14 @@ void Capcity_Paper_Detection(void)
 
 
 		if(0x01 == HMI_Work_Button){
+				Buzzer_Set(&Beep,1,1);//蜂鸣器响一声
+				Get_Paper();/* 获取纸张数量 */
 				Get_Paper();/* 获取纸张数量 */
 				uart_send_hmi_paper_numer(Paper.PaperNumber);	//发送数据
-				Buzzer_Set(&Beep,1,1);//蜂鸣器响一声
 				uart_send_my2490_now_status(my2490_number_array,Paper.PaperNumber);
+
+				rt_thread_mdelay(200);
+				uart_send_hmi_paper_numer(Paper.PaperNumber);	//发送数据
 				HMI_Work_Button = 0;
 				Nb_Iot_Send_data(Paper.PaperNumber,(uint16)Paper.Capacitance,Paper.ShortStatus);//NB-IOT发送信息
 		}
@@ -323,7 +327,7 @@ uint8 ProbablityCapacitance(float CompareArrey[])	//传入 需要比较的数据
 				if(Cap_Probability[n] > Cap_Probability[Probability_Max]){
 						Probability_Max = (n + 1);
 				}
-				if(Cap_Probability[0] >= 5){	//1纸张的特殊处理
+				if(Cap_Probability[0] >= 5){	//纸张数的特殊处理
 						Probability_Max = 1;
 				}	
 		}

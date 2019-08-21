@@ -25,11 +25,11 @@ unsigned int CH4_DATA;//通道值
 
 float ShortValue4;//短路值
 
-float Cap_Division[101]= {0};/**/
+float Cap_Division[110]= {0};/**/
 
 float Cap_Value[10] ={0}; //存放 10次采集的电容值
 
-int Cap_Probability[100] ={0}; //存放可能性
+int Cap_Probability[110] ={0}; //存放可能性
 
 PaperCountEngine_Type Paper = {
 			.Finish_Flag = 2
@@ -40,7 +40,7 @@ float Fiber_Board_Value_In_Flash = 0.0f;//纤维板 Flash数值
 
 int RMB_Value = 0;
 
-Div_Parameter_Type Div_Parameter = {30,30,30,30};//区间分段的系数
+Div_Parameter_Type Div_Parameter = {30,30,30,30,30,30,30};//区间分段的系数
 Money_Type Money;
 
 int Level = 0;//等级 0~100
@@ -113,9 +113,11 @@ void Printer_Paper_Detection(void)
 {
 
 		Paper.Capacitance = get_single_capacity();/* 获取单次 电容值*/
-		Get_Paper();/* 获取纸张数量 */	
+		if(Short_Circuit_Detection() != 1){
+				Get_Paper();/* 获取纸张数量 */	
+		}
 	
-		Short_Circuit_Detection();
+
 	
 		if(Paper.PaperNumber < 5 ){//小于5就一直报警
 				Buzzer_Set(&Beep,1,1);
@@ -296,11 +298,14 @@ void DataSubsection(float Cap_Division[],float arrey[],int Number)
 				CapacitanceDP = Div_Parameter.Div_70_80*(arrey[i-1]-arrey[i]) /100.0f;
 				Cap_Division[i-1]= arrey[i-1]-CapacitanceDP;
 		}
-		for(int i=81;i<=92;i++){
+		for(int i=81;i<=90;i++){
 				CapacitanceDP = Div_Parameter.Div_80_90*(arrey[i-1]-arrey[i]) /100.0f;
 				Cap_Division[i-1]= arrey[i-1]-CapacitanceDP;
 		}				
-		
+		for(int i=91;i<=100;i++){
+				CapacitanceDP = Div_Parameter.Div_90_100*(arrey[i-1]-arrey[i]) /100.0f;
+				Cap_Division[i-1]= arrey[i-1]-CapacitanceDP;
+		}				
 		if(rec==1){
 				Cap_Division[0] =arrey[1]+(arrey[1]-arrey[2]) /2.0f;
 				rec = 0;

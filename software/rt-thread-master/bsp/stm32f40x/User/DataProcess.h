@@ -34,7 +34,7 @@ void DataSubsection(float Cap_Division[],float arrey[],int Number);
 uint8 ProbablityCapacitance(float CompareArrey[])	;
 
 
-extern float Cap_Division[101];/**/
+extern float Cap_Division[110];/**/
 
 extern int HMI_Debug_Write_Button;
 extern int HMI_Work_Button;

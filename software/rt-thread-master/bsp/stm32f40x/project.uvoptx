@@ -154,7 +154,7 @@
           <Type>0</Type>
           <LineNumber>218</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134243208</Address>
+          <Address>134243292</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -371,6 +371,11 @@
           <count>40</count>
           <WinNumber>1</WinNumber>
           <ItemText>HMI_Work_Button,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>41</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Cap_Division</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>

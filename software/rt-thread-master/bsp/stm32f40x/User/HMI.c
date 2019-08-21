@@ -149,6 +149,10 @@ void uart_send_hmi_30_90_flash_data(void)  //发送给hmi 前5个校准数据
 		rt_device_write(focus_uart_device, 0,adjust_str	,adjust_str_len);	
 		rt_device_write(focus_uart_device, 0,end	, 3);		
 
+		sprintf(adjust_str,"n7.val=%d",Div_Parameter.Div_90_100);//发送给串口屏 t1.txt="xxxx"
+		adjust_str_len =  strlen(adjust_str);
+		rt_device_write(focus_uart_device, 0,adjust_str	,adjust_str_len);	
+		rt_device_write(focus_uart_device, 0,end	, 3);	
 }
 
 
@@ -374,6 +378,10 @@ void HMI_Data_Analysis(uint8 Data) //控制数据解析
 										uart_send_my2490_now_sounds();//如果大于，发送
 								
 										Level = HMI_Data;//获取等级
+										Flash_Update();
+										break;  
+					 case 0x10:
+										Div_Parameter.Div_90_100 = HMI_Data;//获取数值
 										Flash_Update();
 										break;  
 				}

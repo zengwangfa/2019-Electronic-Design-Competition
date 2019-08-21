@@ -24,6 +24,7 @@ typedef struct{
 		int Div_60_70;
 		int Div_70_80;
 		int Div_80_90;	
+		int Div_90_100;	
 }Div_Parameter_Type;
 
 

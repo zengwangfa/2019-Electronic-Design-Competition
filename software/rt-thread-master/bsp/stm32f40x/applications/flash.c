@@ -73,6 +73,7 @@ int Normal_Parameter_Init_With_Flash(void)
 		ef_port_read(Nor_FLASH_ADDRESS+4*111,(uint32 *)&Money.RMB_10,4);		 //Flash读取
 		ef_port_read(Nor_FLASH_ADDRESS+4*112,(uint32 *)&Money.RMB_5,4);		 //Flash读取
 		
+		ef_port_read(Nor_FLASH_ADDRESS+4*113,(uint32 *)&Div_Parameter.Div_90_100,4);		 //Flash读取		
 		for(int i = 0;i < 100 ;i++){
 				Parameter_SelfCheck( (uint32 *)&FDC2214_Data_In_Flash[i],&Normal_Parameter[i] );//电池容量参数 3s/4s/6s
 		}
@@ -107,7 +108,7 @@ void Flash_Update(void)
 		
 		ef_port_write(Nor_FLASH_ADDRESS + 4*(111) ,(uint32 *)&Money.RMB_10,4);
 		ef_port_write(Nor_FLASH_ADDRESS + 4*(112) ,(uint32 *)&Money.RMB_5,4); 
-			
+		ef_port_write(Nor_FLASH_ADDRESS + 4*(113) ,(uint32 *)&Div_Parameter.Div_90_100,4); 			
 }	
 
 

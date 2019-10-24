@@ -8,9 +8,9 @@
 </p>
 
 ---
-<p align="center">
-![电赛LOGO](/media/6ac5361fa9b6c8eeee5dd25e7f2a6793.jpg "电赛LOGO")
-</p>
+
+![电赛Logo](/media/6ac5361fa9b6c8eeee5dd25e7f2a6793.jpg "电赛Logo")
+
 
 <p align="center">
   <a href="https://zh.wikipedia.org/wiki/C%E8%AF%AD%E8%A8%80"><img src="https://img.shields.io/badge/language-C-brigreen.svg?style=flat-square" alt="C"></a>
@@ -22,7 +22,7 @@
 
 
 | x | 主控制器(STM32) |
-| :--: | :--: | :--: |
+| :--: | :--: |
 |芯片型号| STM32F407ZGT6 | 
 |CPU| 32位 Cortex-M4(ARMv7) | 
 |主频| 168MHz | 
@@ -33,7 +33,7 @@
 ---
 
 | x | 主传感器(STM32) |
-| :--: | :--: | :--: |
+| :--: | :--: |
 |芯片型号| FCD2214 | 
 |分辨率| 28位 | 
 |通道数| 4 | 
@@ -41,7 +41,7 @@
 |最高输出速率| 4.08ksps |  
 
 - 系统结构简图：
-![系统结构简图](/media/70f436301ab9cf2f9c8566862e2876d3.jpg "系统结构简图")
+![系统结构简图](/media/70f436301ab9cf2f9c8566862e2876d3.png "系统结构简图")
 
 
 ## 2、目录说明
@@ -72,6 +72,7 @@
 
 
 ## 5、硬件结构
+
 ![Controller PCB 3D](/docs/pictures/Controller_3D.jpg "Controller 3D")
 
 - 核心板(Core Controller)拥有外设：

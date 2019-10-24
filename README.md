@@ -174,6 +174,8 @@
 	- [X] 论文 by [@Hyf338](https://github.com/Hyf338)
 
 
+### 赞赏
+![赞赏](/docs/pictures/给赞.png "赞赏")
 
 
 #### 整理纪念

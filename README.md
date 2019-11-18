@@ -69,10 +69,10 @@
 
 - 核心板(Core Controller)拥有外设：
 
-| 外设名称 | RGB LED | Key | Buzzer | Dial Switch | MS5837 | OLED | W25Q128 | Voltage Detection | Current Detection | Zigbee |  JY901 | USR-C216 | CP2102 | OV2640 Camera | Servo Motor | Searchlights | Perpellers |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| 控制(通讯)方式 | GPIO | GPIO | GPIO | GPIO | I2C | SPI | SPI | ADC | ADC | USART | USART | USART  | USART | DCMI-DMA | PWM | PWM | PWM |
-| 功能描述 | 指示灯 | 按键 | 蜂鸣器 | 拨码开关 | 深度传感器 | 显示屏 | 闪存芯片 | 电压检测 | 电流检测 | 2.4G无线通信 | 九轴 | WiFi模块 | 串口转USB | 摄像头 | 舵机  | 探照灯 | ESC |
+| 外设名称 | RGB LED | Key | Buzzer | Dial Switch | FCD2214 | USART HMI |OLED | W25Q128 | Voltage Detection | Current Detection | Zigbee |  JY901 | USR-C216 | CP2102 | 
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | 
+| 控制(通讯)方式 | GPIO | GPIO | GPIO | GPIO | I2C | USART | SPI | SPI | ADC | ADC | USART | USART | USART  | USART | 
+| 功能描述 | 指示灯 | 按键 | 蜂鸣器 | 拨码开关 | 电容传感器 | 串口触摸屏 | 显示屏 | 闪存芯片 | 电压检测 | 电流检测 | 2.4G无线通信 | 九轴 | WiFi模块 | 串口转USB | 
 
 
 
@@ -160,10 +160,10 @@
 ## 8、分工
 - [X] 电路设计
     - [X] 硬件搭建 by [@Ian](https://github.com/zengwangfa)	
-
 	
 - [X] 控制程序
     - [X] 整体框架 by [@Ian](https://github.com/zengwangfa)
+	- [x] 交互界面及通信 by [@Ian](https://github.com/zengwangfa)
 	- [X] 核心分割算法 by [@Okurarisona](https://github.com/Okurarisona)
 
 - [X] 机械结构

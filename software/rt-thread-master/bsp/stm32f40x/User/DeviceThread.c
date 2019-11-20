@@ -45,11 +45,9 @@ void fdc2214_thread_entry(void *parameter)//高电平1.5ms 总周期20ms  占空比7.5% v
 		{
 				switch(HMI_Status_Flag){
 						case 0x01:/* 校准模式 */
-
 											FDC2214_Data_Adjust(); //数据校准	
 											break;
 						case 0x02:/* 校准模式 */
-
 											FDC2214_Data_Adjust(); //数据校准	
 											break;
 						case 0x03:/* 工作模式 */

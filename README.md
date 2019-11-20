@@ -38,6 +38,18 @@
 
 ## 2、目录说明
 
+#### STM32F407控制程序在：
+```
++——2019-Electronic-Design-Competition
+|---+ software:【软件设计】
+|       ├──README.md
+|       ├──rt-thread-master
+|            └──bsp
+|               └──stm32f407【控制程序】
+|                  └──project.uvprojx【Keil5工程】
+|---- ...
+
+```
 | 目录名 | 描述  |
 | :---: | :---: |
 | 2019电赛题目 | 2019年电赛A-H题题目及器件清单 |

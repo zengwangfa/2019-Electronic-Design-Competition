@@ -1,6 +1,6 @@
 # 
 <p align="center">
-  <font size="25">纸张计数显示装置 :smile:</font>
+  <font size="100">纸张计数显示装置 :smile:</font>
 </p>
 
 <p align="center">

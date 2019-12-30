@@ -1,12 +1,10 @@
 # 纸张计数显示装置 :smile:
 
 <p align="center">
-
-[个人主页](https://zengwangfa.top/)
-<br>[电赛论文📚](/docs/论文/纸张计数显示器论文.md) 
-<br>[软件说明💻](/software/) 
-<br>[机械说明🎮](/mechanical_structure/)
-
+  <a href="https://zengwangfa.top/">个人主页🕺|</a>
+  <a href="/docs/论文/纸张计数显示器论文.md">电赛论文📚|</a>
+  <a href="/software/">软件说明💻|</a>
+  <a href="/mechanical_structure/">机械说明🎮</a>
 </p>
 
 ---
@@ -20,7 +18,6 @@
   <a href="https://zh.wikipedia.org/wiki/C%E8%AF%AD%E8%A8%80"><img src="https://img.shields.io/badge/language-C-brigreen.svg?style=flat-square" alt="C"></a>
   <a href="https://www.rt-thread.org/"><img src="https://img.shields.io/badge/OS-RT--Thread-brightgreen" ></a>
   <a href="https://img.shields.io"><img src="https://img.shields.io/github/repo-size/zengwangfa/2019-Electronic-Design-Competition?style=flat-square" alt="Size"></a>
-
 </p>
 
 ## 1、简介:pencil2:
@@ -70,16 +67,13 @@
 | [**software**](./software/) | **纸张计数显示装置STM32程序** |
 | software for development board | 纸张计数显示装置精简版 |
 | software for rail gun | 电磁炮测试程序 |
-| [**综合测评**](./综合测评/) | **综合测评题目及Multisim电路仿真** | 
+| [综合测评](./综合测评/) | **综合测评题目及Multisim电路仿真** | 
 
 ## 3、机械结构:hammer:
 - 3维模型
 ![3D效果图](/docs/pictures/3D_structure.jpg "3D效果图")
 - 实物图
 ![铰链结构实物图](/docs/pictures/metal_struture.png)
-
-
-3D_structure.jpg
 
 ## 4、[软件说明💻](/software/) 
 

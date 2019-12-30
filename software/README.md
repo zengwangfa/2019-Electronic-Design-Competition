@@ -75,7 +75,7 @@ typedef struct
 //初始化变量Paper```c
 
 PaperCountEngine_Type Paper = {
-		.Finish_Flag = 2
+	.Finish_Flag = 2
 };/*Paper数据结构体*/
 ```
 
@@ -89,13 +89,13 @@ PaperCountEngine_Type Paper = {
   */
 float get_single_capacity(void)
 {
-		static unsigned int res_CH4_DATA = 0;
-		static float res_ch4 = 0.0f;
-		
-		FDC2214_GetChannelData(FDC2214_Channel_3, &res_CH4_DATA);
-		res_ch4 = Cap_Calculate(&res_CH4_DATA);
+	static unsigned int res_CH4_DATA = 0;
+	static float res_ch4 = 0.0f;
+	
+	FDC2214_GetChannelData(FDC2214_Channel_3, &res_CH4_DATA);
+	res_ch4 = Cap_Calculate(&res_CH4_DATA);
 
-		return res_ch4;
+	return res_ch4;
 }
 ```
 
@@ -111,46 +111,46 @@ float get_single_capacity(void)
 void DataSubsection(float Cap_Division[],float arrey[],int Number)
 {
 
-		static int rec = 1;
-		
-		for(int i = 2;i <= 30;i++){
-				CapacitanceDP = (arrey[i-1]-arrey[i]) /2.0f;
-				Cap_Division[i-1]= arrey[i-1]-CapacitanceDP;
+	static int rec = 1;
+	
+	for(int i = 2;i <= 30;i++){
+		CapacitanceDP = (arrey[i-1]-arrey[i]) /2.0f;
+		Cap_Division[i-1]= arrey[i-1]-CapacitanceDP;
 
-		}
-		for(int i=31;i<=40;i++){
-				CapacitanceDP = Div_Parameter.Div_30_40*(arrey[i-1]-arrey[i]) /100.0f;
-				Cap_Division[i-1]= arrey[i-1]-CapacitanceDP;
-		}
-		for(int i=41;i<=50;i++){
-				CapacitanceDP = Div_Parameter.Div_40_50*(arrey[i-1]-arrey[i]) /100.0f;
-				Cap_Division[i-1]= arrey[i-1]-CapacitanceDP;
-		}
-		
-		for(int i=51;i<=60;i++){
-				CapacitanceDP = Div_Parameter.Div_50_60*(arrey[i-1]-arrey[i]) /100.0f;
-				Cap_Division[i-1]= arrey[i-1]-CapacitanceDP;
-		}
-		for(int i=61;i<=70;i++){
-				CapacitanceDP = Div_Parameter.Div_60_70*(arrey[i-1]-arrey[i]) /100.0f;
-				Cap_Division[i-1]= arrey[i-1]-CapacitanceDP;
-		}
-		for(int i=71;i<=80;i++){
-				CapacitanceDP = Div_Parameter.Div_70_80*(arrey[i-1]-arrey[i]) /100.0f;
-				Cap_Division[i-1]= arrey[i-1]-CapacitanceDP;
-		}
-		for(int i=81;i<=90;i++){
-				CapacitanceDP = Div_Parameter.Div_80_90*(arrey[i-1]-arrey[i]) /100.0f;
-				Cap_Division[i-1]= arrey[i-1]-CapacitanceDP;
-		}				
-		for(int i=91;i<=100;i++){
-				CapacitanceDP = Div_Parameter.Div_90_100*(arrey[i-1]-arrey[i]) /100.0f;
-				Cap_Division[i-1]= arrey[i-1]-CapacitanceDP;
-		}				
-		if(rec==1){
-				Cap_Division[0] =arrey[1]+(arrey[1]-arrey[2]) /2.0f;
-				rec = 0;
-		}
+	}
+	for(int i=31;i<=40;i++){
+		CapacitanceDP = Div_Parameter.Div_30_40*(arrey[i-1]-arrey[i]) /100.0f;
+		Cap_Division[i-1]= arrey[i-1]-CapacitanceDP;
+	}
+	for(int i=41;i<=50;i++){
+		CapacitanceDP = Div_Parameter.Div_40_50*(arrey[i-1]-arrey[i]) /100.0f;
+		Cap_Division[i-1]= arrey[i-1]-CapacitanceDP;
+	}
+	
+	for(int i=51;i<=60;i++){
+		CapacitanceDP = Div_Parameter.Div_50_60*(arrey[i-1]-arrey[i]) /100.0f;
+		Cap_Division[i-1]= arrey[i-1]-CapacitanceDP;
+	}
+	for(int i=61;i<=70;i++){
+		CapacitanceDP = Div_Parameter.Div_60_70*(arrey[i-1]-arrey[i]) /100.0f;
+		Cap_Division[i-1]= arrey[i-1]-CapacitanceDP;
+	}
+	for(int i=71;i<=80;i++){
+		CapacitanceDP = Div_Parameter.Div_70_80*(arrey[i-1]-arrey[i]) /100.0f;
+		Cap_Division[i-1]= arrey[i-1]-CapacitanceDP;
+	}
+	for(int i=81;i<=90;i++){
+		CapacitanceDP = Div_Parameter.Div_80_90*(arrey[i-1]-arrey[i]) /100.0f;
+		Cap_Division[i-1]= arrey[i-1]-CapacitanceDP;
+	}				
+	for(int i=91;i<=100;i++){
+		CapacitanceDP = Div_Parameter.Div_90_100*(arrey[i-1]-arrey[i]) /100.0f;
+		Cap_Division[i-1]= arrey[i-1]-CapacitanceDP;
+	}				
+	if(rec==1){
+		Cap_Division[0] =arrey[1]+(arrey[1]-arrey[2]) /2.0f;
+		rec = 0;
+	}
 }
 ```
 
@@ -167,28 +167,28 @@ void DataSubsection(float Cap_Division[],float arrey[],int Number)
 uint8 ProbablityCapacitance(float CompareArrey[])	//传入 需要比较的数据
 {
 
-		memset(Cap_Probability,0,sizeof(Cap_Probability));//清空电容值落点可能性
-	
-		for(int i=0;i <= Level;i++ ){
-				for(int j=0; j<10 ;j++){
-						if( (CompareArrey[j] < Cap_Division[i])  && (CompareArrey[j] >= Cap_Division[i+1])){
-								Cap_Probability[i]++;
-						}
-				}
+	memset(Cap_Probability,0,sizeof(Cap_Probability));//清空电容值落点可能性
+
+	for(int i=0;i <= Level;i++ ){
+		for(int j=0; j<10 ;j++){
+			if( (CompareArrey[j] < Cap_Division[i])  && (CompareArrey[j] >= Cap_Division[i+1])){
+				Cap_Probability[i]++;
+			}
 		}
-		for(int n = 0;n < Level ;n++){
-				if(Cap_Probability[n] > Cap_Probability[Probability_Max]){
-						Probability_Max = (n + 1);
-				}
-				if(Cap_Probability[0] >= 5){	//纸张数的特殊处理
-						Probability_Max = 1;
-				}	
+	}
+	for(int n = 0;n < Level ;n++){
+		if(Cap_Probability[n] > Cap_Probability[Probability_Max]){
+			Probability_Max = (n + 1);
 		}
-		
-		if(0 == Cap_Probability[Probability_Max-1]){
-				Probability_Max = 0;
-		}
-		return Probability_Max;
+		if(Cap_Probability[0] >= 5){	//纸张数的特殊处理
+			Probability_Max = 1;
+		}	
+	}
+
+	if(0 == Cap_Probability[Probability_Max-1]){
+		Probability_Max = 0;
+	}
+	return Probability_Max;
 }
 ```
 
@@ -198,8 +198,8 @@ uint8 ProbablityCapacitance(float CompareArrey[])	//传入 需要比较的数据
 > 采集50组电容值数据，进行比较数据，获取最大可能性的落点
 > 在比较数据，获取最终纸张数前，设置调度器上锁（上锁后，将不再切换到其他线程，仅响应中断），以防被打断造成数据出错
 ```c
-void Get_Paper(void){
-
+void Get_Paper(void)
+{
 	for(int i = 0;i < 10;i++){
 		Cap_Value[i] = get_single_capacity();//获取50组数据
 	}	
@@ -229,51 +229,52 @@ void Get_Paper(void){
 void HMI_Data_Analysis(uint8 Data) //控制数据解析
 {
 
-		static uint8 i = 0;	   		  //
-		static uint8 RxCheck = 0;	  //尾校验字
-		static uint8 RxCount = 0;	  //接收计数
+	static uint8 i = 0;	   		  //
+	static uint8 RxCheck = 0;	  //尾校验字
+	static uint8 RxCount = 0;	  //接收计数
 
-	
-		hmi_data[RxCount++] = Data;	//将收到的数据存入缓冲区中
-	
-		if(RxCount <= (HMI_LEN+4)){ //定义数据长度未包括包头和包长3个字节,+4)  
-				if(hmi_data[0] == 0xAA){ //接收到包头0xAA
-						if(RxCount > 3){
-								if(hmi_data[1] == 0x55){ //接收到包头0x55
-										if(RxCount >= hmi_data[2]+4){ //接收到数据包长度位，开始判断什么时候开始计算校验
-												for(i = 0;i <= (RxCount-2);i++){ //累加和校验
-														RxCheck += hmi_data[i];
-												}
-			
-												if(RxCheck == hmi_data[RxCount-1]){
-														hmi_data_ok = 1; //接收数据包成功
-												}
-												else {hmi_data_ok = 0;}
-												
-												RxCheck = 0; //接收完成清零
-												RxCount = 0;	
-										}
-								}
-								else {hmi_data_ok = 0;RxCount = 0;hmi_data_ok = 0;} //接收不成功清零
+	hmi_data[RxCount++] = Data;	//将收到的数据存入缓冲区中
+
+	if(RxCount <= (HMI_LEN+4)){ //定义数据长度未包括包头和包长3个字节,+4)  
+		if(hmi_data[0] == 0xAA){ //接收到包头0xAA
+			if(RxCount > 3){
+				if(hmi_data[1] == 0x55){ //接收到包头0x55
+					if(RxCount >= hmi_data[2]+4){ //接收到数据包长度位，开始判断什么时候开始计算校验
+						for(i = 0;i <= (RxCount-2);i++){ //累加和校验
+							RxCheck += hmi_data[i];
+						}
+		
+						if(RxCheck == hmi_data[RxCount-1]){
+							hmi_data_ok = 1; //接收数据包成功
+						}
+						else {
+							hmi_data_ok = 0;
+						}					
+						RxCheck = 0; //接收完成清零
+						RxCount = 0;	
 						}
 				}
 				else {hmi_data_ok = 0;RxCount = 0;hmi_data_ok = 0;} //接收不成功清零
+			}
 		}
 		else {hmi_data_ok = 0;RxCount = 0;hmi_data_ok = 0;} //接收不成功清零
+	}
+	else {hmi_data_ok = 0;RxCount = 0;hmi_data_ok = 0;} //接收不成功清零
 
-		
-		if(1 == hmi_data_ok){
-				HMI_Status_Flag = hmi_data[3];//获取 工作模式位(页面)
-				HMI_Data = hmi_data[4];//获取 返回的数据
+	
+	if(1 == hmi_data_ok){
+		HMI_Status_Flag = hmi_data[3];//获取 工作模式位(页面)
+		HMI_Data = hmi_data[4];//获取 返回的数据
 
-				. /* 此处省略的为 数据解析后响应的处理函数 */
-				.
-				.
-				.
-				.
-				. /* 此处省略的为 数据解析后响应的处理函数 */
-		}
-		hmi_data_ok = 0;
+		. /* 此处省略的为 数据解析后响应的处理函数 */
+		.
+		.
+		.
+		.
+		. /* 此处省略的为 数据解析后响应的处理函数 */
+	}
+	hmi_data_ok = 0;
+}
 ```
 
 ### 3.2 向串口屏发送纸张数量
@@ -287,12 +288,11 @@ uint8 him_uart_nmber_cmd[14] = {0x76,0x61,0x31,0x2E,0x76,0x61,0x6C,0x3D,0x31,0x3
 void uart_send_hmi_paper_numer(uint8 N_number)  //发送给hmi 纸张数量
 { 	
 
-		him_uart_nmber_cmd[8]  = (N_number/100%10) + 0x30; //百位
-		him_uart_nmber_cmd[9]  = (N_number/10%10) + 0x30; //十位
-		him_uart_nmber_cmd[10] = (N_number/1%10) + 0x30;//个位
-	
-		rt_device_write(focus_uart_device, 0,him_uart_nmber_cmd	, sizeof(him_uart_nmber_cmd));	
+	him_uart_nmber_cmd[8]  = (N_number/100%10) + 0x30; //百位
+	him_uart_nmber_cmd[9]  = (N_number/10%10) + 0x30; //十位
+	him_uart_nmber_cmd[10] = (N_number/1%10) + 0x30;//个位
 
+	rt_device_write(focus_uart_device, 0,him_uart_nmber_cmd	, sizeof(him_uart_nmber_cmd));	
 }
 ```
 
@@ -300,16 +300,16 @@ void uart_send_hmi_paper_numer(uint8 N_number)  //发送给hmi 纸张数量
 
 ## 4.程序流程图
 
-![](../media/9f95c192bfd92310ecad47e2f9367f9c.jpg)
 
 
+![程序流程图](../docs/pictures/program_flow.jpg "程序流程图")
 
 ## 5、测试数据分析
 
 (1)
 保持测试环境不变，采集50个样本，通过MATLAB拟合出纸张页数与传感器原始数据的曲线关系，如图4-2所示。
 
-![](media/341a3f3eb5fd3f1a7a8d4b5c0d028951.png)
+![拟合曲线](../docs/pictures/fitting.png "拟合曲线")
 
 **图4-2 纸张页数与模拟量的拟合函数关系图**
 
@@ -329,7 +329,9 @@ void uart_send_hmi_paper_numer(uint8 N_number)  //发送给hmi 纸张数量
 (3)
 根据（2）中划分的模糊子集，保持测试环境不变，固定测量35张纸张，采集数据如表4-2所示，采集到的原始数据90%落入35张页数所对应的区间[401.35,399.50]，如图4-3所示。
 
-![](media/c45d8d729b636aa9712018bf969c4e80.png)
+![程序流程图](../docs/pictures/program_flow.jpg "程序流程图")
+
+
 
 **表4-2 纸张数为35的实时数据**
 
@@ -341,12 +343,15 @@ void uart_send_hmi_paper_numer(uint8 N_number)  //发送给hmi 纸张数量
 | 4        | 399.912  | 9        | 400.443  |
 | 5        | 401.125  | 10       | 398.529  |
 
+
+![](../docs/pictures/35page.png)
 >   **图4-3 纸张数为35的分布区间图**
 
 (4)
 根据（2）中划分的模糊子集，保持测试环境不变，固定测量46张纸张，采集数据如表4-3所示，模拟值大部分落入46张页数所对应的区间[383.6,382.7]，如图4-4所示。
 
-![](media/7b244171ee345f202c05662f140550c5.png)
+
+
 
 **表4-3纸张数为46的实时数据**
 
@@ -358,6 +363,7 @@ void uart_send_hmi_paper_numer(uint8 N_number)  //发送给hmi 纸张数量
 | 4        | 384.3164 | 9        | 383.7621 |
 | 5        | 383.9984 | 10       | 384.1343 |
 
+![](../docs/pictures/46page.png)
 **图4-4 纸张数为46的分布区间图**
 
 - 测试结果

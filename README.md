@@ -1,4 +1,7 @@
-# 纸张计数显示装置 :smile:
+# 
+<p align="center">
+  <font size="25">纸张计数显示装置 :smile:</font>
+</p>
 
 <p align="center">
   <a href="https://zengwangfa.top/">个人主页🕺|</a>

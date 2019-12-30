@@ -10,7 +10,7 @@
 ---
 
 <p align="center">
-  <img src="/doc/pictures/logo.png"/>
+  <img src="/docs/pictures/logo.png"/>
 </p>
 
 
@@ -133,7 +133,7 @@
 
 - (3)根据（2）中划分的模糊子集，保持测试环境不变，固定测量35张纸张，采集数据如表4-2所示，采集到的原始数据90%落入35张页数所对应的区间[401.35,399.50]，如图4-35
 
-![](/docs/pictures/page.png)
+![](/docs/pictures/page35.png)
 
 **表4-2 纸张数为35的实时数据**
 

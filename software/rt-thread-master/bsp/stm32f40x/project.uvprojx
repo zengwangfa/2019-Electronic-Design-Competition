@@ -55,7 +55,7 @@
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
-          <BrowseInformation>1</BrowseInformation>
+          <BrowseInformation>0</BrowseInformation>
           <ListingPath>.\build\</ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
@@ -539,11 +539,6 @@
               <FilePath>.\applications\ioDevices.c</FilePath>
             </File>
             <File>
-              <FileName>timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\applications\timer.c</FilePath>
-            </File>
-            <File>
               <FileName>my2490.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\applications\my2490.c</FilePath>
@@ -552,6 +547,11 @@
               <FileName>nbiot.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\applications\nbiot.c</FilePath>
+            </File>
+            <File>
+              <FileName>FDC2214.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\FDC2214.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -592,11 +592,6 @@
               <FileName>drv_i2c.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_i2c.c</FilePath>
-            </File>
-            <File>
-              <FileName>FDC2214.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\drivers\FDC2214.c</FilePath>
             </File>
           </Files>
         </Group>

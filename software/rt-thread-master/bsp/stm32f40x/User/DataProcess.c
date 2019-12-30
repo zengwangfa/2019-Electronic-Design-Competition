@@ -59,9 +59,9 @@ void Get_Paper(void){
 		for(int i = 0;i < 10;i++){
 				Cap_Value[i] = get_single_capacity();//获取50组数据
 		}	
-    rt_enter_critical(); /* 线程锁定 */
+    rt_enter_critical(); /* 调度器上锁 */
 		Paper.PaperNumber = ProbablityCapacitance(Cap_Value);	//比较数据，获取最终 纸张数
-    rt_exit_critical();		 
+    rt_exit_critical();	 /* 调度器解锁 */	 
 }
 
 
@@ -221,7 +221,12 @@ void Money_Detection(void)
 
 }
 
-/* 【校准时】获取单极板 容值 */
+/**
+  * @brief  get_single_capacity 获取极板容值
+  * @param  None
+  * @retval 电容值
+  * @notice 
+  */
 float get_single_capacity(void)
 {
 		static unsigned int res_CH4_DATA = 0;
@@ -262,12 +267,14 @@ int Short_Circuit_Detection(void)
 }		
 
 float CapacitanceDP= 0;
-/*
-Cap_Division 分割
-arrey 传入的原始数组
-Number 数量
-*/
-void DataSubsection(float Cap_Division[],float arrey[],int Number)
+
+/**
+  * @brief  DataSubsection 电容值分割，获取区间
+  * @param  Cap_Division电容切分后的值、arrey事先存入的电容值
+  * @retval 
+  * @notice 
+  */
+void DataSubsection(float Cap_Division[],float arrey[])
 {
 
 		static int rec = 1;
@@ -313,9 +320,12 @@ void DataSubsection(float Cap_Division[],float arrey[],int Number)
 }
 
 int Probability_Max = 0;
-/*
-CompareArrey 
-*/
+/**
+  * @brief  ProbablityCapacitance 根据分割函数，获取可能的纸张数量
+  * @param  50组电容值地址
+  * @retval 电容值
+  * @notice 按最大百分比返回对应的纸张数，因此只是可能值
+  */
 uint8 ProbablityCapacitance(float CompareArrey[])	//传入 需要比较的数据
 {
 

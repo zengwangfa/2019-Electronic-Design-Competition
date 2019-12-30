@@ -102,8 +102,8 @@ void menu_define(void) //菜单定义
 	  if(oled.pagenum >= OLED_Page_MAX || oled.pagenum <= SwitchPage) oled.pagenum = SwitchPage; //超出页面范围 则为第一页
 		if(oled.pagechange != oled.pagenum){ //当页码改变
 				OLED_Clear(); //清屏
-				//Buzzer_Set(&Beep,1,1);
-				//rt_kprintf("Current Menu_Page: %s \n",oled.pagename[oled.pagenum-1]);
+				//Buzzer_Set(&Beep,1,1);//蜂鸣器响一声
+				//rt_kprintf("Current Menu_Page: %s \n",oled.pagename[oled.pagenum-1]);//打印当前页面
 				oled.pagechange_flag = 1;
 		}
 		else {oled.pagechange_flag = 0;}
@@ -111,35 +111,33 @@ void menu_define(void) //菜单定义
 		
 		oled.pagenum = HMI_Status_Flag;//获取状态
 
-
-		
 		switch(oled.pagenum){
 				case 0:{
-						MENU = SwitchPage;OLED_SwitchPage();		break;
+						MENU = SwitchPage;OLED_SwitchPage();break;//模式选择页面（与DeviceThread.c的任务对应）
 				}
 				case 1:{
-						MENU = DebugPage;OLED_DebugPage();		break;
+						MENU = DebugPage;OLED_DebugPage();break;//调试页面（与DeviceThread.c的任务对应）
 				}
 				case 2:{
-						MENU = DebugPage;OLED_DebugPage();break;
+						MENU = DebugPage;OLED_DebugPage();break;//调试页面（与DeviceThread.c的任务对应）
 				}
 				case 3:{
-						MENU = WorkPage;OLED_WorkPage();break;
+						MENU = WorkPage;OLED_WorkPage();break;//工作测量页面（与DeviceThread.c的任务对应）
 				}	
 				case 4:{
-						MENU = FuncPage;OLED_FuncSwitchPage();break;
+						MENU = FuncPage;OLED_FuncSwitchPage();break;//扩展功能选择（与DeviceThread.c的任务对应）
 				}
 				case 5:{
-						MENU = PrintPage;OLED_PrintPage();break;
+						MENU = PrintPage;OLED_PrintPage();break;//打印机功能（与DeviceThread.c的任务对应）
 				}
 				case 6:{
-						MENU = MaterPage;OLED_MaterPage();break;
+						MENU = MaterPage;OLED_MaterPage();break;//材料检测功能（与DeviceThread.c的任务对应）
 				}
 				case 7:{
-						MENU = RMBPage; OLED_RMBDectionPage();break;
+						MENU = RMBPage; OLED_RMBDectionPage();break;//人命币检测功能（与DeviceThread.c的任务对应）
 				
 				}
-				default:OLED_SwitchPage();	break;
+				default:OLED_SwitchPage();break;//模式选择页面（与DeviceThread.c的任务对应）
 		}
 }
 

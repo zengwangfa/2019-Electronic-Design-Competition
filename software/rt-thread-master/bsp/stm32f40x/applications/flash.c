@@ -112,22 +112,6 @@ void Flash_Update(void)
 }	
 
 
-/* FLASH 更新 普通参数 */
-//void Capacity_Flash_Update(float array[],uint8 number)
-//{
-//		float temp = 0.0f;
-//		char str[20];
-//	
-//		sprintf(str,"[flash] NO.%d:%f\n",number,array[number]);
-//		rt_kprintf(str);
-
-//	
-//		
-//		ef_port_read( Nor_FLASH_ADDRESS+4*BATTERY_CAPACITY_e + 4*(number+1) ,(uint32 *)&temp,4);		 //Flash读取
-//	
-//		sprintf(str,"[flash] NO.%d:%f\n",number,temp);
-//		rt_kprintf(str);
-//}	
 
 
 /* list 相关重要参数 */

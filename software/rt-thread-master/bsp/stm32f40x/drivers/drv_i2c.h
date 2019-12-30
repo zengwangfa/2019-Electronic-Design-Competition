@@ -15,8 +15,8 @@
 ////////////////////////////////////////////////////////////////////////////////// 	
    	   		   
 //IO方向设置
-#define SDA_IN()  {GPIOE->MODER&=~(3<<(2*12));GPIOE->MODER|=0<<(2*12);}	//PB9输入模式  2*pin_number
-#define SDA_OUT() {GPIOE->MODER&=~(3<<(2*12));GPIOE->MODER|=1<<(2*12);} //PB9输出模式
+#define SDA_IN()  {GPIOE->MODER&=~(3<<(2*12));GPIOE->MODER|=0<<(2*12);}	//PE12输入模式  2*pin_number
+#define SDA_OUT() {GPIOE->MODER&=~(3<<(2*12));GPIOE->MODER|=1<<(2*12);} //PE12输出模式
 //IO操作函数	 
 #define IIC_SCL    PEout(10) //SCL
 #define IIC_SDA    PEout(12) //SDA	 

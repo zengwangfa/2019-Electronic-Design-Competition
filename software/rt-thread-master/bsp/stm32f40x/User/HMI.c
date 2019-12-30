@@ -54,6 +54,7 @@ uint8 him_uart_material_cmd[12] = {0x76,0x61,0x33,0x2E,0x76,0x61,0x6C,0x3D,0x30,
 uint8 him_uart_money_cmd[12] = {0x76,0x61,0x34,0x2E,0x76,0x61,0x6C,0x3D,0x30,0xff,0xff,0xff};
 
 uint8 him_ret_status = 0;
+
 uint8 hmi_data[10] = {0};
 
 float FDC2214_Paper_Data[100]  = {0.0f};
@@ -77,20 +78,15 @@ void uart_send_hmi_writer_status(uint8 *cmd)//发送给 hmi写入的状态
 
 		him_uart_cmd[8] = *cmd + 0x30; //命令+0x30  转成对应的ASCII 对应写入
 		rt_device_write(focus_uart_device, 0,him_uart_cmd	, sizeof(him_uart_cmd));
-
 }
-
-
 
 void uart_send_hmi_paper_numer(uint8 N_number)  //发送给hmi 纸张数量
 { 	
-
 		him_uart_nmber_cmd[8]  = (N_number/100%10) + 0x30;  //百位
 		him_uart_nmber_cmd[9]  = (N_number/10%10) + 0x30; //十位
 		him_uart_nmber_cmd[10] = (N_number/1%10) + 0x30;//个位
 	
 		rt_device_write(focus_uart_device, 0,him_uart_nmber_cmd	, sizeof(him_uart_nmber_cmd));	
-
 }
 
 
@@ -109,7 +105,6 @@ void uart_send_hmi_adjust_data(uint8 N_number)  //发送给hmi 前5个校准数据
 		adjust_str_len =  strlen(adjust_str);
 		rt_device_write(focus_uart_device, 0,adjust_str	,adjust_str_len);	
 		rt_device_write(focus_uart_device, 0,end	, 3);	
-
 }
 
 
@@ -162,7 +157,6 @@ void uart_send_hmi_now_level(void)  //发送给hmi 当前等级
 { 	
 		static uint8 end[3] = {0xFF,0xFF,0xFF};
 
-		
 		sprintf(adjust_str,"n0.val=%d",Level);//发送给串口屏 t1.txt="xxxx"
 		adjust_str_len =  strlen(adjust_str);
 		rt_device_write(focus_uart_device, 0,adjust_str	,adjust_str_len);	
@@ -173,7 +167,6 @@ void uart_send_hmi_now_level(void)  //发送给hmi 当前等级
 
 void uart_send_hmi_is_short(void)  //发送给hmi 是否短路
 { 	
-
 		him_uart_short_cmd[8] = 0x30 + Paper.ShortStatus;
 		
 		rt_device_write(focus_uart_device, 0,him_uart_short_cmd	, sizeof(him_uart_short_cmd));//向HMI发送短路信息
@@ -245,11 +238,11 @@ uint8 last_level = 0;
 void HMI_Data_Analysis(uint8 Data) //控制数据解析
 {
 
-		static uint8 i = 0;	   		  //
+		static uint8 i = 0;	   		  
 		static uint8 RxCheck = 0;	  //尾校验字
 		static uint8 RxCount = 0;	  //接收计数
 
-	
+/*================================= 以下为数据解析 ==================================*/					
 		hmi_data[RxCount++] = Data;	//将收到的数据存入缓冲区中
 	
 		if(RxCount <= (HMI_LEN+4)){ //定义数据长度未包括包头和包长3个字节,+4)  
@@ -277,19 +270,21 @@ void HMI_Data_Analysis(uint8 Data) //控制数据解析
 		}
 		else {hmi_data_ok = 0;RxCount = 0;hmi_data_ok = 0;} //接收不成功清零
 
-		
+/*================================= 以下为数据解析后响应的处理函数 ==================================*/					
 		if(1 == hmi_data_ok){
-				HMI_Status_Flag = hmi_data[3];//获取 工作模式位(页面s)
-				HMI_Data = hmi_data[4];
+				HMI_Status_Flag = hmi_data[3];//获取 工作模式位(页面)
+				HMI_Data = hmi_data[4];//获取 返回的数据
 				switch(HMI_Status_Flag){
 				
 						case 0x01:
 											HMI_Debug_Write_Button = 0; 	//【校准页面】只是单单进入页面
 											break;	
+/*----------------------- 获取校准模式 --------------------------------*/			
 						case 0x02:
 											HMI_Page_Number = HMI_Data;//【校准页面】 获取 指定的校准页数
 											HMI_Debug_Write_Button = 1; 	//写入Flash
-											break;				
+											break;	
+/*----------------------- 获取工作模式（按下锁定） --------------------------------*/			
 						case 0x03:
 											if(0x01 == HMI_Data){
 													HMI_Work_Button = 1;         	//【工作页面】 按下锁定按钮
@@ -299,11 +294,11 @@ void HMI_Data_Analysis(uint8 Data) //控制数据解析
 											}
 											break;				
 						case 0x04:
-											break;//扩展功能页面				
+											break;//扩展功能页面，会进入工作模式选择对应的函数				
 						case 0x05:
-											break;//打印机页面
-
-
+											break;//打印机页面，会进入工作模式选择对应的函数			
+						
+/*----------------------- 获取材料检测功能 --------------------------------*/			
 					 case 0x06:
 										if( 0x01 == HMI_Data){
 												Material_Button = 1; 
@@ -318,25 +313,19 @@ void HMI_Data_Analysis(uint8 Data) //控制数据解析
 												Material_Button = 0; //清除锁定
 										}
 										break;	
+/*----------------------- 获取人命币测量功能 --------------------------------*/				
 					 case 0x07:
 										if( 0x01 == HMI_Data){
 												Money_Button = 1; //清除锁定
 										}
-										else if(0x02 == HMI_Data){
-												Money_Debug_Write_Button = 1;
-										}
-										else if(0x03 == HMI_Data){
-												Money_Debug_Write_Button = 2;
-										}
-										else if(0x04 == HMI_Data){
-												Money_Debug_Write_Button = 3;
-										}
-										else if(0x05 == HMI_Data){
-												Money_Debug_Write_Button = 4;
+										else if(HMI_Data >= 2){
+												Money_Debug_Write_Button = HMI_Data -1;
 										}
 										else{
 												Money_Button = 0; //清除锁定
 										}
+										
+/*----------------------- 获取分段区间参数（拟合不够线性，采用分段乘以系数的方法） --------------------------------*/										
 					 case 0x08:
 										uart_send_hmi_30_90_flash_data();//进入调参界面,发送存入Flash的值
 										break;
@@ -366,9 +355,8 @@ void HMI_Data_Analysis(uint8 Data) //控制数据解析
 										Flash_Update();
 										break;  
 					 
-					 
-					 
-					 
+
+/*----------------------- 加倍功能（用于测量极其自信的时候，将最大测量极限上浮） --------------------------------*/				 
 					 case 0xFE:
 										uart_send_hmi_now_level();//进入等级页面
 										rt_thread_mdelay(100);

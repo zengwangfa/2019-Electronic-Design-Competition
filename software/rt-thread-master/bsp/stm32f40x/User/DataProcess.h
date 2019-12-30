@@ -29,7 +29,7 @@ void	Capcity_Paper_Detection(void); //获取电容值
 
 int	Short_Circuit_Detection(void);//短路检测
 
-void DataSubsection(float Cap_Division[],float arrey[],int Number);
+void DataSubsection(float Cap_Division[],float arrey[]);
 
 uint8 ProbablityCapacitance(float CompareArrey[])	;
 

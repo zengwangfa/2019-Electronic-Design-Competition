@@ -10,7 +10,7 @@
 ---
 
 <p align="center">
-  <img src="/docs/pictures/logo.gif"/>
+  <img src="/docs/pictures/logo.jpg"/>
 </p>
 
 

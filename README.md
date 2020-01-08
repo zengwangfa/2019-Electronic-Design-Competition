@@ -62,11 +62,8 @@
 | hmi| 串口屏幕设计UI及交互程序 |
 | matlab| matlab函数拟合及Kalman  |
 | mechanical structure| 机械结构设计 |
-| media| 设计图片 |
-| openMV | openMV设计程序 |
+| others | 一些关于电赛前的准备 |
 | [**software**](./software/) | **纸张计数显示装置STM32程序** |
-| software for development board | 纸张计数显示装置精简版 |
-| software for rail gun | 电磁炮测试程序 |
 | [综合测评](./综合测评/) | **综合测评题目及Multisim电路仿真** | 
 
 ## 3、机械结构:hammer:

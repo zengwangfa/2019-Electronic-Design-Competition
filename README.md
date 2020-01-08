@@ -61,7 +61,7 @@
 | [hardware](./hardware/) | FDC2214、核心板原理图及PCB |
 | hmi| 串口屏幕设计UI及交互程序 |
 | matlab| matlab函数拟合及Kalman  |
-| mechanical structure| 机械结构设计 |
+| mechanical | 机械结构设计 |
 | others | 一些关于电赛前的准备 |
 | [**software**](./software/) | **纸张计数显示装置STM32程序** |
 | [综合测评](./综合测评/) | **综合测评题目及Multisim电路仿真** | 

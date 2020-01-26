@@ -72,7 +72,7 @@ typedef struct
 }PaperCountEngine_Type;//纸张测数器状态
 ```
 ```c
-//初始化变量Paper```c
+//初始化变量Paper
 
 PaperCountEngine_Type Paper = {
 	.Finish_Flag = 2

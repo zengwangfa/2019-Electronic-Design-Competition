@@ -15,7 +15,7 @@
 
 
 <p align="center">
-  <a href="https://zh.wikipedia.org/wiki/C%E8%AF%AD%E8%A8%80"><img src="https://img.shields.io/badge/language-C-brigreen.svg?style=flat-square" alt="C"></a>
+  <a href="https://www.stmcu.com.cn"><img src="https://img.shields.io/badge/Device-STM32F407-brigreen.svg?style=flat-square" alt="STM32"></a>
   <a href="https://www.rt-thread.org/"><img src="https://img.shields.io/badge/OS-RT--Thread-brightgreen" ></a>
   <a href="https://img.shields.io"><img src="https://img.shields.io/github/repo-size/zengwangfa/2019-Electronic-Design-Competition?style=flat-square" alt="Size"></a>
 </p>

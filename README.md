@@ -4,7 +4,7 @@
   <a href="https://zengwangfa.top/">个人主页🕺|</a>
   <a href="/docs/论文/纸张计数显示器论文.md">电赛论文📚|</a>
   <a href="/software/">软件说明💻|</a>
-  <a href="/mechanical_structure/">机械说明🎮</a>
+  <a href="/mechanical_structure/">机械说明🎮|</a>
   <a href="/hmi/">交互界面🖼</a>
 </p>
 
@@ -26,7 +26,11 @@
 
 - [x] 成果：在校准好后，50张以下`100%`正确
 
-![纸张显示交互界面](/docs/pictures/hmi/paper_hmi.gif)
+<p align="center">
+    <a><img src="https://zengwangfa.oss-cn-shanghai.aliyuncs.com/github/paper_hmi.gif"></a>
+</p>
+
+
 ---
 | 配置参数 | 主控制器 | 配置参数 | 主传感器 |
 | :--: | :--: | :--: | :--: |

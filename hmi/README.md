@@ -1,7 +1,9 @@
 
-电脑调试展示
+- [x] 电脑调试时的交互界面展示：
 
-![纸张显示交互界面](/docs/pictures/hmi/paper_hmi.gif)
+<p align="center">
+  <img src="https://zengwangfa.oss-cn-shanghai.aliyuncs.com/github/paper_hmi.gif"/>
+</p>
 
 ## 1.主界面
 主界面分为：

@@ -26,15 +26,8 @@
 
 - [x] 成果：在校准好后，50张以下`100%`正确
 
-
-<p align="center">
-  <img src="https://zengwangfa.oss-cn-shanghai.aliyuncs.com/github/paper_hmi.gif"/>
-</p>
-
-
-
-
 ---
+
 | 配置参数 | 主控制器 | 配置参数 | 主传感器 |
 | :--: | :--: | :--: | :--: |
 |芯片型号| STM32F407ZGT6 |芯片型号| FCD2214 | 
@@ -45,6 +38,7 @@
 |单元| FPU、DSP | 特性 |抗电磁干扰(EMI) |
 
 ---
+
 - 系统结构简图：
 ![系统结构简图](/docs/pictures/系统结构简图.png "系统结构简图")
 
@@ -114,8 +108,12 @@
 
 ---
 ## 6、[交互界面:framed_picture:](/software/) 
-- 主界面
-![主界面](/docs/pictures/hmi/hmi1.png)
+- [x] 电脑调试时的交互界面展示：
+
+<p align="center">
+  <img src="https://zengwangfa.oss-cn-shanghai.aliyuncs.com/github/paper_hmi.gif"/>
+</p>
+
 
 ## 7、测试数据分析:bar_chart:
 

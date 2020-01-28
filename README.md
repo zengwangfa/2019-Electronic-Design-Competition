@@ -27,7 +27,7 @@
 - [x] 成果：在校准好后，50张以下`100%`正确
 
 <p align="center">
-    <a><img src="https://zengwangfa.oss-cn-shanghai.aliyuncs.com/github/paper_hmi.gif"></a>
+	![交互界面](https://zengwangfa.oss-cn-shanghai.aliyuncs.com/github/paper_hmi.gif)
 </p>
 
 

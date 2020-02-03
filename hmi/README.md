@@ -1,3 +1,4 @@
+> 串口屏型号为 USART HMI 3.2寸增强型
 
 - [x] 电脑调试时的交互界面展示：
 
@@ -5,8 +6,12 @@
   <img src="https://zengwangfa.oss-cn-shanghai.aliyuncs.com/github/paper_hmi.gif"/>
 </p>
 
+
+
 ## 串口屏通讯协议
 - [x] 以下数据格式都为`16进制`
+- [x] 波特率：`115200`
+
 控制字格式：0xAA 0x55 0x10+数据字节(2字节)+校验字(所有字节相加后，保留最后一个字节)
 
 - 第1字节：包头位

@@ -5,7 +5,7 @@
   <a href="/docs/论文/纸张计数显示器论文.md">电赛论文📚|</a>
   <a href="/software/">软件说明💻|</a>
   <a href="/mechanical_structure/">机械说明🎮|</a>
-  <a href="/hmi/">交互界面说明🖼</a>
+  <a href="/hmi/">交互界面说明🖼|</a>
   <a href="/综合测评/">综合测评:triangular_ruler:</a>
 </p>
 

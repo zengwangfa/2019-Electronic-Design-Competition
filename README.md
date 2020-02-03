@@ -5,7 +5,7 @@
   <a href="/docs/论文/纸张计数显示器论文.md">电赛论文📚|</a>
   <a href="/software/">软件说明💻|</a>
   <a href="/mechanical_structure/">机械说明🎮|</a>
-  <a href="/hmi/">交互界面🖼</a>
+  <a href="/hmi/">交互界面说明🖼</a>
 </p>
 
 ---
@@ -107,7 +107,8 @@
 ![整体实物图](/docs/pictures/all_structure.png)
 
 ---
-## 6、[交互界面:framed_picture:](/software/) 
+## 6、[交互界面:framed_picture:](/hmi/) 
+
 - [x] 电脑调试时的交互界面展示：
 
 <p align="center">

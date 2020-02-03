@@ -6,6 +6,7 @@
   <a href="/software/">软件说明💻|</a>
   <a href="/mechanical_structure/">机械说明🎮|</a>
   <a href="/hmi/">交互界面说明🖼</a>
+  <a href="/综合测评/">综合测评:triangular_ruler:</a>
 </p>
 
 ---
@@ -68,7 +69,7 @@
 | [**software**](./software/) | **纸张计数显示装置STM32程序** |
 | [综合测评](./综合测评/) | **综合测评题目及Multisim电路仿真** | 
 
-## 3、机械结构:hammer:
+## 3、[机械结构:hammer:](/mechanical_structure/)
 - 3维模型
 ![3D效果图](/docs/pictures/3D_structure.jpg "3D效果图")
 - 实物图
@@ -169,7 +170,7 @@
 | 70\~80 | 25       | 16       | 64%    |
 
 
-## 8、综合测评演练:triangular_ruler:
+## 8、[综合测评演练:triangular_ruler:](/综合测评/)
 - 选定2017综合测评题目【符合信号发生器】，进行综合测评训练
 ![2017年全国大学生电子设计竞赛综合测评题](/docs/pictures/2017年全国大学生电子设计竞赛综合测评题.jpg "2017年全国大学生电子设计竞赛综合测评题")
 

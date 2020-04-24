@@ -198,6 +198,8 @@
 ### 赞赏
 ![赞赏](/docs/pictures/给赞.png "赞赏")
 
+#### Github下载过慢
+- [Github下载过慢解决办法](https://blog.csdn.net/wangshuaiwsws95/article/details/104730741/)
 
 #### 整理纪念
 - [点击联系我](Mailto:zengwangfa@outlook.com)

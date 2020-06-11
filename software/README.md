@@ -1,3 +1,16 @@
+#### STM32F407控制程序在：
+```
+|---+ software:【软件设计】
+|       ├──README.md
+|       ├──rt-thread-master
+|            └──bsp
+|               └──stm32f407【控制程序】
+|                  └──project.uvprojx【Keil5工程】
+|---- ...
+
+```
+
+
 ## 1. 程序描述与思路:book:
 
 ### 1.1 系统总体工作流程
